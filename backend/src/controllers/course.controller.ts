@@ -1,12 +1,14 @@
 import type { Request, Response } from "express";
 import { courseServices } from "../services/index.js";
 import { ctrlWrapper } from "../decorators/index.js";
+import { HttpError } from "../utils/index.js";
 const {
   getCoursesService,
   getCourseByIdService,
   addCourseService,
   updateCourseService,
   deleteCourseByIdService,
+  toggleFavoriteCourseService,
 } = courseServices;
 
 /**
@@ -89,10 +91,20 @@ export const deleteCourseById = async (
   res.json({ message: "Course deleted" });
 };
 
-// export const updateStatusPost = async (
-//   req: Request,
-//   res: Response
-// ): Promise<void> => {};
+export const toggleFavoriteCourse = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const { id: courseId } = req.params;
+  const { _id: userId } = req.user;
+  if (!userId) {
+    throw HttpError(404, "User not found");
+  }
+
+  const { action } = await toggleFavoriteCourseService(userId, courseId);
+
+  res.json({ message: `Course ${action} favorites` });
+};
 
 export default {
   getCourses: ctrlWrapper(getCourses),
@@ -100,5 +112,5 @@ export default {
   addCourse: ctrlWrapper(addCourse),
   updateCourse: ctrlWrapper(updateCourse),
   deleteCourseById: ctrlWrapper(deleteCourseById),
-  // updateStatusPost: ctrlWrapper(updateStatusPost),
+  toggleFavoriteCourse: ctrlWrapper(toggleFavoriteCourse),
 };

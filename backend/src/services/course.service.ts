@@ -1,7 +1,7 @@
-import type { FilterQuery } from "mongoose";
+import type { FilterQuery, ObjectId } from "mongoose";
 
-import { CourseModel } from "../models/index";
-import type { ICourse } from "../types/course.type";
+import { CourseModel, UserModel } from "../models/index.js";
+import type { ICourse } from "../types/course.type.js";
 
 const getCoursesService = async (
   filter: FilterQuery<ICourse>,
@@ -53,10 +53,35 @@ export const deleteCourseByIdService = async (
   return CourseModel.findByIdAndDelete(id).exec();
 };
 
+export const toggleFavoriteCourseService = async (
+  userId: string | ObjectId,
+  courseId: string
+): Promise<{ action: "added to" | "removed from" }> => {
+  const user = await UserModel.findById(userId);
+  if (!user) throw new Error("User not found");
+
+  const isFavorite = user.favoritesCourses?.some(
+    (id) => id.toString() === courseId
+  );
+
+  const action = isFavorite ? "removed from" : "added to";
+
+  await UserModel.findByIdAndUpdate(userId, {
+    [isFavorite ? "$pull" : "$addToSet"]: { favoritesCourses: courseId },
+  });
+
+  await CourseModel.findByIdAndUpdate(courseId, {
+    [isFavorite ? "$pull" : "$addToSet"]: { favoritedBy: userId },
+  });
+
+  return { action };
+};
+
 export default {
   getCoursesService,
   getCourseByIdService,
   addCourseService,
   updateCourseService,
   deleteCourseByIdService,
+  toggleFavoriteCourseService,
 };
