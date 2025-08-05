@@ -1,0 +1,67 @@
+@import "tailwindcss";
+@config "../../tailwind.config.ts";
+
+@font-face {
+  font-family: "Helvetica Neue";
+  src: url("/fonts/HelveticaNeueCyr-Roman.woff") format("woff");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Helvetica Neue";
+  src: url("/fonts/HelveticaNeueCyr-Medium.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Helvetica Neue";
+  src: url("/fonts/HelveticaNeueCyr-Bold.woff") format("woff");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --background: #f7f7f7;
+  --foreground: #121212;
+  --muted: #7b7b7b;
+  --muted-foreground: #222;
+  --accent: #0170fd;
+  /* --hover: #086de3; */
+  /* --hover-foreground: #f8f8f8; */
+  --font-sora: "Sora", sans-serif;
+  --font-inter: "Inter", sans-serif;
+  --font-helvetica: "Helvetica Neue", Arial, sans-serif;
+  --background-btn: #090909;
+  --background-btn-hover: #000;
+  --box-shadow-btn: 0 3px 4px -1px rgba(0, 0, 0, 0.15),
+    0 1px 0 0 rgba(255, 255, 255, 0.33) inset, 0 0 0 1px #d4d4d4;
+  --box-shadow-input: 0px 1px 1px 0px rgba(18, 18, 18, 0.1),
+    0px 0px 0px 1px rgba(18, 18, 18, 0.1);
+  --box-shadow-input-hover: 0px 0px 0px 4px rgba(18, 18, 18, 0.1),
+    0px 1px 1px 0px rgba(18, 18, 18, 0.1), 0px 0px 0px 1px rgba(18, 18, 18, 0.2),
+    0px 1px 3px 0px rgba(18, 18, 18, 0.1);
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --background: #f7f7f7;
+    --foreground: #121212;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: "Helvetica Neue", Arial, sans-serif;
+}
+
+.btn-gradient {
+  background: linear-gradient(180deg, #e5e5e5 0%, #e2e2e2 100%);
+}
+.btn-telegram {
+  background: linear-gradient(0deg, #fff 0%, #fff 100%),
+    linear-gradient(180deg, #e5e5e5 0%, #e2e2e2 100%);
+}

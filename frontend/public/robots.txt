@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+Disallow: /dl-admin
+Sitemap: https://dsgn.page/sitemap.xml
