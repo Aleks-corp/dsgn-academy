@@ -11,6 +11,7 @@ import type { Err } from "./types/error.type.js";
 import usersRouter from "./routes/user.route.js";
 import coursesRouter from "./routes/course.route.js";
 import videosRouter from "./routes/video.route.js";
+import testRouter from "./routes/test.route.js";
 
 const logPath = path.resolve("dist/logs");
 
@@ -54,6 +55,7 @@ app.use((req, res, next) => {
 app.use("/auth", usersRouter);
 app.use("/courses", coursesRouter);
 app.use("/videos", videosRouter);
+app.use("/testing", testRouter);
 
 app.get("/ping", (req, res) => {
   res.send("POST /pong");

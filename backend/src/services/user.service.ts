@@ -21,10 +21,8 @@ import {
   HttpError,
   sendMail,
   checkSubscriptionStatus,
-  nextDate,
+  setSubDate,
   unsubscribeUser,
-  migrateFromOldBase,
-  registrationSale,
 } from "../utils/index.js";
 
 const {
@@ -34,7 +32,6 @@ const {
   WFP_MERCHANT_DOMAIN_NAME,
   VITE_BASE_URL,
   IPHUB_API_KEY,
-  DATE_FOR_TRIAL,
 } = process.env;
 
 export const registerService = async ({
@@ -67,45 +64,28 @@ export const registerService = async ({
       );
     }
   }
-  const migrateUserData = await migrateFromOldBase({ email });
-  const registerSale = registrationSale(DATE_FOR_TRIAL);
+
   const userData = {
     password: await bcrypt.hash(password, 10),
     verificationToken: nanoid(),
-    orderReference: migrateUserData
-      ? migrateUserData.PaymentOrder
-      : registerSale.orderReference,
-    regularDateEnd:
-      migrateUserData && migrateUserData.Status === "ACTIVE"
-        ? migrateUserData.ExpirationDate
-        : null,
-    substart: migrateUserData ? null : registerSale.substart,
-    subend: migrateUserData ? null : registerSale.subend,
-    subscription: migrateUserData
-      ? userSubscriptionConst.FREE
-      : userSubscriptionConst.TRIAL,
+    orderReference: "",
+    subscription: userSubscriptionConst.FREE,
   };
   const emailText =
-    userData.subscription === userSubscriptionConst.TRIAL
-      ? "Thank you for signing up! To complete your registration, please verify your email address by clicking the button below. As a new user, you will receive <strong>3 days of Limit Premium access</strong> after verification."
-      : "Thank you for signing up! To complete your registration, please verify your email address by clicking the button below.";
+    "Thank you for signing up! To complete your registration, please verify your email address by clicking the button below.";
 
   await UserModel.create({
     name,
     email,
-
     ip,
     ...userData,
   });
-  const maildata = await sendMail({
+  await sendMail({
     email,
     verificationToken: userData.verificationToken,
     path: "verify",
     text: emailText,
   });
-  if (!maildata) {
-    throw HttpError(400, "Email not sent");
-  }
 };
 
 export const loginService = async ({
@@ -147,7 +127,7 @@ export const loginService = async ({
         return { token, updatedUser };
       }
     } catch (error) {
-      console.log("🚀 ~ error:", error);
+      console.error("🚀 ~ error:", error); // log
     }
 
     await UserModel.findByIdAndUpdate(user._id, { token, ip });
@@ -199,15 +179,13 @@ export const resendVerifyService = async (
   if (user.verify) {
     throw HttpError(400, "Verification has already been passed");
   }
-  const maildata = await sendMail({
+  await sendMail({
     email,
     path: "verify",
     verificationToken: user.verificationToken,
     text: "Thank you for signing up! To complete your registration, please verify your email address by clicking the button below.",
   });
-  if (!maildata) {
-    throw HttpError(400, "Email not sent");
-  }
+
   return { message: "Verification email sent" };
 };
 
@@ -228,15 +206,13 @@ export const forgotPasswordService = async (
     ...user,
   });
 
-  const maildata = await sendMail({
+  await sendMail({
     email: user.email,
     path: "reset-password",
     verificationToken: resetToken,
     text: "You requested a password reset. Click the link below to set a new password.",
   });
-  if (!maildata) {
-    throw HttpError(400, "Email not sent");
-  }
+
   return { message: "Password reset link sent to email" };
 };
 
@@ -369,10 +345,10 @@ export const paymentWebhookService = async (
           regularDateEnd.split(".").reverse().join(", ")
         ),
         substart: new Date(parseInt(arr[1])),
-        subend: nextDate(parseInt(arr[1])),
+        subend: setSubDate(parseInt(arr[1])),
       }
     );
-    console.log("✅ Оплата підтверджена для", orderReference); //Log
+    console.info("✅ Оплата підтверджена для", orderReference); //Log
   }
   return responseData;
 };
@@ -392,9 +368,6 @@ export const unsubscribeWebhookService = async (
   user: IUser
 ): Promise<IUser | undefined | null> => {
   const data = await unsubscribeUser(user);
-  if (data instanceof Error) {
-    throw HttpError(400, data.message);
-  }
   if (data.reasonCode === 4100) {
     const updatedUser = await UserModel.findByIdAndUpdate(
       user._id,

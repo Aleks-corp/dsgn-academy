@@ -5,7 +5,7 @@ import {
   passRegexp,
   userSubscription,
 } from "../constants/user.constant.js";
-// import tempEmailDomainsSet from "../constants/tempEmailDomainsSet";
+import tempEmailDomainsSet from "../constants/tempEmailDomainsSet.js";
 
 const usersRegSchema = Joi.object({
   name: Joi.string().required().min(3).max(18).messages({
@@ -15,13 +15,13 @@ const usersRegSchema = Joi.object({
   email: Joi.string()
     .pattern(emailRegexp)
     .required()
-    // .custom((value, helpers) => {
-    //   const domain = value.split("@")[1]?.toLowerCase();
-    //   if (tempEmailDomainsSet.has(domain)) {
-    //     return helpers.error("any.invalid");
-    //   }
-    //   return value;
-    // })
+    .custom((value, helpers) => {
+      const domain = value.split("@")[1]?.toLowerCase();
+      if (tempEmailDomainsSet.has(domain)) {
+        return helpers.error("any.invalid");
+      }
+      return value;
+    })
     .messages({
       "string.pattern.base": `'email' should be a type of 'email'`,
       "string.empty": `'email' cannot be an empty field`,

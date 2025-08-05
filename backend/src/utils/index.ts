@@ -1,2 +1,6 @@
-export { default as HttpError } from "./HttpError.js";
+export { default as HttpError } from "./httperror.utils.js";
 export { default as modelHooks } from "./model.hook.js";
+export { default as sendMail } from "./sendmail.utils.js";
+export { default as setSubDate } from "./setsubdate.utils.js";
+export { default as unsubscribeUser } from "./unsubscribe.utils.js";
+export { default as checkSubscriptionStatus } from "./checksub.utils.js";

@@ -17,7 +17,10 @@ export class CustomError extends Error {
   }
 }
 
-const HttpError = (status: number, message: string = errorMessage[status]) => {
+const HttpError = (
+  status: number,
+  message: string = errorMessage[status]
+): CustomError => {
   const error = new CustomError(status, message);
   return error;
 };

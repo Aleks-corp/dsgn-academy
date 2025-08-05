@@ -1,14 +1,14 @@
 export const amountData = {
-  amount: "4.95",
+  amount: "3",
   currency: "EUR",
-  productName: ["All-Access-Pass"],
+  productName: ["Access-Pass"],
   productCount: [1],
-  productPrice: ["4.95"],
+  productPrice: ["3"],
   merchantAuthType: "SimpleSignature",
   merchantTransactionSecureType: "AUTO",
   recurringToken: "auto",
   regularMode: "monthly",
-  regularAmount: "4.95",
+  regularAmount: "3",
   regularBehavior: "preset",
   regularOn: 1,
 };

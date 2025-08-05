@@ -5,12 +5,10 @@ import type { Document, ObjectId } from "mongoose";
 import "dotenv/config";
 
 import { ctrlWrapper } from "../decorators/index.js";
-import { HttpError } from "../utils/index.js";
+import { HttpError, checkSubscriptionStatus } from "../utils/index.js";
 import { UserModel } from "../models/index.js";
 
 import type { IUser } from "../types/user.type.js";
-// import { checkSubscriptionStatus } from "src/helpers/CheckSubscriptionStatus";
-// import { resetLimitedDownload } from "src/helpers/checkDownloadPermission";
 
 export interface UserDocument extends IUser, Document {
   _id: ObjectId;
@@ -39,9 +37,8 @@ const authenticateUser = async (
       next();
     } else {
       req.user = user;
-      // const resetUser = await resetLimitedDownload(user);
-      // const updatedUser = await checkSubscriptionStatus(resetUser);
-      // req.user = updatedUser;
+      const updatedUser = await checkSubscriptionStatus(user);
+      req.user = updatedUser;
       next();
     }
   } catch {

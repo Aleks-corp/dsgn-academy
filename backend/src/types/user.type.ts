@@ -21,12 +21,12 @@ export interface IUser extends Document {
   regularDateEnd?: Date;
   lastPayedStatus?: string;
   lastPayedDate?: Date;
-  substart?: Date;
-  subend?: Date;
+  substart: Date;
+  subend: Date;
   orderReference: string;
   token?: string;
   verify?: boolean;
-  verificationToken?: string;
+  verificationToken: string;
   resetPasswordToken?: string;
   resetPasswordExpires?: number;
   favoritesCourses?: Types.ObjectId[];

@@ -7,7 +7,11 @@ export type CtrlFunction<T> = (
 ) => Promise<T>;
 
 const ctrlWrapper = <T>(ctrl: CtrlFunction<T>) => {
-  return async (req: Request, res: Response, next: NextFunction) => {
+  return async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
     try {
       await ctrl(req, res, next);
     } catch (error) {
