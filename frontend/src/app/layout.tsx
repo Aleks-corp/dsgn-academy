@@ -1,5 +1,6 @@
 import { Inter, Sora } from "next/font/google";
 import "./globals.css";
+import LenisProvider from "@/components/LenisProvider";
 
 import Header from "@/components/Header";
 import Aside from "@/components/Aside";
@@ -35,8 +36,9 @@ export default function RootLayout({
         <meta name="theme-color" content="#ffffff" />
       </head>
       <body className={`${sora.variable} ${inter.variable} antialiased`}>
+        <LenisProvider />
         <ReduxProvider>
-          <div className="flex gap-[32px] w-full min-h-screen p-8 pb-12 sm:p-6 max-w-[1440px] mx-auto">
+          <div className="flex gap-[32px] w-full min-h-screen p-4 sm:p-5 pb-12 max-w-[1440px] mx-auto">
             <Aside />
             <div className="w-full">
               <Header />

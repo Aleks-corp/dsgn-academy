@@ -14,7 +14,7 @@ import {
   unsubscribe,
 } from "./auth.thunk";
 import { AuthState } from "../../types/state.types";
-import { GetUser, UserProfile } from "../../types/auth.types";
+import { IUser, GetUser, UserSubscription } from "../../types/users.type";
 
 const handleFulfilled = (state: AuthState) => {
   state.isLogining = false;
@@ -39,7 +39,7 @@ const handleLogOutFulfilled = (state: AuthState) => {
 
 const handleCheckPaymentFulfilled = (
   state: AuthState,
-  action: PayloadAction<{ subscription: string }>
+  action: PayloadAction<{ subscription: UserSubscription }>
 ) => {
   state.isLogining = false;
   if (state.profile) {
@@ -49,7 +49,7 @@ const handleCheckPaymentFulfilled = (
 
 const handleUnsubscribeFulfilled = (
   state: AuthState,
-  action: PayloadAction<UserProfile>
+  action: PayloadAction<IUser>
 ) => {
   state.isLogining = false;
   state.profile = action.payload;
@@ -61,7 +61,7 @@ const handleRefreshPending = (state: AuthState) => {
 
 const handleRefreshFulfilled = (
   state: AuthState,
-  action: PayloadAction<UserProfile>
+  action: PayloadAction<IUser>
 ) => {
   state.profile = action.payload;
   state.isLoggedIn = true;
@@ -95,11 +95,6 @@ const authSlice = createSlice({
   name: "auth",
   initialState: initialState,
   reducers: {
-    setDailyDownloadCount(state: AuthState, action: PayloadAction<number>) {
-      if (state.profile) {
-        state.profile.dailyDownloadCount = action.payload;
-      }
-    },
     localLogOut(state: AuthState) {
       state.isLoggedIn = false;
       state.profile = null;
@@ -133,5 +128,5 @@ const authSlice = createSlice({
       ),
 });
 
-export const { setDailyDownloadCount, localLogOut } = authSlice.actions;
+export const { localLogOut } = authSlice.actions;
 export const authReducer = authSlice.reducer;

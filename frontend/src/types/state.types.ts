@@ -1,44 +1,59 @@
-// import { UserProfile } from "./auth.types";
-// import { GetPost } from "./posts.types";
+import { IUser } from "./users.type";
+import { ICourse } from "./courses.type";
+import { IVideo } from "./videos.type";
 
 export interface State {
-  //   posts: PostsState;
-  //   auth: AuthState;
+  courses: CourseState;
+  videos: VideoState;
+  auth: AuthState;
   //     admin: AdminState;
   test: TestState;
 }
 
-// export interface PostsState {
-//   posts: GetPost[];
-//   totalHits: number;
-//   currentFilter: string;
-//   selectedPost: GetPost | null;
-//   isLoading: boolean;
-//   error: string;
-//   postToEdit: GetPost | null;
-// }
+export interface CourseState {
+  courses: ICourse[];
+  totalHits: number;
+  currentFilter: string;
+  selectedCourse: ICourse | null;
+  isLoading: boolean;
+  error: string;
+  courseToEdit: ICourse | null;
+}
 
-// export interface AuthState {
-//   token: string;
-//   isLoggedIn: boolean;
-//   isRefreshing: boolean;
-//   isLogining: boolean;
-//   error: string;
-//   profile: UserProfile | null;
-// }
+export interface VideoState {
+  videos: IVideo[];
+  totalHits: number;
+  currentFilter: string;
+  selectedVideo: IVideo | null;
+  isLoading: boolean;
+  error: string;
+  videoToEdit: IVideo | null;
+}
 
-// export interface AdminState {
-//   folowers: UserProfile[];
-//   totalFolowers: number;
-//   totalPosts: number;
-//   unpublPosts: GetPost[];
-//   unpublPost: GetPost | null;
-//   isLoadingPost: boolean;
-//   isLoadingUpdate: boolean;
-//   isLoadingCheck: boolean;
-//   isLoadingMore: boolean;
-//   error: string;
-// }
+export interface AuthState {
+  token: string;
+  isLoggedIn: boolean;
+  isRefreshing: boolean;
+  isLogining: boolean;
+  error: string;
+  profile: IUser | null;
+}
+
+export interface AdminState {
+  folowers: IUser[];
+  totalFolowers: number;
+  totalVideos: number;
+  unpublVideos: IVideo[];
+  unpublVideo: IVideo | null;
+  totalCources: number;
+  unpublCources: IVideo[];
+  unpublCource: IVideo | null;
+  isLoading: boolean;
+  isLoadingUpdate: boolean;
+  isLoadingCheck: boolean;
+  isLoadingMore: boolean;
+  error: string;
+}
 
 export interface TestState {
   isAlpha: boolean;

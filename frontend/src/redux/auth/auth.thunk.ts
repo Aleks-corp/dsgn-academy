@@ -3,18 +3,18 @@ import { AxiosError } from "axios";
 import { toast } from "react-hot-toast";
 import { RootState } from "../store";
 import {
-  UserChangePassProfile,
-  UserForgotProfile,
-  UserLogProfile,
-  UserNewPassProfile,
-  UserProfile,
-  UserRegProfile,
-} from "../../types/auth.types";
-import { delToken, instance, setToken } from "../../api/axios";
+  IUser,
+  IUserReg,
+  IUserLog,
+  IUserNewPass,
+  IUserChangePass,
+  IUserForgot,
+} from "../../types/users.type";
+import { delToken, instance, setToken } from "../../lib/api/axios";
 
 export const signUp = createAsyncThunk(
   "auth/signup",
-  async (userData: UserRegProfile, thunkAPI) => {
+  async (userData: IUserReg, thunkAPI) => {
     try {
       const response = await instance.post("/users/register", userData);
       toast.success("Congratulations! You are successfully signed up!");
@@ -38,7 +38,7 @@ export const signUp = createAsyncThunk(
 
 export const logIn = createAsyncThunk(
   "auth/login",
-  async (userData: UserLogProfile, thunkAPI) => {
+  async (userData: IUserLog, thunkAPI) => {
     try {
       const response = await instance.post("/users/login", userData);
       setToken(response.data.token);
@@ -72,33 +72,32 @@ export const logOut = createAsyncThunk("auth/logout", async (_, thunkAPI) => {
   }
 });
 
-export const refreshUser = createAsyncThunk<
-  UserProfile,
-  void,
-  { state: RootState }
->("auth/refresh", async (_, thunkAPI) => {
-  const state: RootState = thunkAPI.getState();
-  const persistedToken = state.auth.token;
+export const refreshUser = createAsyncThunk<IUser, void, { state: RootState }>(
+  "auth/refresh",
+  async (_, thunkAPI) => {
+    const state: RootState = thunkAPI.getState();
+    const persistedToken = state.auth.token;
 
-  if (!persistedToken) {
-    return thunkAPI.rejectWithValue("Unable to Login");
-  }
+    if (!persistedToken) {
+      return thunkAPI.rejectWithValue("Unable to Login");
+    }
 
-  try {
-    setToken(persistedToken);
-    const response = await instance.get("/users/current");
-    return response.data;
-  } catch (error) {
-    if (error instanceof AxiosError) {
-      // toast.error(
-      //   `${error.response?.data.message ?? error.message}. Please try login.`
-      // );
-      return thunkAPI.rejectWithValue(
-        error.response?.data.message ?? error.message
-      );
+    try {
+      setToken(persistedToken);
+      const response = await instance.get("/users/current");
+      return response.data;
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        // toast.error(
+        //   `${error.response?.data.message ?? error.message}. Please try login.`
+        // );
+        return thunkAPI.rejectWithValue(
+          error.response?.data.message ?? error.message
+        );
+      }
     }
   }
-});
+);
 
 export const verifyUser = createAsyncThunk(
   "auth/verify",
@@ -140,7 +139,7 @@ export const resendVerifyUser = createAsyncThunk(
 
 export const setNewPassword = createAsyncThunk(
   "auth/resetpassword",
-  async (userData: UserNewPassProfile, thunkAPI) => {
+  async (userData: IUserNewPass, thunkAPI) => {
     try {
       const response = await instance.post(
         `/users/reset-password/${userData.newPassToken}`,
@@ -164,7 +163,7 @@ export const setNewPassword = createAsyncThunk(
 
 export const forgotPassword = createAsyncThunk(
   "auth/forgotpassword",
-  async (userData: UserForgotProfile, thunkAPI) => {
+  async (userData: IUserForgot, thunkAPI) => {
     try {
       const response = await instance.post("/users/forgot-password", userData);
       toast.success("Email sent");
@@ -182,7 +181,7 @@ export const forgotPassword = createAsyncThunk(
 
 export const changePassword = createAsyncThunk(
   "auth/changepassword",
-  async (userData: UserChangePassProfile, thunkAPI) => {
+  async (userData: IUserChangePass, thunkAPI) => {
     try {
       const response = await instance.post("/users/change-password", userData);
       toast.success("Password changed successful");

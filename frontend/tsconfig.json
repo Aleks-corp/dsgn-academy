@@ -26,10 +26,17 @@
       "@/hooks/*": ["./src/hooks/*"],
       "@/lib/*": ["./src/lib/*"],
       "@/types/*": ["./src/types/*"],
-      "@/api/*": ["./src/api/*"],
-      "@/redux/*": ["./src/redux/*"]
+      "@/api/*": ["./src/lib/api/*"],
+      "@/redux/*": ["./src/redux/*"],
+      "@/selector/*": ["./src/redux/selectors/*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    ".next/types/**/*.ts",
+    "src/redux/selectors"
+  ],
   "exclude": ["node_modules"]
 }

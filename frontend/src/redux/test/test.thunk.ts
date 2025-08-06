@@ -1,7 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { AxiosError } from "axios";
 import { toast } from "react-hot-toast";
-import { instance } from "../../api/axios";
+import { instance } from "../../lib/api/axios";
 
 export const isAlpha = createAsyncThunk("test/isalpha", async (_, thunkAPI) => {
   try {

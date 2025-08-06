@@ -1,20 +1,13 @@
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://news-dsgn-academy.onrender.com"),
-  title: "UX.News — Український портал новин для дизайнерів",
+  metadataBase: new URL("https://dsgn.academy"),
+  title: "Dsgn Academy — Освітня платформа для дизайнерів українською",
   description:
-    "UX.News — новини, аналітика, статті та тренди для дизайнерів і UX-фахівців. Читай актуальне, знаходь ідеї для своїх проектів.",
+    "Dsgn Academy — сучасна освітня платформа для дизайнерів. Курси, відео, інтерв’ю та лекції з UI/UX, Webflow, Figma, Framer, Spline — українською мовою.",
+  keywords:
+    "дизайн, онлайн-курси, освіта, дизайн українською, Dsgn Academy, UI/UX, графічний дизайн, Webflow, Figma, Framer, Spline, відео, інтерв’ю, курси дизайну, навчання, академія дизайну, українські курси",
   authors: [{ name: "Design Academy" }],
-  keywords: [
-    "дизайн",
-    "ux",
-    "новини",
-    "інтерфейси",
-    "ui",
-    "дезайн аналітика",
-    "новини дизайну",
-  ],
   icons: {
     icon: [
       { url: "/favicon.ico", sizes: "16x16 32x32 48x48", type: "image/x-icon" },
@@ -32,26 +25,28 @@ export const metadata: Metadata = {
   },
   manifest: "/site.manifest",
   openGraph: {
-    title: "UX.News — Український портал новин для дизайнерів",
+    title: "Dsgn Academy — Освітня платформа для дизайнерерів українською",
     description:
-      "Читай найсвіжіші новини зі світу UX, UI, технологій та дизайну. Огляди інструментів, експертні думки, корисні статті.",
-    url: "hhttps://news-dsgn-academy.onrender.com",
-    type: "website",
+      "Сучасна платформа для дизайнерів. Найкращі відео, курси, лекції, інтерв’ю — українською. Доступно. Без бар'єрів. Професійний розвиток з Dsgn Academy.",
+    url: "https://dsgn.academy",
+    siteName: "Dsgn Academy",
     images: [
       {
-        url: "https://news-dsgn-academy.onrender.com/og-preview.png",
+        url: "https://dsgn.academy/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "UX.News – Український портал новин для дизайнерів",
+        alt: "Dsgn Academy — Освітня платформа для дизайнерів",
       },
     ],
+    locale: "uk_UA",
+    type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "UX.News — Український портал новин для дизайнерів",
+    title: "Dsgn Academy — Освітня платформа для дизайнерерів українською",
     description:
-      "Останні новини для для дизайнерів і UX-фахівців. Читай, навчайся, знаходь натхнення на UX.News.",
-    images: ["https://news-dsgn-academy.onrender.com/og-preview.png"],
+      "Найкращі відео, курси, інтерв’ю для дизайнерів — українською. Dsgn Academy — твій розвиток у світі дизайну.",
+    images: ["https://dsgn.academy/og-image.jpg"],
   },
   robots: {
     index: true,

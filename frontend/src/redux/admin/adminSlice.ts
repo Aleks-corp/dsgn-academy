@@ -11,8 +11,8 @@ import {
   sendMessageSpt,
 } from "./admin.thunk";
 import { AdminState } from "../../types/state.types";
-import { GetPost } from "../../types/posts.types";
-import { UserProfile } from "../../types/auth.types";
+import { IVideo } from "@/types/videos.type";
+import { IUser } from "@/types/users.type";
 import toast from "react-hot-toast";
 
 const handleGetAllUsersPending = (state: AdminState) => {
@@ -31,13 +31,13 @@ const handlePatchCheckSubPending = (state: AdminState) => {
 };
 
 const handlePostsPending = (state: AdminState) => {
-  state.isLoadingPost = true;
+  state.isLoading = true;
   state.error = "";
 };
 
 const handleGetAllUsersFulfilled = (
   state: AdminState,
-  action: PayloadAction<{ users: UserProfile[]; totalHits: number }>
+  action: PayloadAction<{ users: IUser[]; totalHits: number }>
 ) => {
   state.isLoadingMore = false;
   const newUsers = action.payload.users.filter(
@@ -50,7 +50,7 @@ const handleGetAllUsersFulfilled = (
 
 const handlePatchUserFulfilled = (
   state: AdminState,
-  action: PayloadAction<UserProfile>
+  action: PayloadAction<IUser>
 ) => {
   state.isLoadingUpdate = false;
   const index = state.folowers.findIndex((i) => action.payload._id === i._id);
@@ -59,7 +59,7 @@ const handlePatchUserFulfilled = (
 
 const handlePatchUsersFulfilled = (
   state: AdminState,
-  action: PayloadAction<{ users: UserProfile[]; totalHits: number }>
+  action: PayloadAction<{ users: IUser[]; totalHits: number }>
 ) => {
   state.isLoadingUpdate = false;
   state.folowers = action.payload.users;
@@ -68,7 +68,7 @@ const handlePatchUsersFulfilled = (
 
 const handlePatchCheckSubFulfilled = (
   state: AdminState,
-  action: PayloadAction<{ users: UserProfile[]; totalHits: number }>
+  action: PayloadAction<{ users: IUser[]; totalHits: number }>
 ) => {
   state.isLoadingCheck = false;
   state.folowers = action.payload.users;
@@ -77,19 +77,19 @@ const handlePatchCheckSubFulfilled = (
 
 const handleGetUnpublishedPostsFulfilled = (
   state: AdminState,
-  action: PayloadAction<{ posts: GetPost[]; totalHits: number }>
+  action: PayloadAction<{ posts: IVideo[]; totalHits: number }>
 ) => {
-  state.isLoadingPost = false;
-  state.unpublPosts = action.payload.posts;
-  state.totalPosts = action.payload.totalHits;
+  state.isLoading = false;
+  state.unpublVideos = action.payload.posts;
+  state.totalVideos = action.payload.totalHits;
 };
 
 const handleGetUnpublishedPostsByIdFulfilled = (
   state: AdminState,
-  action: PayloadAction<GetPost>
+  action: PayloadAction<IVideo>
 ) => {
-  state.isLoadingPost = false;
-  state.unpublPost = action.payload;
+  state.isLoading = false;
+  state.unpublVideo = action.payload;
 };
 
 const handleSendMessageSptPending = (state: AdminState) => {
@@ -108,7 +108,7 @@ const handleSendMessageSptFulfilled = (
 };
 
 const handleRejected = (state: AdminState, action: PayloadAction<string>) => {
-  state.isLoadingPost = false;
+  state.isLoading = false;
   state.isLoadingCheck = false;
   state.isLoadingUpdate = false;
   state.isLoadingMore = false;

@@ -1,6 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { UserProfile } from "../../types/auth.types";
-import { instance } from "../../api/axios";
+
+import { IUser } from "@/types/users.type";
+import { instance } from "@/lib/api/axios";
 
 interface Query {
   page?: number;
@@ -25,7 +26,7 @@ export const getAllUsers = createAsyncThunk(
 
 export const patchUser = createAsyncThunk(
   "admin/updateuser",
-  async (userData: UserProfile, thunkAPI) => {
+  async (userData: IUser, thunkAPI) => {
     try {
       const response = await instance.patch("/admin/user", userData);
       return response.data;

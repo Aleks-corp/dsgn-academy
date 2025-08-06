@@ -6,7 +6,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { isAlpha } from "@/redux/test/test.thunk";
-import { selectIsAlpha, selectIsLoadingTest } from "@/redux/selectors";
+import { selectIsAlpha, selectIsLoadingTest } from "@/selector/test.selectors";
 import { redirect } from "next/navigation";
 
 interface Course {

@@ -1,14 +1,14 @@
 {
-  "name": "Dsgn Academy — Український портал новин для дизайнерів",
+  "name": "Dsgn Academy — Освітня платформа для дизайнерів. Курси, відео, інтерв’ю українською",
   "short_name": "Dsgn Academy",
-  "description": "Останні новини, аналітика та тренди для дизайнерів, UX-фахівців і фронтендерів. Читай, навчайся, знаходь ідеї.",
+  "description": "Dsgn Academy — це сучасна освітня платформа для дизайнерів, створена українською мовою. Ми відбираємо, перекладаємо та адаптуємо найкращі світові курси, відео та інтерв’ю з UI/UX, графічного дизайну, Webflow, Figma, Spline, Framer та інших тем. З нами навчання завжди зручне, якісне і доступне, а мова не є бар’єром. Рости разом з Dsgn Academy — твоя освіта, твоя мова, твій розвиток!",
   "lang": "uk",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#ffffff",
-  "theme_color": "#ffffff",
+  "theme_color": "#ffffff", 
   "icons": [
     {
       "src": "/favicon-16x16.png",
@@ -29,12 +29,6 @@
       "src": "/favicon-96x96.png",
       "sizes": "96x96",
       "type": "image/png"
-    },
-    {
-      "src": "/favicon-180x180.png",
-      "sizes": "180x180",
-      "type": "image/png",
-      "purpose": "any maskable"
     },
     {
       "src": "/favicon-192x192.png",
