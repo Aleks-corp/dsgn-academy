@@ -8,7 +8,7 @@
   },
   "scripts": {
     "start": "node dist/index.js",
-    "dev": "nodemon",
+    "dev": "tsx watch src/index.ts",
     "build": "tsc",
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix"
@@ -41,8 +41,7 @@
     "eslint-plugin-n": "^17.21.0",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^7.2.1",
-    "nodemon": "^3.1.10",
-    "ts-node": "^10.9.2",
+    "tsx": "^4.20.3",
     "typescript": "^5.8.3"
   }
 }

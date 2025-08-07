@@ -9,6 +9,7 @@ const videoSchema = new Schema<IVideo>(
     category: { type: [String] },
     level: { type: String, enum: ["beginner", "intermediate", "advanced"] },
     video: { type: String, required: true },
+    cover: { type: String, required: true },
     favoritedBy: [{ type: Schema.Types.ObjectId, ref: "user" }],
     watchedBy: [{ type: Schema.Types.ObjectId, ref: "user" }],
     publishedAt: { type: Date },

@@ -9,7 +9,7 @@ import tempEmailDomainsSet from "../constants/tempEmailDomainsSet.js";
 
 const usersRegSchema = Joi.object({
   name: Joi.string().required().min(3).max(18).messages({
-    "string.empty": `'email' cannot be an empty field`,
+    "string.empty": `'name' cannot be an empty field`,
     "any.required": `missing required 'name' field`,
   }),
   email: Joi.string()

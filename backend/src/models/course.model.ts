@@ -5,6 +5,7 @@ const videoSchema = new Schema<ICourseVideo>(
   {
     url: { type: String, required: true },
     description: { type: String },
+    cover: { type: String },
   },
   { _id: false }
 );

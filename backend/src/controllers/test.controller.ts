@@ -1,15 +1,17 @@
 import type { Request, Response } from "express";
 import { testServices } from "../services/index.js";
 import { ctrlWrapper } from "../decorators/index.js";
-import { endOfTest } from "../constants/alpha.js";
+import "dotenv/config";
 const { isTesterService } = testServices;
 
-export const isAlpha = async (req: Request, res: Response): Promise<void> => {
+const { END_TEST } = process.env;
+
+export const isAlpha = async (_: Request, res: Response): Promise<void> => {
   const current = new Date().getTime();
   const testing = { isAlpha: false, timer: 0 };
-  if (current < endOfTest) {
+  if (END_TEST && current < parseInt(END_TEST)) {
     testing.isAlpha = true;
-    testing.timer = endOfTest;
+    testing.timer = parseInt(END_TEST);
   }
   res.json(testing);
 };

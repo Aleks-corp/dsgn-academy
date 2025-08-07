@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
 import { courseServices } from "../services/index.js";
 import { ctrlWrapper } from "../decorators/index.js";
-import { HttpError } from "../utils/index.js";
+import { fetchVideoDataById, HttpError } from "../utils/index.js";
 const {
   getCoursesService,
   getCourseByIdService,
@@ -39,7 +39,7 @@ export const getCourses = async (
   });
 
   res.json({
-    data: courses,
+    courses: courses,
     total,
     page: currentPage,
     limit: perPage,
@@ -61,7 +61,27 @@ export const getCourseById = async (
 };
 
 export const addCourse = async (req: Request, res: Response): Promise<void> => {
+  const { videos, author, publishedAt } = req.body;
+  await Promise.all(
+    videos.map(async (i: { url: string; description: string }, index) => {
+      const data = await fetchVideoDataById(i.url);
+      if (data) {
+        if (!videos.cover) {
+          req.body.videos[index].cover = data.thumbnail_url;
+        }
+        if (index + 1 === videos.length) {
+          if (!author) {
+            req.body.author = data.author_name;
+          }
+          if (!publishedAt) {
+            req.body.publishedAt = new Date(data.upload_date);
+          }
+        }
+      }
+    })
+  );
   const course = await addCourseService(req.body);
+
   res.status(201).json(course);
 };
 

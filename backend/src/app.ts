@@ -62,18 +62,16 @@ app.get("/ping", (req, res) => {
 });
 
 app.use((req, res) => {
-  res.status(404).json({ message: "Not found" });
+  res.status(404).json({ message: "Route not found" });
 });
 
-app.use(
-  (error: Err, _req: Request, res: Response, _next: NextFunction): void => {
-    if (!error.status) {
-      error.status = 500;
-    }
-    const { status, message } = error;
-    res.status(status).json({ message });
-    console.log("📩 Error Response:", res.statusCode, res.statusMessage);
+app.use((error: Err, _req: Request, res: Response, ___: NextFunction): void => {
+  if (!error.status) {
+    error.status = 500;
   }
-);
+  const { status, message } = error;
+  res.status(status).json({ message });
+  console.log("📩 Error Response:", res.statusCode, res.statusMessage);
+});
 
 export default app;

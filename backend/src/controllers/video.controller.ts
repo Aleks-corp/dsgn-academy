@@ -1,7 +1,8 @@
 import type { Request, Response } from "express";
 import { videoServices } from "../services/index.js";
 import { ctrlWrapper } from "../decorators/index.js";
-import { HttpError } from "../utils/index.js";
+import { HttpError, fetchVideoDataById } from "../utils/index.js";
+
 const {
   getVideosService,
   getVideoByIdService,
@@ -36,7 +37,7 @@ export const getVideos = async (req: Request, res: Response): Promise<void> => {
   });
 
   res.json({
-    data: videos,
+    videos: videos,
     total,
     page: currentPage,
     limit: perPage,
@@ -58,8 +59,21 @@ export const getVideoById = async (
 };
 
 export const addVideo = async (req: Request, res: Response): Promise<void> => {
-  const video = await addVideoService(req.body);
-  res.status(201).json(video);
+  const { video, cover, author, publishedAt } = req.body;
+  const data = await fetchVideoDataById(video);
+  if (data) {
+    if (!cover) {
+      req.body.cover = data.thumbnail_url;
+    }
+    if (!author) {
+      req.body.author = data.author_name;
+    }
+    if (!publishedAt) {
+      req.body.publishedAt = new Date(data.upload_date);
+    }
+  }
+  const response = await addVideoService(req.body);
+  res.status(201).json(response);
 };
 
 export const updateVideo = async (

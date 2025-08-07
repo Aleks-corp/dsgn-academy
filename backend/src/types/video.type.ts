@@ -5,11 +5,12 @@ export interface IVideo extends Document {
   title: string;
   description: string;
   category: string[];
+  video: string;
+  cover?: string;
   author?: string;
   level?: string;
-  video: string;
-  favoritedBy: string[];
-  watchedBy: string[];
+  favoritedBy?: string[];
+  watchedBy?: string[];
   publishedAt?: Date;
   createdAt?: Date;
   updatedAt?: Date;
