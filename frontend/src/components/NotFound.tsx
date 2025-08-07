@@ -1,6 +1,4 @@
 import Image from "next/image";
-import Link from "next/link";
-import Button from "./Button";
 import NavLink from "./Link";
 
 export default function NotFoundWrap() {
