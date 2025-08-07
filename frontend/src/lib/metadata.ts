@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://dsgn.academy"),
+  metadataBase: new URL("https://dsgn-academy.onrender.com"),
   title: "Dsgn Academy — Освітня платформа для дизайнерів українською",
   description:
     "Dsgn Academy — сучасна освітня платформа для дизайнерів. Курси, відео, інтерв’ю та лекції з UI/UX, Webflow, Figma, Framer, Spline — українською мовою.",
@@ -28,11 +28,11 @@ export const metadata: Metadata = {
     title: "Dsgn Academy — Освітня платформа для дизайнерерів українською",
     description:
       "Сучасна платформа для дизайнерів. Найкращі відео, курси, лекції, інтерв’ю — українською. Доступно. Без бар'єрів. Професійний розвиток з Dsgn Academy.",
-    url: "https://dsgn.academy",
+    url: "https://dsgn-academy.onrender.com",
     siteName: "Dsgn Academy",
     images: [
       {
-        url: "https://dsgn.academy/og-image.png",
+        url: "https://dsgn-academy.onrender.com/og-image.png",
         width: 1200,
         height: 630,
         alt: "Dsgn Academy — Освітня платформа для дизайнерів",
@@ -46,7 +46,7 @@ export const metadata: Metadata = {
     title: "Dsgn Academy — Освітня платформа для дизайнерерів українською",
     description:
       "Найкращі відео, курси, інтерв’ю для дизайнерів — українською. Dsgn Academy — твій розвиток у світі дизайну.",
-    images: ["https://dsgn.academy/og-image.png"],
+    images: ["https://dsgn-academy.onrender.com/og-image.png"],
   },
   robots: {
     index: true,

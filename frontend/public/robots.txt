@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 Disallow: /dl-admin
-Sitemap: https://dsgn.academy/sitemap.xml
+Sitemap: https://dsgn-academy.onrender.com/sitemap.xml
