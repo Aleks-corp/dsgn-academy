@@ -5,6 +5,7 @@ import type { NextFunction, Request, Response } from "express";
 import morgan from "morgan";
 import cors from "cors";
 import "dotenv/config";
+import { startRenderPing } from "./utils/ping.utils";
 
 import type { Err } from "./types/error.type.js";
 
@@ -73,5 +74,7 @@ app.use((error: Err, _req: Request, res: Response, ___: NextFunction): void => {
   res.status(status).json({ message });
   console.log("📩 Error Response:", res.statusCode, res.statusMessage);
 });
+
+startRenderPing();
 
 export default app;
