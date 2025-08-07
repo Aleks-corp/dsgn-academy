@@ -1,19 +1,23 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import Image from "next/image";
 // import { Youtube, ChevronRight } from "lucide-react";
 import Link from "next/link";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { isAlpha } from "@/redux/test/test.thunk";
-import { selectIsAlpha, selectIsLoadingTest } from "@/selector/test.selectors";
+import { selectIsAlpha, selectIsLoadingTest } from "@/selectors/test.selectors";
 import { redirect } from "next/navigation";
+import { selectCourses } from "@/selectors/courses.selector";
+import { selectVideos } from "@/selectors/videos.selectors";
+import { fetchCourses } from "@/redux/courses/course.thunk";
+import { fetchVideos } from "@/redux/videos/video.thunk";
 
 interface Course {
   _id: string;
   title: string;
   description: string;
-  preview?: string; // постер/thumbnail
+  preview?: string;
   videoCount?: number;
 }
 
@@ -27,14 +31,17 @@ interface Video {
 
 export default function HomePage() {
   const dispatch = useAppDispatch();
-  const [courses, setCourses] = useState<Course[]>([]);
-  const [videos, setVideos] = useState<Video[]>([]);
 
   const isAlphaTesting = useAppSelector(selectIsAlpha);
   const isLoading = useAppSelector(selectIsLoadingTest);
 
+  const courses = useAppSelector(selectCourses);
+  const videos = useAppSelector(selectVideos);
+
   useEffect(() => {
     dispatch(isAlpha());
+    dispatch(fetchCourses({}));
+    dispatch(fetchVideos({}));
   }, [dispatch]);
 
   if (isLoading) {
@@ -81,7 +88,7 @@ export default function HomePage() {
       <section>
         <h2 className="text-xl font-bold mb-4">Курси</h2>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-          {courses.length === 0 ? (
+          {courses && courses.length === 0 ? (
             <div className="col-span-3 text-center text-gray-400">
               Курси ще не додані
             </div>
@@ -89,9 +96,9 @@ export default function HomePage() {
             courses.map((course) => (
               <Link key={course._id} href={`/courses/${course._id}`}>
                 <div className="rounded-xl shadow-sm border bg-white hover:shadow-lg transition group overflow-hidden flex flex-col">
-                  {course.preview && (
+                  {course.videos[0].cover && (
                     <Image
-                      src={course.preview}
+                      src={course.videos[0].cover}
                       alt={course.title}
                       width={400}
                       height={180}
@@ -103,11 +110,10 @@ export default function HomePage() {
                     <div className="text-sm text-gray-500 flex-1">
                       {course.description}
                     </div>
-                    {course.videoCount && (
-                      <div className="mt-2 text-xs text-right text-gray-400">
-                        {course.videoCount} уроків
-                      </div>
-                    )}
+
+                    <div className="mt-2 text-xs text-right text-gray-400">
+                      {course.videos.length} уроків
+                    </div>
                   </div>
                 </div>
               </Link>
@@ -129,7 +135,7 @@ export default function HomePage() {
               <Link key={video._id} href={`/videos/${video._id}`}>
                 <div className="rounded-xl shadow-sm border bg-white hover:shadow-lg transition group overflow-hidden flex flex-col">
                   <Image
-                    src={video.preview}
+                    src={video.cover}
                     alt={video.title}
                     width={400}
                     height={180}

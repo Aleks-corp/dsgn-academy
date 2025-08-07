@@ -1,6 +1,7 @@
 export interface ICourseVideo {
   url: string;
   description?: string;
+  cover?: string;
 }
 
 export interface ICourse {
@@ -11,7 +12,6 @@ export interface ICourse {
   author?: string;
   level?: string;
   videos: ICourseVideo[];
-  cover?: string;
   favoritedBy: string[];
   watchedBy: string[];
   publishedAt?: Date;

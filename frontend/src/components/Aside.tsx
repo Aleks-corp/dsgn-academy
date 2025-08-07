@@ -3,7 +3,7 @@
 import { useAppSelector } from "@/redux/hooks";
 import Logo from "./Logo";
 
-import { selectIsAlpha } from "@/selector/test.selectors";
+import { selectIsAlpha } from "@/selectors/test.selectors";
 
 export default function Aside() {
   const isAlphaTesting = useAppSelector(selectIsAlpha);

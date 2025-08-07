@@ -6,7 +6,7 @@ export interface IVideo {
   author?: string;
   level?: string;
   video: string;
-  cover?: string;
+  cover: string;
   favoritedBy: string[];
   watchedBy: string[];
   publishedAt?: Date;

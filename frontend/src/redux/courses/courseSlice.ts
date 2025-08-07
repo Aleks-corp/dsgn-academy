@@ -1,11 +1,11 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { CourseState } from "../../types/state.types";
 import {
-  fetchPosts,
-  fetchPostById,
-  // addPost,
-  // addRemoveFavorites,
-  deletePost,
+  fetchCourses,
+  fetchCourseById,
+  // addCourse,
+  addRemoveFavoritesCourse,
+  deleteCourse,
 } from "./course.thunk";
 import { ICourse } from "../../types/courses.type";
 import { initialState } from "./initialState";
@@ -51,19 +51,19 @@ export const handleFulfilledAddPost = (
   state.selectedCourse = { ...action.payload };
 };
 
-// export const handleFulfilledAddFavorites = (
-//   state: CourseState,
-//   action: PayloadAction<ICourse>
-// ): void => {
-//   const updatedPost = action.payload;
-//   const index = state.courses.findIndex((i) => i._id === updatedPost._id);
-//   if (index !== -1) {
-//     state.courses[index].favorites = updatedPost.favorites;
-//   }
-//   if (state.selectedCourse) {
-//     state.selectedCourse.favorites = updatedPost.favorites;
-//   }
-// };
+export const handleFulfilledAddFavorites = (
+  state: CourseState,
+  action: PayloadAction<ICourse>
+): void => {
+  const updatedCourse = action.payload;
+  const index = state.courses.findIndex((i) => i._id === updatedCourse._id);
+  if (index !== -1) {
+    state.courses[index].favoritedBy = updatedCourse.favoritedBy;
+  }
+  if (state.selectedCourse) {
+    state.selectedCourse.favoritedBy = updatedCourse.favoritedBy;
+  }
+};
 
 export const handleFulfilledDeletePost = (
   state: CourseState,
@@ -105,15 +105,15 @@ const courseSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchPosts.pending, handlePending)
-      .addCase(fetchPosts.fulfilled, handleFulfilledPosts)
-      .addCase(fetchPostById.pending, handlePending)
-      .addCase(fetchPostById.fulfilled, handleFulfilledPostById)
-      // .addCase(addPost.pending, handlePending)
-      // .addCase(addPost.fulfilled, handleFulfilledAddPost)
-      // .addCase(addRemoveFavorites.fulfilled, handleFulfilledAddFavorites)
-      .addCase(deletePost.pending, handlePending)
-      .addCase(deletePost.fulfilled, handleFulfilledDeletePost)
+      .addCase(fetchCourses.pending, handlePending)
+      .addCase(fetchCourses.fulfilled, handleFulfilledPosts)
+      .addCase(fetchCourseById.pending, handlePending)
+      .addCase(fetchCourseById.fulfilled, handleFulfilledPostById)
+      // .addCase(addCourse.pending, handlePending)
+      // .addCase(addCourse.fulfilled, handleFulfilledAddPost)
+      .addCase(addRemoveFavoritesCourse.fulfilled, handleFulfilledAddFavorites)
+      .addCase(deleteCourse.pending, handlePending)
+      .addCase(deleteCourse.fulfilled, handleFulfilledDeletePost)
       .addMatcher(
         ({ type }) => type.endsWith("/rejected") && type.startsWith("posts"),
         handleRejected

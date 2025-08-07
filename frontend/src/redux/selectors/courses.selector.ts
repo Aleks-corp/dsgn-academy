@@ -1,6 +1,6 @@
 import { State } from "../../types/state.types";
 
-export const selectCourses = (state: State) => state.courses;
+export const selectCourses = (state: State) => state.courses.courses;
 
 export const selectTotalHits = (state: State) => state.courses.totalHits;
 

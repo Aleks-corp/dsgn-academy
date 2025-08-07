@@ -1,12 +1,6 @@
-"use client";
-
-// import { handleBack } from "@/lib/handleBack";
 import Image from "next/image";
-// import { useRouter } from "next/navigation";
 
 export default function CommandPage() {
-  // const router = useRouter();
-
   return (
     <div className="flex flex-col gap-16 md:gap-20 max-w-5xl py-8 md:pt-16">
       <div className="grid grid-cols-1 md:grid-cols-[216px_64px_1fr] lg:grid-cols-[216px_128px_1fr] gap-y-10 md:gap-y-0 items-start w-full max-w-5xl mx-auto">
@@ -132,13 +126,6 @@ export default function CommandPage() {
           </div>
         </div>
       </div>
-
-      {/* <button
-        onClick={() => handleBack(router)}
-        className="w-24 btn-gradient py-2 px-6 rounded-xl shadow-btn cursor-pointer "
-      >
-        BACK
-      </button> */}
     </div>
   );
 }

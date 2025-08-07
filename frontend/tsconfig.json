@@ -28,7 +28,7 @@
       "@/types/*": ["./src/types/*"],
       "@/api/*": ["./src/lib/api/*"],
       "@/redux/*": ["./src/redux/*"],
-      "@/selector/*": ["./src/redux/selectors/*"]
+      "@/selectors/*": ["./src/redux/selectors/*"]
     }
   },
   "include": [

@@ -5,7 +5,7 @@ import Lenis from "lenis";
 export function useLenis() {
   useEffect(() => {
     const lenis = new Lenis({
-      duration: 1.1,
+      duration: 1.3,
     });
     function raf(time: number) {
       lenis.raf(time);

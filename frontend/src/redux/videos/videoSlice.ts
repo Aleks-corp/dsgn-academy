@@ -1,11 +1,11 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { VideoState } from "../../types/state.types";
 import {
-  fetchPosts,
-  fetchPostById,
+  fetchVideos,
+  fetchVideoById,
   // addVideo,
-  // addRemoveFavorites,
-  deletePost,
+  addRemoveFavoritesVideo,
+  deleteVideo,
 } from "./video.thunk";
 import { IVideo } from "../../types/videos.type";
 import { initialState } from "./initialState";
@@ -51,19 +51,19 @@ export const handleFulfilledAddVideo = (
   state.selectedVideo = { ...action.payload };
 };
 
-// export const handleFulfilledAddFavorites = (
-//   state: VideoState,
-//   action: PayloadAction<IVideo>
-// ): void => {
-//   const updatedPost = action.payload;
-//   const index = state.videos.findIndex((i) => i._id === updatedPost._id);
-//   if (index !== -1) {
-//     state.videos[index].favorites = updatedPost.favorites;
-//   }
-//   if (state.selectedVideo) {
-//     state.selectedVideo.favorites = updatedPost.favorites;
-//   }
-// };
+export const handleFulfilledAddFavorites = (
+  state: VideoState,
+  action: PayloadAction<IVideo>
+): void => {
+  const updatedVideo = action.payload;
+  const index = state.videos.findIndex((i) => i._id === updatedVideo._id);
+  if (index !== -1) {
+    state.videos[index].favoritedBy = updatedVideo.favoritedBy;
+  }
+  if (state.selectedVideo) {
+    state.selectedVideo.favoritedBy = updatedVideo.favoritedBy;
+  }
+};
 
 export const handleFulfilledDeleteVideo = (
   state: VideoState,
@@ -105,15 +105,15 @@ const videoSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchPosts.pending, handlePending)
-      .addCase(fetchPosts.fulfilled, handleFulfilledVideos)
-      .addCase(fetchPostById.pending, handlePending)
-      .addCase(fetchPostById.fulfilled, handleFulfilledVideoById)
-      // .addCase(addPost.pending, handlePending)
-      // .addCase(addPost.fulfilled, handleFulfilledAddVideo)
-      // .addCase(addRemoveFavorites.fulfilled, handleFulfilledAddFavorites)
-      .addCase(deletePost.pending, handlePending)
-      .addCase(deletePost.fulfilled, handleFulfilledDeleteVideo)
+      .addCase(fetchVideos.pending, handlePending)
+      .addCase(fetchVideos.fulfilled, handleFulfilledVideos)
+      .addCase(fetchVideoById.pending, handlePending)
+      .addCase(fetchVideoById.fulfilled, handleFulfilledVideoById)
+      // .addCase(addVideo.pending, handlePending)
+      // .addCase(addVideo.fulfilled, handleFulfilledAddVideo)
+      .addCase(addRemoveFavoritesVideo.fulfilled, handleFulfilledAddFavorites)
+      .addCase(deleteVideo.pending, handlePending)
+      .addCase(deleteVideo.fulfilled, handleFulfilledDeleteVideo)
       .addMatcher(
         ({ type }) => type.endsWith("/rejected") && type.startsWith("posts"),
         handleRejected

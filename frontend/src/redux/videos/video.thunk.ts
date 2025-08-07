@@ -11,8 +11,8 @@ interface Query {
   search?: string;
 }
 
-export const fetchPosts = createAsyncThunk(
-  "posts/fetchPosts",
+export const fetchVideos = createAsyncThunk(
+  "videos/fetchVideos",
   async (
     {
       page = 1,
@@ -25,7 +25,7 @@ export const fetchPosts = createAsyncThunk(
   ) => {
     try {
       const response = await instance.get(
-        `/posts?page=${page}&limit=${limit}${
+        `/videos?page=${page}&limit=${limit}${
           filter ? `&filter=${filter}` : ``
         }${favorites ? `&favorites=${favorites}` : ``}${
           search ? `&search=${search}` : ``
@@ -42,11 +42,11 @@ export const fetchPosts = createAsyncThunk(
   }
 );
 
-export const fetchPostById = createAsyncThunk(
-  "posts/fetchPostById",
+export const fetchVideoById = createAsyncThunk(
+  "videos/fetchVideoById",
   async (id: string, thunkAPI) => {
     try {
-      const response = await instance.get(`/posts/${id}`);
+      const response = await instance.get(`/videos/${id}`);
       return response.data;
     } catch (error) {
       if (error instanceof AxiosError) {
@@ -60,11 +60,11 @@ export const fetchPostById = createAsyncThunk(
 
 export const checkDownloadPermission = createAsyncThunk(
   "posts/checkDownloadPermission",
-  async (postId: string, thunkAPI) => {
+  async (videoId: string, thunkAPI) => {
     try {
       const response: {
         data: { downloadUrl: string; dailyDownloadCount?: number };
-      } = await instance.get(`/posts/check-download/${postId}`);
+      } = await instance.get(`/videos/check-download/${videoId}`);
       return response.data;
     } catch (error) {
       if (error instanceof AxiosError) {
@@ -76,11 +76,11 @@ export const checkDownloadPermission = createAsyncThunk(
   }
 );
 
-// export const addPost = createAsyncThunk(
-//   "posts/addPost",
-//   async (data: AddPost, thunkAPI) => {
+// export const addVideo = createAsyncThunk(
+//   "videos/addVideo",
+//   async (data: AddVideo, thunkAPI) => {
 //     try {
-//       const response = await instance.post("/posts", data);
+//       const response = await instance.post("/videos", data);
 //       return response.data;
 //     } catch (error) {
 //       if (error instanceof AxiosError) {
@@ -92,11 +92,11 @@ export const checkDownloadPermission = createAsyncThunk(
 //   }
 // );
 
-// export const editPost = createAsyncThunk(
-//   "posts/addPost",
-//   async ({ post, postId }: { post: EditPost; postId: string }, thunkAPI) => {
+// export const editVideo = createAsyncThunk(
+//   "videos/editVideo",
+//   async ({ video, videoId }: { video: EditVideo; videoId: string }, thunkAPI) => {
 //     try {
-//       const response = await instance.patch(`/posts/${postId}`, post);
+//       const response = await instance.patch(`/videos/${videoId}`, video);
 //       return response.data;
 //     } catch (error) {
 //       if (error instanceof AxiosError) {
@@ -108,12 +108,12 @@ export const checkDownloadPermission = createAsyncThunk(
 //   }
 // );
 
-export const addRemoveFavorites = createAsyncThunk(
-  "posts/favorites",
-  async (postId: string, thunkAPI) => {
+export const addRemoveFavoritesVideo = createAsyncThunk(
+  "videos/favorites",
+  async (videoId: string, thunkAPI) => {
     try {
-      const response = await instance.patch(`/posts`, {
-        postId,
+      const response = await instance.patch(`/videos`, {
+        videoId,
       });
 
       return response.data;
@@ -127,11 +127,11 @@ export const addRemoveFavorites = createAsyncThunk(
   }
 );
 
-export const deletePost = createAsyncThunk(
-  "posts/deletePost",
+export const deleteVideo = createAsyncThunk(
+  "videos/deleteVideo",
   async (id: string, thunkAPI) => {
     try {
-      await instance.delete(`/posts/${id}`);
+      await instance.delete(`/videos/${id}`);
       return id;
     } catch (error) {
       if (error instanceof AxiosError) {
