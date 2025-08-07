@@ -25,7 +25,7 @@ export const metadata: Metadata = {
   },
   manifest: "/site.manifest",
   openGraph: {
-    title: "Dsgn Academy — Освітня платформа для дизайнерерів українською",
+    title: "Dsgn Academy — Освітня платформа для дизайнерів українською",
     description:
       "Сучасна платформа для дизайнерів. Найкращі відео, курси, лекції, інтерв’ю — українською. Доступно. Без бар'єрів. Професійний розвиток з Dsgn Academy.",
     url: "https://dsgn-academy.onrender.com",
@@ -43,7 +43,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Dsgn Academy — Освітня платформа для дизайнерерів українською",
+    title: "Dsgn Academy — Освітня платформа для дизайнерів українською",
     description:
       "Найкращі відео, курси, інтерв’ю для дизайнерів — українською. Dsgn Academy — твій розвиток у світі дизайну.",
     images: ["https://dsgn-academy.onrender.com/og-image.png"],
