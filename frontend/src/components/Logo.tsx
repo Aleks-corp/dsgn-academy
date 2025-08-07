@@ -19,6 +19,7 @@ export default function Logo() {
           width={52}
           height={28}
           priority
+          className="w-auto h-[30px]"
         />
         <h1 className="font-sora text-start text-foreground text-base font-extrabold leading-[15px] tracking-[-0.64px]">
           dsgn <span className="flex">academy</span>

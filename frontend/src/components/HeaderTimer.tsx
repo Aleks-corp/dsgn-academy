@@ -1,5 +1,5 @@
-import Link from "next/link";
 import Logo from "./Logo";
+import NavLink from "./Link";
 
 export default function HeaderTimer() {
   return (
@@ -7,12 +7,7 @@ export default function HeaderTimer() {
       <header className=" mx-auto flex justify-center w-full max-w-[1440px] px-5">
         <div className="flex w-full mx-auto items-center justify-between gap-6 flex-wrap">
           <Logo />
-          <Link
-            className="btn-gradient py-2 px-6 rounded-xl shadow-btn"
-            href={"/command"}
-          >
-            Про нас
-          </Link>
+          <NavLink text="Про нас" rout="/command" />
         </div>
       </header>
     </div>

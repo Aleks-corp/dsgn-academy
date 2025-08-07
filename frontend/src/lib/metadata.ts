@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     siteName: "Dsgn Academy",
     images: [
       {
-        url: "https://dsgn.academy/og-image.jpg",
+        url: "https://dsgn.academy/og-image.png",
         width: 1200,
         height: 630,
         alt: "Dsgn Academy — Освітня платформа для дизайнерів",
@@ -46,7 +46,7 @@ export const metadata: Metadata = {
     title: "Dsgn Academy — Освітня платформа для дизайнерерів українською",
     description:
       "Найкращі відео, курси, інтерв’ю для дизайнерів — українською. Dsgn Academy — твій розвиток у світі дизайну.",
-    images: ["https://dsgn.academy/og-image.jpg"],
+    images: ["https://dsgn.academy/og-image.png"],
   },
   robots: {
     index: true,

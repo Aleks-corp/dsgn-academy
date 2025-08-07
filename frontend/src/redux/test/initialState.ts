@@ -1,7 +1,7 @@
 import { TestState } from "@/types/state.types";
 
 export const initialState: TestState = {
-  isAlpha: false,
+  isAlpha: true,
   isTester: false,
   error: "",
   isLoading: false,

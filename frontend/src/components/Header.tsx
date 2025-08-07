@@ -4,11 +4,17 @@ import { useState } from "react";
 import IconInput from "./InputIcon";
 import HeaderTimer from "./HeaderTimer";
 import { useAppSelector } from "@/redux/hooks";
-import { selectIsAlpha } from "@/selectors/test.selectors";
+import { selectIsAlpha, selectIsLoadingTest } from "@/selectors/test.selectors";
 
 export default function Header() {
-  const isAlphaTesting = useAppSelector(selectIsAlpha);
   const [search, setSearch] = useState("");
+  const isLoading = useAppSelector(selectIsLoadingTest);
+  const isAlphaTesting = useAppSelector(selectIsAlpha);
+
+  if (isLoading) {
+    return null;
+  }
+
   return isAlphaTesting ? (
     <HeaderTimer />
   ) : (

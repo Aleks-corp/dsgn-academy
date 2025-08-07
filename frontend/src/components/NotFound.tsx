@@ -1,30 +1,29 @@
 import Image from "next/image";
 import Link from "next/link";
+import Button from "./Button";
+import NavLink from "./Link";
 
 export default function NotFoundWrap() {
   return (
-    <div className="flex min-h-[70vh] items-center justify-center pt-12">
-      <div className="max-w-3xl w-full flex flex-col items-center">
+    <div className="flex max-h-[80vh] items-center justify-center pt-20">
+      <div className="flex flex-col md:flex-row gap-4 max-w-5xl w-full items-center">
         <Image
-          src="/frame.svg"
-          width={302}
-          height={174}
+          src="/not-found.png"
+          width={503}
+          height={706}
           alt="Not Found"
-          className="w-full mb-12"
+          className="w-64 md:flex md:flex-1/2 md:w-xl"
         />
-        <div className="max-w-[450px]">
-          <p className="text-4xl font-sans-conf font-semibold tracking-tight text-center mb-3">
-            Сторінку не знайдено.
+        <div className="md:flex-1/2">
+          <p className="font-inter text-4xl lg:text-5xl lg:leading-14 tracking-[-1.44px] mb-4 max-w-2xs md:max-w-96 m-auto md:m-0">
+            Ой... Я, здається,
+            <br /> звернув не туди.
           </p>
-          <p className="text-xl text-center mb-12 tracking-[-0.4px] ">
-            Можливо, вона ще в розробці — або вже зникла в архівах UX.
+          <p className="font-inter text-base lg:text-lg text-muted leading-7 tracking-[-0.36px] mb-8">
+            Давайте повернемо вас туди, де живуть милі речі.
           </p>
+          <NavLink text="На головну" rout="/"></NavLink>
         </div>
-        <Link href="/" passHref>
-          <button className="btn-gradient text-white px-4 py-2.5 w-full transition cursor-pointer">
-            Повернутись на головну
-          </button>
-        </Link>
       </div>
     </div>
   );

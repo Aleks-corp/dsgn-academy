@@ -3,10 +3,14 @@
 import { useAppSelector } from "@/redux/hooks";
 import Logo from "./Logo";
 
-import { selectIsAlpha } from "@/selectors/test.selectors";
+import { selectIsAlpha, selectIsLoadingTest } from "@/selectors/test.selectors";
 
 export default function Aside() {
+  const isLoading = useAppSelector(selectIsLoadingTest);
   const isAlphaTesting = useAppSelector(selectIsAlpha);
+  if (isLoading) {
+    return null;
+  }
 
   return isAlphaTesting ? null : (
     <aside className="flex flex-col items-center w-2xs gap-8">
