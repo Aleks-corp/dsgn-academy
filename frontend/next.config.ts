@@ -2,9 +2,13 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
-    domains: [
-      "i.vimeocdn.com",
-      // інші домени, які ти вже використовуєш
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "i.vimeocdn.com",
+        port: "",
+        pathname: "/video/**",
+      },
     ],
   },
   /* config options here */
