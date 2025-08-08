@@ -160,7 +160,7 @@ const paymentWebhook = async (req: Request, res: Response): Promise<void> => {
     try {
       data = JSON.parse(keys[0]);
     } catch (error) {
-      console.log("🚀 ~ paymentWebhook ~ error:", error);
+      console.error("🚀 ~ paymentWebhook ~ error:", error);
       throw HttpError(400, "Invalid nested JSON");
     }
   }

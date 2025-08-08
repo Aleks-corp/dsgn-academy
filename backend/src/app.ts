@@ -49,7 +49,7 @@ app.use((req, res, next) => {
     typeof req.headers["x-forwarded-for"] === "string"
       ? req.headers["x-forwarded-for"].split(",")[0].trim()
       : req.socket.remoteAddress || "";
-  console.log("📩 New Request:", ip, req.method, req.url);
+  console.info("📩 New Request:", ip, req.method, req.url);
   next();
 });
 
@@ -72,7 +72,7 @@ app.use((error: Err, _req: Request, res: Response, ___: NextFunction): void => {
   }
   const { status, message } = error;
   res.status(status).json({ message });
-  console.log("📩 Error Response:", res.statusCode, res.statusMessage);
+  console.error("📩 Error Response:", res.statusCode, res.statusMessage);
 });
 
 startRenderPing();
