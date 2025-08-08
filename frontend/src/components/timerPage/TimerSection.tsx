@@ -1,4 +1,5 @@
 import { CountdownTimer } from "@/components/Timer";
+import Link from "next/link";
 
 export default function TimerSection({ timer }: { timer: number | null }) {
   return (
@@ -7,9 +8,12 @@ export default function TimerSection({ timer }: { timer: number | null }) {
         Платформа відкриється через:
       </p>
       <CountdownTimer targetTime={timer} />
-      <button className="btn-telegram px-6 py-2 rounded-xl shadow-btn text-foreground text-sm font-inter font-semibold">
+      <Link
+        className="btn-telegram px-6 py-2 rounded-xl shadow-btn text-foreground text-sm font-inter font-semibold"
+        href={"/"}
+      >
         Підписатись у Telegram
-      </button>
+      </Link>
       <p className="text-sm text-background leading-11">
         🎁 Подарунки для перших 100 підписників!
       </p>
