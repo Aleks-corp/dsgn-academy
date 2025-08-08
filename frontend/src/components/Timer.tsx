@@ -17,7 +17,7 @@ export function CountdownTimer({ targetTime }: { targetTime?: number | null }) {
 
   if (!targetTime || timeLeft <= 0) {
     return (
-      <p className="font-inter font-thin text-6xl md:text-9xl text-background tracking-[-4.8px] uppercase">
+      <p className="font-inter font-thin text-6xl md:text-9xl text-background tracking-[-4.8px] uppercase select-none">
         00:00:00:00
       </p>
     );
@@ -30,7 +30,7 @@ export function CountdownTimer({ targetTime }: { targetTime?: number | null }) {
   const pad = (n: number) => String(n).padStart(2, "0");
 
   return (
-    <p className="font-inter font-thin text-7xl tab:text-8xl md:text-9xl text-background tracking-[-4.8px] uppercase">
+    <p className="font-inter font-thin text-7xl tab:text-8xl md:text-9xl text-background tracking-[-4.8px] uppercase select-none">
       {pad(days)}:{pad(hours)}:{pad(minutes)}:{pad(seconds)}
     </p>
   );

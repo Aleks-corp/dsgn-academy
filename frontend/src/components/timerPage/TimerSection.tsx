@@ -10,9 +10,10 @@ export default function TimerSection({ timer }: { timer: number | null }) {
       <CountdownTimer targetTime={timer} />
       <Link
         className="btn-telegram px-6 py-2 rounded-xl shadow-btn text-foreground text-sm font-inter font-semibold"
-        href={"/"}
+        href={"https://forms.gle/Gpum1ZmEpqzsiipR6"}
+        target="_blank"
       >
-        Підписатись у Telegram
+        Заповнити форму та отримати 🎁
       </Link>
       <p className="text-sm text-background leading-11">
         🎁 Подарунки для перших 100 підписників!
