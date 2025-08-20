@@ -5,6 +5,7 @@ import type { NextFunction, Request, Response } from "express";
 import morgan from "morgan";
 import cors from "cors";
 import "dotenv/config";
+import cookieParser from "cookie-parser";
 import { startRenderPing } from "./utils/ping.utils.js";
 
 import type { Err } from "./types/error.type.js";
@@ -14,7 +15,7 @@ import coursesRouter from "./routes/course.route.js";
 import videosRouter from "./routes/video.route.js";
 import testRouter from "./routes/test.route.js";
 
-const logPath = path.resolve("dist/logs");
+const logPath = path.resolve("logs");
 
 if (!fs.existsSync(logPath)) {
   fs.mkdirSync(logPath);
@@ -41,15 +42,26 @@ app.use(
     credentials: true,
   })
 );
+app.use(cookieParser());
 app.use(express.json()); // для application/json
 app.use(express.urlencoded({ extended: true })); // для application/x-www-form-urlencoded
 app.use(express.static("public"));
-app.use((req, res, next) => {
+
+app.use((req: Request, res: Response, next: NextFunction) => {
   const ip =
     typeof req.headers["x-forwarded-for"] === "string"
       ? req.headers["x-forwarded-for"].split(",")[0].trim()
       : req.socket.remoteAddress || "";
-  console.info("📩 New Request:", ip, req.method, req.url);
+
+  const start = Date.now();
+
+  res.on("finish", () => {
+    const duration = Date.now() - start;
+    console.info(
+      `📩 New Request: ${ip} ${req.method} ${req.originalUrl} -> ${res.statusCode} ${res.statusMessage} (${duration}ms)`
+    );
+  });
+
   next();
 });
 

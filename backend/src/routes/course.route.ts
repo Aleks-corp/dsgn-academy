@@ -3,12 +3,14 @@ import {
   isEmptyBody,
   isValidId,
   authenticateToken,
+  authenticateAdmin,
 } from "../middlewares/index.js";
 import { validateBody } from "../decorators/index.js";
 import { coursesSchemas } from "../schemas/index.js";
 import { courseController } from "../controllers/index.js";
 const {
   getCourses,
+  getCoursesCounts,
   getCourseById,
   addCourse,
   updateCourse,
@@ -24,9 +26,17 @@ coursesRouter.use(authenticateToken);
 
 coursesRouter.get("/", getCourses);
 
+coursesRouter.get("/counts", getCoursesCounts);
+
 coursesRouter.get("/:id", isValidId, getCourseById);
 
-coursesRouter.post("/", isEmptyBody, validateBody(courseAddSchema), addCourse);
+coursesRouter.post(
+  "/",
+  authenticateAdmin,
+  isEmptyBody,
+  validateBody(courseAddSchema),
+  addCourse
+);
 
 coursesRouter.patch(
   "/:id",

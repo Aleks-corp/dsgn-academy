@@ -1,5 +1,7 @@
 import type { ObjectId, Document, Types } from "mongoose";
 
+export type OAuthProvider = "google" | "linkedin";
+
 export type UserSubscription =
   | "free"
   | "trial"
@@ -7,11 +9,23 @@ export type UserSubscription =
   | "tester"
   | "admin";
 
+export interface IUserAccount {
+  provider: OAuthProvider;
+  providerId: string;
+}
+
+export interface IUserFavWatched {
+  id: Types.ObjectId;
+  updatedAt: Date;
+}
+
 export interface IUser extends Document {
   _id: string | ObjectId;
   name: string;
+  avatar: string;
   email: string;
   password: string;
+  accounts: IUserAccount[];
   ip: string;
   isBlocked: boolean;
   subscription: UserSubscription;
@@ -29,10 +43,10 @@ export interface IUser extends Document {
   verificationToken: string;
   resetPasswordToken?: string;
   resetPasswordExpires?: number;
-  favoritesCourses?: Types.ObjectId[];
-  favoritesVideos?: Types.ObjectId[];
-  watchedCourses?: Types.ObjectId[];
-  watchedVideos?: Types.ObjectId[];
+  favoritesCourses?: IUserFavWatched[];
+  favoritesVideos?: IUserFavWatched[];
+  watchedCourses?: IUserFavWatched[];
+  watchedVideos?: IUserFavWatched[];
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -48,3 +62,17 @@ export interface IUserLog {
   email: string;
   password: string;
 }
+
+export type OAuthUpsertInput = {
+  email?: string;
+  name?: string;
+  avatar?: string;
+  provider: "google" | "linkedin";
+  providerId: string;
+  ip?: string;
+};
+
+export type OAuthUpsertResult = {
+  token: string;
+  updatedUser: IUser;
+};

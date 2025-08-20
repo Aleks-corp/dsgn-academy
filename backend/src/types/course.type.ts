@@ -1,9 +1,11 @@
 import type { Document } from "mongoose";
 
 export interface ICourseVideo {
+  title: string;
   url: string;
   description: string;
-  cover?: string;
+  duration: string;
+  cover: string;
 }
 
 export interface ICourse extends Document {
@@ -12,8 +14,6 @@ export interface ICourse extends Document {
   description: string;
   category: string[];
   videos: ICourseVideo[];
-  author?: string;
-  level?: string;
   favoritedBy?: string[];
   watchedBy?: string[];
   publishedAt?: Date;

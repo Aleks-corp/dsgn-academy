@@ -2,11 +2,18 @@ import "dotenv/config";
 import crypto from "crypto";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import axios from "axios";
+// import axios from "axios";
 import { nanoid } from "nanoid";
 import type { ObjectId } from "mongoose";
 
-import type { IUser, IUserReg, UserSubscription } from "../types/user.type.js";
+import type {
+  IUser,
+  IUserFavWatched,
+  IUserReg,
+  OAuthUpsertInput,
+  OAuthUpsertResult,
+  UserSubscription,
+} from "../types/user.type.js";
 import type {
   PaymentData,
   RequestData,
@@ -31,7 +38,7 @@ const {
   WFP_MERCHANT_ACCOUNT,
   WFP_MERCHANT_DOMAIN_NAME,
   VITE_BASE_URL,
-  IPHUB_API_KEY,
+  // IPHUB_API_KEY,
 } = process.env;
 
 export const registerService = async ({
@@ -41,29 +48,33 @@ export const registerService = async ({
   ip,
 }: IUserReg): Promise<void> => {
   const user = await UserModel.findOne({ email });
+
   if (user) {
-    throw HttpError(409, "Email in use. Please Sign In.");
+    throw HttpError(
+      409,
+      "Електронна пошта вже використовується. Будь ласка, увійдіть."
+    );
   }
 
-  if (ip && ip !== "") {
-    const { data } = await axios.get(`https://v2.api.iphub.info/ip/${ip}`, {
-      headers: {
-        "X-Key": IPHUB_API_KEY as string,
-      },
-    });
+  // if (ip && ip !== "") {
+  // const { data } = await axios.get(`https://v2.api.iphub.info/ip/${ip}`, {
+  //   headers: {
+  //     "X-Key": IPHUB_API_KEY as string,
+  //   },
+  // });
 
-    if (data.block === 1 || data.block === 2) {
-      throw HttpError(403, "Registration via VPN or Proxy is not allowed.");
-    }
-    const sameIpUsers = await UserModel.countDocuments({ ip });
+  // if (data.block === 1 || data.block === 2) {
+  //   throw HttpError(403, "Registration via VPN or Proxy is not allowed.");
+  // }
+  // const sameIpUsers = await UserModel.countDocuments({ ip });
 
-    if (sameIpUsers > 0) {
-      throw HttpError(
-        403,
-        "Too many registrations from your network. Contact support."
-      );
-    }
-  }
+  // if (sameIpUsers > 0) {
+  //   throw HttpError(
+  //     403,
+  //     "Too many registrations from your network. Contact support."
+  //   );
+  // }
+  // }
 
   const userData = {
     password: await bcrypt.hash(password, 10),
@@ -72,8 +83,7 @@ export const registerService = async ({
     subscription: userSubscriptionConst.FREE,
   };
   const emailText =
-    "Thank you for signing up! To complete your registration, please verify your email address by clicking the button below.";
-
+    "Дякуємо за реєстрацію! Щоб завершити реєстрацію, будь ласка, підтвердьте свою електронну адресу, натиснувши кнопку нижче.";
   await UserModel.create({
     name,
     email,
@@ -91,8 +101,8 @@ export const registerService = async ({
 export const loginService = async ({
   email,
   password,
-  ip,
-}: {
+}: // ip,
+{
   email: string;
   password: string;
   ip: string;
@@ -102,39 +112,102 @@ export const loginService = async ({
 }> => {
   const user = await UserModel.findOne({ email });
   if (!user) {
-    throw HttpError(401, "Email or password not valid");
+    throw HttpError(401, "Невірна електронна пошта або пароль");
   }
   if (!(await bcrypt.compare(password, user.password))) {
-    throw HttpError(401, "Email or password not valid");
+    throw HttpError(401, "Невірна електронна пошта або пароль");
   }
   if (!user.verify) {
-    throw HttpError(403, "Non verified user, please check email");
+    throw HttpError(
+      403,
+      "Користувач не підтверджений, перевірте електронну пошту"
+    );
   }
   const updatedUser = await checkSubscriptionStatus(user);
 
   const token = jwt.sign({ id: user._id }, JWT_SECRET ? JWT_SECRET : "", {
     expiresIn: "333h",
   });
-  if (ip && ip !== "") {
-    try {
-      const { data } = await axios.get(`https://v2.api.iphub.info/ip/${ip}`, {
-        headers: {
-          "X-Key": IPHUB_API_KEY as string,
-        },
-      });
-      if (data.block === 1 || data.block === 2) {
-        await UserModel.findByIdAndUpdate(user._id, { token });
-        return { token, updatedUser };
-      }
-    } catch (error) {
-      console.error("🚀 ~ error:", error); // log
-    }
+  // if (ip && ip !== "") {
+  //   try {
+  //     const { data } = await axios.get(`https://v2.api.iphub.info/ip/${ip}`, {
+  //       headers: {
+  //         "X-Key": IPHUB_API_KEY as string,
+  //       },
+  //     });
+  //     if (data.block === 1 || data.block === 2) {
+  //       await UserModel.findByIdAndUpdate(user._id, { token });
+  //       return { token, updatedUser };
+  //     }
+  //   } catch (error) {
+  //     console.error("🚀 ~ error:", error); // log
+  //   }
 
-    await UserModel.findByIdAndUpdate(user._id, { token, ip });
-    return { token, updatedUser };
-  }
+  //   await UserModel.findByIdAndUpdate(user._id, { token, ip });
+  //   return { token, updatedUser };
+  // }
 
   await UserModel.findByIdAndUpdate(user._id, { token });
+  return { token, updatedUser };
+};
+
+export const oauthUpsertService = async ({
+  email,
+  name,
+  avatar,
+  provider,
+  providerId,
+  ip,
+}: OAuthUpsertInput): Promise<OAuthUpsertResult> => {
+  if (!provider || !providerId) {
+    throw HttpError(400, "Відсутні дані провайдера");
+  }
+  const emailLc = email?.toLowerCase();
+
+  let user = await UserModel.findOne({
+    accounts: { $elemMatch: { provider, providerId } },
+  });
+
+  if (!user && emailLc) {
+    user = await UserModel.findOne({ email: emailLc });
+  }
+
+  if (!user) {
+    user = await UserModel.create({
+      email: emailLc,
+      name,
+      avatar,
+      orderReference: "",
+      subscription: userSubscriptionConst.FREE,
+      verify: !!emailLc,
+      accounts: [{ provider, providerId }],
+    });
+  } else {
+    const hasAccount = user.accounts?.some(
+      (a) => a.provider === provider && a.providerId === providerId
+    );
+
+    if (!hasAccount) {
+      user.accounts?.push({ provider, providerId });
+    }
+
+    if (emailLc && !user.email) user.email = emailLc;
+    if (name && !user.name) user.name = name;
+    if (avatar && !user.avatar) user.avatar = avatar;
+    if (emailLc) user.verify = true;
+  }
+  const updatedUser = await checkSubscriptionStatus(user);
+
+  const token = jwt.sign({ id: updatedUser._id }, JWT_SECRET || "", {
+    expiresIn: "333h",
+  });
+
+  if (ip) {
+    await UserModel.findByIdAndUpdate(updatedUser._id, { token, ip });
+  } else {
+    await UserModel.findByIdAndUpdate(updatedUser._id, { token });
+  }
+
   return { token, updatedUser };
 };
 
@@ -143,10 +216,10 @@ export const logoutService = async (
 ): Promise<{ message: string }> => {
   const user = await UserModel.findById(_id);
   if (!user) {
-    throw HttpError(401, "User not found");
+    throw HttpError(404, "Користувача не знайдено");
   }
   await UserModel.findByIdAndUpdate(_id, { token: "" });
-  return { message: "Logout successful" };
+  return { message: "Успішний вихід" };
 };
 
 export const verificationService = async (
@@ -156,15 +229,15 @@ export const verificationService = async (
 }> => {
   const user = await UserModel.findOne({ verificationToken });
   if (!user) {
-    throw HttpError(404, "User not found");
+    throw HttpError(404, "Користувача не знайдено");
   }
   if (user.verify) {
-    throw HttpError(400, "Verification has already been passed");
+    throw HttpError(400, "Верифікацію вже пройдено");
   }
   await UserModel.findByIdAndUpdate(user._id, {
     verify: true,
   });
-  return { message: "Verification has been passed" };
+  return { message: "Верифікацію пройдено" };
 };
 
 export const resendVerifyService = async (
@@ -174,19 +247,19 @@ export const resendVerifyService = async (
 }> => {
   const user = await UserModel.findOne({ email });
   if (!user) {
-    throw HttpError(404, "User Not Found");
+    throw HttpError(404, "Користувача не знайдено");
   }
   if (user.verify) {
-    throw HttpError(400, "Verification has already been passed");
+    throw HttpError(400, "Верифікацію вже пройдено");
   }
   await sendMail({
     email,
     path: "verify",
     verificationToken: user.verificationToken,
-    text: "Thank you for signing up! To complete your registration, please verify your email address by clicking the button below.",
+    text: "Дякуємо за реєстрацію! Щоб завершити реєстрацію, будь ласка, підтвердьте свою електронну адресу, натиснувши кнопку нижче.",
   });
 
-  return { message: "Verification email sent" };
+  return { message: "Лист для підтвердження відправлено" };
 };
 
 export const forgotPasswordService = async (
@@ -196,7 +269,7 @@ export const forgotPasswordService = async (
 }> => {
   const user = await UserModel.findOne({ email });
   if (!user) {
-    throw HttpError(404, "User not found");
+    throw HttpError(404, "Користувача не знайдено");
   }
 
   const resetToken = nanoid();
@@ -210,10 +283,10 @@ export const forgotPasswordService = async (
     email: user.email,
     path: "reset-password",
     verificationToken: resetToken,
-    text: "You requested a password reset. Click the link below to set a new password.",
+    text: "Ви запросили скидання пароля. Натисніть на посилання нижче, щоб встановити новий пароль.",
   });
 
-  return { message: "Password reset link sent to email" };
+  return { message: "Посилання на скидання паролю відправлено на пошту" };
 };
 
 export const resetPasswordService = async ({
@@ -230,10 +303,10 @@ export const resetPasswordService = async ({
   });
 
   if (!user) {
-    throw HttpError(400, "Invalid reset token");
+    throw HttpError(400, "Невірний токен для скидання пароля");
   }
   if (user.resetPasswordExpires && user.resetPasswordExpires < Date.now()) {
-    throw HttpError(400, "Expired reset token");
+    throw HttpError(400, "Термін дії токена для скидання пароля закінчився");
   }
 
   user.password = await bcrypt.hash(newPassword, 10);
@@ -242,7 +315,7 @@ export const resetPasswordService = async ({
   await UserModel.findByIdAndUpdate(user._id, {
     ...user,
   });
-  return { message: "Password reset successful" };
+  return { message: "Пароль успішно змінено" };
 };
 
 export const changePasswordService = async ({
@@ -259,19 +332,19 @@ export const changePasswordService = async ({
   const user = await UserModel.findById(userId);
 
   if (!user) {
-    throw HttpError(404, "User not found");
+    throw HttpError(404, "Користувача не знайдено");
   }
 
   const isMatch = await bcrypt.compare(oldPassword, user.password);
   if (!isMatch) {
-    throw HttpError(401, "Old password is incorrect");
+    throw HttpError(401, "Старий пароль невірний");
   }
 
   user.password = await bcrypt.hash(newPassword, 10);
   await UserModel.findByIdAndUpdate(user._id, {
     ...user,
   });
-  return { message: "Password successfully changed" };
+  return { message: "Пароль успішно змінено" };
 };
 
 export const createPaymentService = async ({
@@ -282,7 +355,7 @@ export const createPaymentService = async ({
   userId: ObjectId;
 }): Promise<PaymentData> => {
   if (!userId) {
-    throw HttpError(401, "Please login first");
+    throw HttpError(401, "Будь ласка, увійдіть в систему");
   }
   await UserModel.findByIdAndUpdate(userId, {
     orderReference: data.orderReference,
@@ -358,7 +431,7 @@ export const paymentStatusService = async (
 ): Promise<UserSubscription> => {
   const user = await UserModel.findById(userId);
   if (!user) {
-    throw HttpError(404, "User not found");
+    throw HttpError(404, "Користувача не знайдено");
   }
   const { subscription } = user;
   return subscription;
@@ -379,4 +452,32 @@ export const unsubscribeWebhookService = async (
     );
     return updatedUser;
   }
+};
+
+export const undateFaforitesVideosService = async (
+  cleanIds: IUserFavWatched[],
+  _id: string | ObjectId
+): Promise<void> => {
+  await UserModel.findByIdAndUpdate(_id, { favoritesVideos: cleanIds });
+};
+
+export const undateWatchedVideosService = async (
+  cleanIds: IUserFavWatched[],
+  _id: string | ObjectId
+): Promise<void> => {
+  await UserModel.findByIdAndUpdate(_id, { watchedVideos: cleanIds });
+};
+
+export const undateFaforitesCoursesService = async (
+  cleanIds: IUserFavWatched[],
+  _id: string | ObjectId
+): Promise<void> => {
+  await UserModel.findByIdAndUpdate(_id, { favoritesCourses: cleanIds });
+};
+
+export const undateWatchedCoursesService = async (
+  cleanIds: IUserFavWatched[],
+  _id: string | ObjectId
+): Promise<void> => {
+  await UserModel.findByIdAndUpdate(_id, { watchedCourses: cleanIds });
 };

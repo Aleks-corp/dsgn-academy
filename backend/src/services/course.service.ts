@@ -15,7 +15,7 @@ const getCoursesService = async (
   const { limit, page } = options;
   const skip = (page - 1) * limit;
   const [courses, total] = await Promise.all([
-    CourseModel.find(filter)
+    CourseModel.find(filter, "-createdAt -updatedAt -videos.url")
       .sort({ publishedAt: -1, createdAt: -1 })
       .skip(skip)
       .limit(limit)
@@ -23,6 +23,13 @@ const getCoursesService = async (
     CourseModel.countDocuments(filter),
   ]);
   return { courses, total, page, limit };
+};
+
+export const getCoursesTotalService = async (
+  filter: FilterQuery<ICourse>
+): Promise<number> => {
+  const count = await CourseModel.countDocuments(filter);
+  return count;
 };
 
 export const getCourseByIdService = async (
@@ -79,6 +86,7 @@ export const toggleFavoriteCourseService = async (
 
 export default {
   getCoursesService,
+  getCoursesTotalService,
   getCourseByIdService,
   addCourseService,
   updateCourseService,

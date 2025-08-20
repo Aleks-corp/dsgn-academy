@@ -1,9 +1,12 @@
 import type { Request, Response } from "express";
+import type { ICourse } from "../types/course.type.js";
 import { courseServices } from "../services/index.js";
 import { ctrlWrapper } from "../decorators/index.js";
-import { fetchVideoDataById, HttpError } from "../utils/index.js";
+import { HttpError } from "../utils/index.js";
+
 const {
   getCoursesService,
+  getCoursesTotalService,
   getCourseByIdService,
   addCourseService,
   updateCourseService,
@@ -47,6 +50,17 @@ export const getCourses = async (
   });
 };
 
+export const getCoursesCounts = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const totalCourses = await getCoursesTotalService({});
+
+  res.json({
+    totalCourses,
+  });
+};
+
 export const getCourseById = async (
   req: Request,
   res: Response
@@ -61,26 +75,9 @@ export const getCourseById = async (
 };
 
 export const addCourse = async (req: Request, res: Response): Promise<void> => {
-  const { videos, author, publishedAt } = req.body;
-  await Promise.all(
-    videos.map(async (i: { url: string; description: string }, index) => {
-      const data = await fetchVideoDataById(i.url);
-      if (data) {
-        if (!videos.cover) {
-          req.body.videos[index].cover = data.thumbnail_url;
-        }
-        if (index + 1 === videos.length) {
-          if (!author) {
-            req.body.author = data.author_name;
-          }
-          if (!publishedAt) {
-            req.body.publishedAt = new Date(data.upload_date);
-          }
-        }
-      }
-    })
-  );
-  const course = await addCourseService(req.body);
+  const courseData: ICourse = req.body;
+
+  const course = await addCourseService(courseData);
 
   res.status(201).json(course);
 };
@@ -128,6 +125,7 @@ export const toggleFavoriteCourse = async (
 
 export default {
   getCourses: ctrlWrapper(getCourses),
+  getCoursesCounts: ctrlWrapper(getCoursesCounts),
   getCourseById: ctrlWrapper(getCourseById),
   addCourse: ctrlWrapper(addCourse),
   updateCourse: ctrlWrapper(updateCourse),

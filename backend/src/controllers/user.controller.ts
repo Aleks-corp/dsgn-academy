@@ -18,27 +18,26 @@ import {
   resetPasswordService,
   unsubscribeWebhookService,
   verificationService,
+  oauthUpsertService,
 } from "../services/user.service.js";
 
 const { FRONT_SERVER } = process.env;
 
 const register = async (req: Request, res: Response): Promise<void> => {
   const { name, email, password } = req.body;
+
   const forwarded = req.headers["x-forwarded-for"];
   const ip =
     typeof forwarded === "string"
       ? forwarded.split(",")[0].trim()
       : req.socket.remoteAddress || "";
-
   await registerService({
     name,
     email,
     password,
-
     ip,
   });
-
-  res.status(201).json({ message: "Thank you for signing up" });
+  res.status(201).json({ ok: true, message: "Thank you for signing up" });
 };
 
 const login = async (req: Request, res: Response): Promise<void> => {
@@ -56,6 +55,57 @@ const login = async (req: Request, res: Response): Promise<void> => {
       _id: updatedUser._id,
       name: updatedUser.name,
       email: updatedUser.email,
+      avatar: updatedUser.avatar,
+      isBlocked: updatedUser.isBlocked,
+      subscription: updatedUser.subscription,
+      status: updatedUser.status,
+      regularDateEnd: updatedUser.regularDateEnd,
+      lastPayedDate: updatedUser.lastPayedDate,
+      lastPayedStatus: updatedUser.lastPayedStatus,
+      substart: updatedUser.substart,
+      subend: updatedUser.subend,
+      createdAt: updatedUser.createdAt,
+    },
+  });
+};
+
+export const oauthUpsert = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const { email, name, avatar, provider, providerId } = req.body;
+
+  const forwarded = req.headers["x-forwarded-for"];
+  const ip =
+    typeof forwarded === "string"
+      ? forwarded.split(",")[0].trim()
+      : req.socket.remoteAddress || "";
+
+  const { token, updatedUser } = await oauthUpsertService({
+    email,
+    name,
+    avatar,
+    provider,
+    providerId,
+    ip,
+  });
+
+  res.cookie("token", token, {
+    httpOnly: true,
+    sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
+    domain: process.env.COOKIE_DOMAIN || ".dsgn.academy",
+    maxAge: 30 * 24 * 60 * 60 * 1000,
+    path: "/",
+  });
+
+  res.json({
+    token,
+    user: {
+      _id: updatedUser._id,
+      name: updatedUser.name,
+      email: updatedUser.email,
+      avatar: updatedUser.avatar,
       isBlocked: updatedUser.isBlocked,
       subscription: updatedUser.subscription,
       status: updatedUser.status,
@@ -80,7 +130,7 @@ const getCurrent = async (req: Request, res: Response): Promise<void> => {
     _id,
     name,
     email,
-
+    avatar,
     isBlocked,
     subscription,
     status,
@@ -96,7 +146,7 @@ const getCurrent = async (req: Request, res: Response): Promise<void> => {
       _id,
       name,
       email,
-
+      avatar,
       isBlocked,
       subscription,
       status,
@@ -208,6 +258,7 @@ const paymentReturn = async (req: Request, res: Response): Promise<void> => {
 export default {
   register: ctrlWrapper(register),
   login: ctrlWrapper(login),
+  oauthUpsert: ctrlWrapper(oauthUpsert),
   logout: ctrlWrapper(logout),
   getCurrent: ctrlWrapper(getCurrent),
   getVerification: ctrlWrapper(getVerification),

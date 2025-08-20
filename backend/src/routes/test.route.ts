@@ -8,6 +8,6 @@ const testRouter = Router();
 
 testRouter.get("/", isAlpha);
 
-testRouter.get("/login", isTester);
+testRouter.get("/login/:token", isTester);
 
 export default testRouter;

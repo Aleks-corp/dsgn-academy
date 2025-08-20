@@ -34,9 +34,10 @@ const usersRegSchema = Joi.object({
     .pattern(passRegexp)
     .required()
     .messages({
-      "string.pattern.base": `'password' contain 8-18 characters, at least one uppercase letter, one lowercase letter and one number`,
-      "string.empty": `'password' cannot be an empty field`,
-      "any.required": `missing required 'password' field`,
+      "string.pattern.base":
+        "Пароль має містити 8-18 символів, хоча б одну велику та малу літеру і одну цифру",
+      "string.empty": "Пароль не може бути пустим",
+      "any.required": "Поле 'password' є обов’язковим",
     }),
 });
 
@@ -52,9 +53,10 @@ const usersLoginSchema = Joi.object({
     .pattern(passRegexp)
     .required()
     .messages({
-      "string.pattern.base": `'password' contain minimum 8 characters, at least one uppercase letter, one lowercase letter and one number`,
-      "string.empty": `'password' cannot be an empty field`,
-      "any.required": `missing required 'password' field`,
+      "string.pattern.base":
+        "Пароль має містити 8-18 символів, хоча б одну велику та малу літеру і одну цифру",
+      "string.empty": "Пароль не може бути пустим",
+      "any.required": "Поле 'password' є обов’язковим",
     }),
 });
 

@@ -17,8 +17,9 @@ export const isAlpha = async (_: Request, res: Response): Promise<void> => {
 };
 
 export const isTester = async (req: Request, res: Response): Promise<void> => {
-  const testing = await isTesterService(req.body);
-  res.json(testing);
+  const { token } = req.params;
+  const isTester = await isTesterService(token);
+  res.json({ isTester });
 };
 
 export default {

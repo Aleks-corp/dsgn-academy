@@ -4,7 +4,6 @@ import { modelHooks } from "../utils/index.js";
 
 import {
   emailRegexp,
-  passRegexp,
   userSubscription,
   userSubscriptionConst,
   userStatus,
@@ -15,6 +14,30 @@ const { handleUpdateValidator, handlerSaveError } = modelHooks;
 
 type IUserModelType = Model<IUser>;
 
+const AccountSchema = new Schema(
+  {
+    provider: { type: String, required: true }, // 'google' | 'linkedin'
+    providerId: { type: String, required: true },
+  },
+  { _id: false }
+);
+
+const FavWatchedVideoSchema = new Schema(
+  {
+    id: { type: Types.ObjectId, ref: "video" },
+    updatedAt: { type: Date, required: true },
+  },
+  { _id: false }
+);
+
+const FavWatchedCourseSchema = new Schema(
+  {
+    id: { type: Types.ObjectId, ref: "course" },
+    updatedAt: { type: Date, required: true },
+  },
+  { _id: false }
+);
+
 const userSchema = new Schema<IUser, IUserModelType>(
   {
     name: {
@@ -23,17 +46,17 @@ const userSchema = new Schema<IUser, IUserModelType>(
       maxlength: 18,
       required: true,
     },
+    avatar: { type: String },
     email: {
       type: String,
-      unique: true,
-      match: [emailRegexp, "Please set a valid email address"],
+      match: [emailRegexp, "Будь ласка, вкажіть коректну електронну адресу"],
       required: true,
     },
     password: {
       type: String,
-      match: [passRegexp, "Please set a valid password"],
-      required: true,
+      required: false,
     },
+    accounts: { type: [AccountSchema], default: [] },
     ip: { type: String },
     isBlocked: {
       type: Boolean,
@@ -64,9 +87,9 @@ const userSchema = new Schema<IUser, IUserModelType>(
         return this.subscription === "premium";
       },
     },
-
     orderReference: {
       type: String,
+      default: "",
     },
     token: {
       type: String,
@@ -84,12 +107,18 @@ const userSchema = new Schema<IUser, IUserModelType>(
     resetPasswordExpires: {
       type: Number,
     },
-    favoritesCourses: [{ type: Types.ObjectId, ref: "course" }],
-    favoritesVideos: [{ type: Types.ObjectId, ref: "video" }],
-    watchedCourses: [{ type: Types.ObjectId, ref: "course" }],
-    watchedVideos: [{ type: Types.ObjectId, ref: "video" }],
+    favoritesCourses: { type: [FavWatchedCourseSchema], default: [] },
+    favoritesVideos: { type: [FavWatchedVideoSchema], default: [] },
+    watchedCourses: { type: [FavWatchedCourseSchema], default: [] },
+    watchedVideos: { type: [FavWatchedVideoSchema], default: [] },
   },
   { versionKey: false, timestamps: true }
+);
+
+userSchema.index({ email: 1 }, { unique: true, sparse: true });
+userSchema.index(
+  { "accounts.provider": 1, "accounts.providerId": 1 },
+  { unique: true, sparse: true }
 );
 
 userSchema.post("save", handlerSaveError);

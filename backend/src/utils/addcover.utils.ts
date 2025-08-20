@@ -1,22 +1,35 @@
 import axios, { AxiosError } from "axios";
+import "dotenv/config";
 
-interface IData {
-  title: string;
-  author_name: string;
-  duration: number;
+const { VIMEO_TOKEN } = process.env;
+
+export interface IProgressive {
+  type: string;
+  link: string;
+  rendition: string;
+}
+
+export interface IData {
+  name: string;
   description: string;
-  thumbnail_url: string;
-  thumbnail_url_with_play_button: string;
-  upload_date: string;
+  duration: number;
+  pictures: { base_link: string };
+  release_time: string;
+  play: {
+    progressive: IProgressive[];
+  };
 }
 
 export default async function fetchVideoDataById(
-  url: string
+  id: string
 ): Promise<IData | undefined> {
+  // const id = url.replace("https://vimeo.com/", "");
   try {
-    const response = await axios.get(
-      `https://vimeo.com/api/oembed.json?url=${url}`
-    );
+    const response = await axios(`https://api.vimeo.com/videos/${id}`, {
+      headers: {
+        Authorization: `Bearer ${VIMEO_TOKEN}`,
+      },
+    });
     return response.data;
   } catch (error) {
     if (error instanceof AxiosError) {

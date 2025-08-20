@@ -14,7 +14,6 @@
     "lint:fix": "eslint . --ext .ts --fix"
   },
   "dependencies": {
-    "@sendgrid/mail": "^8.1.5",
     "axios": "^1.10.0",
     "bcryptjs": "^3.0.2",
     "cookie-parser": "^1.4.7",
@@ -25,7 +24,8 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.16.3",
     "morgan": "^1.10.0",
-    "nanoid": "^5.1.5"
+    "nanoid": "^5.1.5",
+    "nodemailer": "^7.0.5"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",

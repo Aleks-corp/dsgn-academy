@@ -2,6 +2,7 @@ import type { FilterQuery, ObjectId } from "mongoose";
 
 import { VideoModel, UserModel } from "../models/index.js";
 import type { IVideo } from "../types/video.type.js";
+import type { IUserFavWatched } from "../types/user.type.js";
 
 const getVideosService = async (
   filter: FilterQuery<IVideo>,
@@ -15,8 +16,8 @@ const getVideosService = async (
   const { limit, page } = options;
   const skip = (page - 1) * limit;
   const [videos, total] = await Promise.all([
-    VideoModel.find(filter)
-      .sort({ publishedAt: -1, createdAt: -1 })
+    VideoModel.find(filter, "-createdAt -updatedAt -video")
+      .sort({ publishedAt: -1, _id: -1 })
       .skip(skip)
       .limit(limit)
       .exec(),
@@ -28,13 +29,94 @@ const getVideosService = async (
 export const getVideoByIdService = async (
   id: string
 ): Promise<IVideo | null> => {
-  return VideoModel.findById(id).exec();
+  return await VideoModel.findById(id).exec();
 };
 
-export const addVideoService = async (
-  data: Partial<IVideo>
-): Promise<IVideo> => {
-  return VideoModel.create(data);
+export const getVideosCategoriesService = async (): Promise<
+  { category: string; count: number }[]
+> => {
+  const categories = await VideoModel.aggregate([
+    { $unwind: "$category" },
+    {
+      $group: {
+        _id: "$category",
+        count: { $sum: 1 },
+      },
+    },
+    { $match: { _id: { $ne: "" } } },
+    { $sort: { count: -1 } },
+    {
+      $project: {
+        _id: 0,
+        category: "$_id",
+        count: 1,
+      },
+    },
+  ]);
+  return categories;
+};
+
+export const getVideosFiltersService = async (): Promise<
+  { filter: string; count: number }[]
+> => {
+  const filters = await VideoModel.aggregate([
+    { $unwind: "$filter" },
+    {
+      $group: {
+        _id: "$filter",
+        count: { $sum: 1 },
+      },
+    },
+    { $match: { _id: { $ne: "" } } },
+    { $sort: { count: -1 } },
+    {
+      $project: {
+        _id: 0,
+        filter: "$_id",
+        count: 1,
+      },
+    },
+  ]);
+  return filters;
+};
+
+export const getVideosTotalService = async (
+  filter: FilterQuery<IVideo>
+): Promise<number> => {
+  const count = await VideoModel.countDocuments(filter);
+  return count;
+};
+
+export const getFavoriteWatchedVideosService = async (
+  videoIds: IUserFavWatched[],
+  options: { limit: number; page: number }
+): Promise<{
+  videos: IVideo[];
+  total: number;
+  cleanIds: IUserFavWatched[];
+}> => {
+  const sorted = videoIds.sort(
+    (a: IUserFavWatched, b: IUserFavWatched) =>
+      new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+  );
+  const allIds = sorted.map((i) => i.id);
+  const videos = await VideoModel.find({ _id: { $in: allIds } })
+    .select("-video -updatedAt -createdAt")
+    .lean();
+  const videoMap = new Map(videos.map((v) => [v._id.toString(), v]));
+  const valid = sorted.filter((y) => videoMap.has(y.id.toString()));
+  const slice = valid.slice(
+    (options.page - 1) * options.limit,
+    options.page * options.limit
+  );
+  const ordered = slice
+    .map((f) => videoMap.get(f.id.toString()))
+    .filter(Boolean) as IVideo[];
+  return { videos: ordered, total: valid.length, cleanIds: valid };
+};
+
+export const addVideoService = async (body: IVideo): Promise<IVideo> => {
+  return VideoModel.create(body);
 };
 
 export const updateVideoService = async (
@@ -80,6 +162,10 @@ export const toggleFavoriteVideoService = async (
 export default {
   getVideosService,
   getVideoByIdService,
+  getVideosCategoriesService,
+  getVideosFiltersService,
+  getVideosTotalService,
+  getFavoriteWatchedVideosService,
   addVideoService,
   updateVideoService,
   deleteVideoByIdService,

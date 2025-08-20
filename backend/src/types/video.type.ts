@@ -1,14 +1,16 @@
-import type { Document } from "mongoose";
+import type { Document, Types } from "mongoose";
 
 export interface IVideo extends Document {
-  _id: string;
+  _id: Types.ObjectId;
   title: string;
   description: string;
+  filter: string[];
   category: string[];
   video: string;
-  cover?: string;
-  author?: string;
-  level?: string;
+  cover: string;
+  duration: string;
+  free: boolean;
+  recommended: boolean;
   favoritedBy?: string[];
   watchedBy?: string[];
   publishedAt?: Date;

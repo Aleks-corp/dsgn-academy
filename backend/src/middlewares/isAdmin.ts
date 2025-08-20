@@ -16,33 +16,26 @@ export interface UserDocument extends IUser, Document {
 
 const JWT_SECRET = process.env.JWT_SECRET || "";
 
-const authenticateToken = async (
+const authenticateAdmin = async (
   req: Request,
   res: Response,
   next: NextFunction
 ): Promise<void> => {
-  const { authorization } = req.headers;
-  if (!authorization || !authorization.startsWith("Bearer ")) {
-    return next();
-  }
+  const { authorization = "" } = req.headers;
   const [bearer, token] = authorization.split(" ");
-  if (bearer === "Bearer" && token) {
-    try {
-      const jwtPayload: JwtPayload = jwt.verify(
-        token,
-        JWT_SECRET
-      ) as JwtPayload;
-      const user = (await UserModel.findById(jwtPayload.id)) as UserDocument;
-      if (user && user.token) {
-        req.user = user;
-      } else {
-        return next(HttpError(401));
-      }
-    } catch {
-      return next(HttpError(401));
+  if (bearer !== "Bearer") {
+    throw HttpError(401);
+  }
+  try {
+    const jwtPayload: JwtPayload = jwt.verify(token, JWT_SECRET) as JwtPayload;
+    const user = (await UserModel.findById(jwtPayload.id)) as UserDocument;
+    if (!user || !user.token || user.subscription !== "admin") {
+      throw HttpError(401);
     }
+  } catch {
+    throw HttpError(401);
   }
   next();
 };
 
-export default ctrlWrapper(authenticateToken);
+export default ctrlWrapper(authenticateAdmin);
