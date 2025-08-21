@@ -20,10 +20,10 @@
     ],
     "paths": {
       "@/*": ["./src/*"],
+      "@/public/*": ["./public/*"],
       "@/styles/*": ["./src/styles/*"],
       "@/components/*": ["./src/components/*"],
       "@/constants/*": ["./src/constants/*"],
-      "@/hooks/*": ["./src/hooks/*"],
       "@/lib/*": ["./src/lib/*"],
       "@/types/*": ["./src/types/*"],
       "@/api/*": ["./src/lib/api/*"],

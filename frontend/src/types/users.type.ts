@@ -1,3 +1,6 @@
+import { ICourse } from "./courses.type";
+import { IVideo } from "./videos.type";
+
 export type UserSubscription =
   | "free"
   | "trial"
@@ -9,7 +12,7 @@ export interface IUser {
   _id: string;
   name: string;
   email: string;
-  password: string;
+  avatar?: string;
   ip: string;
   isBlocked: boolean;
   subscription: UserSubscription;
@@ -27,10 +30,10 @@ export interface IUser {
   verificationToken: string;
   resetPasswordToken?: string;
   resetPasswordExpires?: number;
-  favoritesCourses?: string[];
-  favoritesVideos?: string[];
-  watchedCourses?: string[];
-  watchedVideos?: string[];
+  favoritesCourses?: ICourse[];
+  favoritesVideos?: IVideo[];
+  watchedCourses?: ICourse[];
+  watchedVideos?: IVideo[];
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -44,7 +47,6 @@ export interface IUserReg {
   name: string;
   email: string;
   password: string;
-  ip: string;
 }
 
 export interface IUserLog {

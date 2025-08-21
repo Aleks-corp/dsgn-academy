@@ -5,6 +5,7 @@ import { IVideo } from "./videos.type";
 export interface State {
   courses: CourseState;
   videos: VideoState;
+  shorts: ShortState;
   auth: AuthState;
   //     admin: AdminState;
   test: TestState;
@@ -13,6 +14,7 @@ export interface State {
 export interface CourseState {
   courses: ICourse[];
   totalHits: number;
+  totalCourses: number | undefined;
   currentFilter: string;
   selectedCourse: ICourse | null;
   isLoading: boolean;
@@ -23,11 +25,31 @@ export interface CourseState {
 export interface VideoState {
   videos: IVideo[];
   totalHits: number;
-  currentFilter: string;
+  categories: {
+    category: string;
+    count: number;
+  }[];
+  filters: {
+    filter: string;
+    count: number;
+  }[];
+  selectedCategory: string | null;
+  totalVideos: number | undefined;
+  totalFree: number | undefined;
+  currentFreeFilter: boolean;
   selectedVideo: IVideo | null;
   isLoading: boolean;
   error: string;
   videoToEdit: IVideo | null;
+}
+
+export interface ShortState {
+  shorts: IVideo[];
+  totalShorts: number | undefined;
+  selectedShort: IVideo | null;
+  isLoading: boolean;
+  error: string;
+  shortToEdit: IVideo | null;
 }
 
 export interface AuthState {

@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @config "../../tailwind.config.ts";
 @import "./loader.css";
+@import "lenis/dist/lenis.css";
 
 @font-face {
   font-family: "Helvetica Neue";
@@ -28,7 +29,11 @@
   --background: #f7f7f7;
   --foreground: #121212;
   --muted: #7b7b7b;
+  --text: #a8a8a8;
+  --muted-background: #f1f1f1;
   --muted-foreground: #222;
+  --icon-bg: #fcfcfc;
+  --border-bg: #ececec;
   --accent: #0170fd;
   /* --hover: #086de3; */
   /* --hover-foreground: #f8f8f8; */
@@ -44,6 +49,11 @@
   --box-shadow-input-hover: 0px 0px 0px 4px rgba(18, 18, 18, 0.1),
     0px 1px 1px 0px rgba(18, 18, 18, 0.1), 0px 0px 0px 1px rgba(18, 18, 18, 0.2),
     0px 1px 3px 0px rgba(18, 18, 18, 0.1);
+  --box-shadow-icon: 0 0 4px 0 rgba(18, 18, 18, 0.1);
+  --box-shadow-count: 0 0 0 1px rgba(0, 0, 0, 0.11),
+    0 2px 0.8px 0 rgba(255, 255, 255, 0.27) inset,
+    0 -1px 0.6px 0 rgba(0, 0, 0, 0.2) inset,
+    0 1px 4.2px -1px rgba(0, 0, 0, 0.25);
 }
 
 @media (prefers-color-scheme: light) {
@@ -60,8 +70,19 @@ body {
 }
 
 .btn-gradient {
-  background: linear-gradient(180deg, #e5e5e5 0%, #e2e2e2 100%);
+  background-color: #e5e5e5;
+  background-image: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.2) 0%,
+    rgba(0, 0, 0, 0.05) 100%
+  );
+  transition: background-color 0.3s ease-in-out;
 }
+.btn-gradient:hover,
+.btn-gradient:focus {
+  background-color: #c5c5c5;
+}
+
 .btn-telegram {
   background: linear-gradient(0deg, #fff 0%, #fff 100%),
     linear-gradient(180deg, #e5e5e5 0%, #e2e2e2 100%);
@@ -91,4 +112,11 @@ body {
   100% {
     transform: rotate(360deg);
   }
+}
+
+.scroll-disable-smooth {
+  scroll-behavior: auto !important;
+}
+.scrollable-smooth {
+  overscroll-behavior: contain;
 }

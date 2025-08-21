@@ -3,6 +3,7 @@ import { VideoState } from "../../types/state.types";
 import {
   fetchVideos,
   fetchVideoById,
+  fetchVideosCount,
   // addVideo,
   addRemoveFavoritesVideo,
   deleteVideo,
@@ -25,15 +26,45 @@ const handleFulfilled = (state: VideoState) => {
 
 export const handleFulfilledVideos = (
   state: VideoState,
-  action: PayloadAction<{ videos: IVideo[]; totalHits: number }>
+  action: PayloadAction<{
+    videos: IVideo[];
+    total: number;
+    page: number;
+  }>
 ): void => {
-  const newVideos = action.payload.videos.filter(
-    (newVideo) =>
-      !state.videos.some((existingPost) => existingPost._id === newVideo._id)
-  );
-  state.videos = [...state.videos, ...newVideos];
+  if (action.payload.page === 1) {
+    state.videos = action.payload.videos;
+  } else {
+    const newVideos = action.payload.videos.filter(
+      (newVideo) =>
+        !state.videos.some(
+          (existingVideo) => existingVideo._id === newVideo._id
+        )
+    );
+    state.videos = [...state.videos, ...newVideos];
+  }
+  state.totalHits = action.payload.total;
+};
 
-  state.totalHits = action.payload.totalHits;
+export const handleFulfilledVideosCount = (
+  state: VideoState,
+  action: PayloadAction<{
+    categories: {
+      category: string;
+      count: number;
+    }[];
+    filters: {
+      filter: string;
+      count: number;
+    }[];
+    totalFree: number;
+    totalVideos: number;
+  }>
+): void => {
+  state.totalVideos = action.payload.totalVideos;
+  state.totalFree = action.payload.totalFree;
+  state.categories = action.payload.categories;
+  state.filters = action.payload.filters;
 };
 
 export const handleFulfilledVideoById = (
@@ -79,15 +110,15 @@ export const handleFulfilledDeleteVideo = (
 };
 
 const videoSlice = createSlice({
-  name: "video",
+  name: "videos",
   initialState: initialState,
   reducers: {
     clearVideos(state: VideoState) {
       state.videos = [];
-      state.totalHits = 0;
+      state.totalVideos = 0;
     },
     setFilter(state: VideoState, action: PayloadAction<string>) {
-      state.currentFilter = action.payload;
+      state.selectedCategory = action.payload;
     },
     clearVideo(state: VideoState) {
       state.selectedVideo = null;
@@ -96,7 +127,9 @@ const videoSlice = createSlice({
       const index = state.videos.findIndex((i) => i._id === action.payload);
       if (index !== -1) {
         state.videos.splice(index, 1);
-        state.totalHits = state.totalHits - 1;
+        if (state.totalVideos) {
+          state.totalVideos = state.totalVideos - 1;
+        }
       }
     },
     setVideoToEdit: (state, action) => {
@@ -109,17 +142,20 @@ const videoSlice = createSlice({
       .addCase(fetchVideos.fulfilled, handleFulfilledVideos)
       .addCase(fetchVideoById.pending, handlePending)
       .addCase(fetchVideoById.fulfilled, handleFulfilledVideoById)
+      .addCase(fetchVideosCount.fulfilled, handleFulfilledVideosCount)
       // .addCase(addVideo.pending, handlePending)
       // .addCase(addVideo.fulfilled, handleFulfilledAddVideo)
       .addCase(addRemoveFavoritesVideo.fulfilled, handleFulfilledAddFavorites)
       .addCase(deleteVideo.pending, handlePending)
       .addCase(deleteVideo.fulfilled, handleFulfilledDeleteVideo)
       .addMatcher(
-        ({ type }) => type.endsWith("/rejected") && type.startsWith("posts"),
+        ({ type }) => type.endsWith("/rejected") && type.startsWith("videos"),
         handleRejected
       )
       .addMatcher(
-        (action) => action.type.endsWith("fulfilled"),
+        (action) =>
+          action.type.endsWith("/fulfilled") &&
+          action.type.startsWith("videos"),
         handleFulfilled
       );
   },

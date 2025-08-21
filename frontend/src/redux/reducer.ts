@@ -6,19 +6,25 @@ import { authReducer } from "./auth/authSlice";
 import { courseReducer } from "./courses/courseSlice";
 import { testReducer } from "./test/testSlice";
 import { videoReducer } from "./videos/videoSlice";
+import { shortReducer } from "./shorts/shortsSlice";
 
-const persistConfig = {
-  key: "token",
+const authPersistConfig = {
+  key: "auth",
   storage,
-  whitelist: ["token"],
+  whitelist: ["token"], // зберігати тільки token
 };
 
-const persistedReducer = persistReducer(persistConfig, authReducer);
+const testPersistConfig = {
+  key: "test",
+  storage,
+  whitelist: ["isTester"], // зберігати тільки isTester
+};
 
 export const reducer = {
-  auth: persistedReducer,
+  auth: persistReducer(authPersistConfig, authReducer),
   courses: courseReducer,
   videos: videoReducer,
+  shorts: shortReducer,
   // admin: adminReducer,
-  test: testReducer,
+  test: persistReducer(testPersistConfig, testReducer),
 };

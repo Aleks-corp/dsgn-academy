@@ -1,13 +1,11 @@
 "use client";
 
-import { useEffect } from "react";
 import { redirect } from "next/navigation";
 import HeroSection from "@/components/timerPage/HeroSection";
 import TimerSection from "@/components/timerPage/TimerSection";
 import FaqSection from "@/components/timerPage/FaqSection";
-import Loader from "@/components/LoaderCircle";
-import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { isAlpha } from "@/redux/test/test.thunk";
+import Loader from "@/components/loaders/LoaderCircle";
+import { useAppSelector } from "@/redux/hooks";
 import {
   selectIsAlpha,
   selectIsLoadingTest,
@@ -15,12 +13,6 @@ import {
 } from "@/redux/selectors/test.selectors";
 
 export default function TimerPage() {
-  const dispatch = useAppDispatch();
-
-  useEffect(() => {
-    dispatch(isAlpha());
-  }, [dispatch]);
-
   const isAlphaTesting = useAppSelector(selectIsAlpha);
   const isLoading = useAppSelector(selectIsLoadingTest);
   const timer = useAppSelector(selectTimer);

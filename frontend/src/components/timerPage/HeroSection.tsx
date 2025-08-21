@@ -67,8 +67,7 @@ export default function HeroSection() {
         ДИЗАЙН АКАДЕМІЯ
       </h1>
       <p className="text-sm md:text-lg text-muted-foreground leading-7 max-w-sm mb-14 select-none">
-        Ми робимо платформу, яку самі мріяли мати.
-        <br className="md:hidden" />
+        Ми робимо платформу, яку самі мріяли мати. <br className="md:hidden" />
         Для себе. І для тебе. ❤️
       </p>
       <motion.div

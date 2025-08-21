@@ -1,5 +1,5 @@
-import Logo from "./Logo";
-import NavLink from "./Link";
+import Logo from "@/components/Logo";
+import NavLink from "@/components/links/Link";
 
 export default function HeaderTimer() {
   return (

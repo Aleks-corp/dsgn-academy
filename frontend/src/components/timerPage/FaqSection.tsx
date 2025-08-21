@@ -3,11 +3,8 @@
 import { useState } from "react";
 import { ChevronUp } from "lucide-react";
 import { FAQ } from "@/constants/faq.constant";
-import AOS from "aos";
-import "aos/dist/aos.css";
 
 export default function FaqSection() {
-  AOS.init();
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   const toggle = (idx: number) => {
@@ -15,11 +12,7 @@ export default function FaqSection() {
   };
 
   return (
-    <section
-      className="flex flex-col items-start text-start py-8 gap-1 max-w-2xl mb-9"
-      data-aos="fade-up"
-      data-aos-duration="1000"
-    >
+    <section className="flex flex-col items-start text-start py-8 gap-1 max-w-2xl mb-9">
       {FAQ.map((item, idx) => {
         const isOpen = openIndex === idx;
         return (

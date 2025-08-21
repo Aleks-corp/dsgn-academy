@@ -13,6 +13,7 @@ const config: Config = {
         sm: "390px",
         md: "744px",
         tab: "502px",
+        tabx: "630px",
         lg: "1024px",
         xl: "1280px",
         xxl: "1440px",
@@ -28,6 +29,7 @@ const config: Config = {
         muted: {
           DEFAULT: "var(--muted)",
           foreground: "var(--muted-foreground)",
+          background: "var(--muted-background)",
         },
         accent: {
           DEFAULT: "var(--accent)",
@@ -37,13 +39,27 @@ const config: Config = {
           DEFAULT: "var(--hover)",
           foreground: "var(--hover-foreground)",
         },
-        btn: "var(---background-btn)",
-        btnHover: "var(--background-btn-hover)",
+        btn: {
+          DEFAULT: "var(---background-btn)",
+          hover: "var(--background-btn-hover)",
+        },
+        icon: {
+          DEFAULT: "var(--icon-bg)",
+          foreground: "var(--icon-foreground)",
+        },
+        border: {
+          DEFAULT: "var(--border-bg)",
+          foreground: "var(--border-foreground)",
+        },
       },
       boxShadow: {
         btn: "var(--box-shadow-btn)",
-        input: "var(--box-shadow-input)",
-        inputHover: "var(--box-shadow-input-hover)",
+        input: {
+          DEFAULT: "var(--box-shadow-input)",
+          hover: "var(--box-shadow-input-hover)",
+        },
+        icon: "var(--box-shadow-icon)",
+        count: "var(--box-shadow-count)",
       },
     },
   },

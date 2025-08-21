@@ -2,8 +2,8 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { initialState } from "./initialState";
 import {
   signUp,
-  logIn,
-  logOut,
+  signIn,
+  signOut,
   refreshUser,
   verifyUser,
   resendVerifyUser,
@@ -101,12 +101,18 @@ const authSlice = createSlice({
       state.token = "";
       state.isLogining = false;
     },
+    localLogIn(state: AuthState, action: PayloadAction<GetUser>) {
+      state.isLoggedIn = true;
+      state.token = action.payload.token;
+      state.profile = action.payload.user;
+      state.isLogining = false;
+    },
   },
   extraReducers: (builder) =>
     builder
       .addCase(signUp.fulfilled, handleFulfilled)
-      .addCase(logIn.fulfilled, handleLoginFulfilled)
-      .addCase(logOut.fulfilled, handleLogOutFulfilled)
+      .addCase(signIn.fulfilled, handleLoginFulfilled)
+      .addCase(signOut.fulfilled, handleLogOutFulfilled)
       .addCase(verifyUser.fulfilled, handleFulfilled)
       .addCase(resendVerifyUser.fulfilled, handleFulfilled)
       .addCase(setNewPassword.fulfilled, handleFulfilled)
@@ -128,5 +134,5 @@ const authSlice = createSlice({
       ),
 });
 
-export const { localLogOut } = authSlice.actions;
+export const { localLogOut, localLogIn } = authSlice.actions;
 export const authReducer = authSlice.reducer;

@@ -1,4 +1,4 @@
-import { CountdownTimer } from "@/components/Timer";
+import { CountdownTimer } from "@/components/timerPage/Timer";
 import Link from "next/link";
 
 export default function TimerSection({ timer }: { timer: number | null }) {

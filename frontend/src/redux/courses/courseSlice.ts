@@ -3,9 +3,12 @@ import { CourseState } from "../../types/state.types";
 import {
   fetchCourses,
   fetchCourseById,
+  fetchCoursesCount,
   // addCourse,
   addRemoveFavoritesCourse,
   deleteCourse,
+  editCourse,
+  addCourse,
 } from "./course.thunk";
 import { ICourse } from "../../types/courses.type";
 import { initialState } from "./initialState";
@@ -23,32 +26,60 @@ const handleFulfilled = (state: CourseState) => {
   state.isLoading = false;
 };
 
-export const handleFulfilledPosts = (
+export const handleFulfilledCourses = (
   state: CourseState,
-  action: PayloadAction<{ courses: ICourse[]; totalHits: number }>
+  action: PayloadAction<{ courses: ICourse[]; total: number; page: number }>
 ): void => {
-  const newCourses = action.payload.courses.filter(
-    (newCourse) =>
-      !state.courses.some((existingPost) => existingPost._id === newCourse._id)
-  );
-  state.courses = [...state.courses, ...newCourses];
-
-  state.totalHits = action.payload.totalHits;
+  if (action.payload.page === 1) {
+    state.courses = action.payload.courses;
+  } else {
+    const newCourses = action.payload.courses.filter(
+      (newCourse) =>
+        !state.courses.some(
+          (existingCourse) => existingCourse._id === newCourse._id
+        )
+    );
+    state.courses = [...state.courses, ...newCourses];
+  }
+  state.totalCourses = action.payload.total;
 };
 
-export const handleFulfilledPostById = (
+export const handleFulfilledCoursesCount = (
+  state: CourseState,
+  action: PayloadAction<{
+    totalCourses: number;
+  }>
+): void => {
+  state.totalCourses = action.payload.totalCourses;
+};
+
+export const handleFulfilledCourseById = (
   state: CourseState,
   action: PayloadAction<ICourse>
 ): void => {
   state.selectedCourse = action.payload;
 };
 
-export const handleFulfilledAddPost = (
+export const handleFulfilledAddCourse = (
   state: CourseState,
   action: PayloadAction<ICourse>
 ): void => {
   state.courses.push({ ...action.payload });
   state.selectedCourse = { ...action.payload };
+};
+
+export const handleFulfilledEditCourse = (
+  state: CourseState,
+  action: PayloadAction<ICourse>
+): void => {
+  const updatedCourse = action.payload;
+  const index = state.courses.findIndex((i) => i._id === updatedCourse._id);
+  if (index !== -1) {
+    state.courses.splice(index, 1, updatedCourse);
+  }
+  if (state.selectedCourse) {
+    state.selectedCourse = updatedCourse;
+  }
 };
 
 export const handleFulfilledAddFavorites = (
@@ -65,7 +96,7 @@ export const handleFulfilledAddFavorites = (
   }
 };
 
-export const handleFulfilledDeletePost = (
+export const handleFulfilledDeleteCourse = (
   state: CourseState,
   action: PayloadAction<string | undefined>
 ): void => {
@@ -79,12 +110,12 @@ export const handleFulfilledDeletePost = (
 };
 
 const courseSlice = createSlice({
-  name: "course",
+  name: "courses",
   initialState: initialState,
   reducers: {
     clearCourses(state: CourseState) {
       state.courses = [];
-      state.totalHits = 0;
+      state.totalCourses = 0;
     },
     setFilter(state: CourseState, action: PayloadAction<string>) {
       state.currentFilter = action.payload;
@@ -96,7 +127,9 @@ const courseSlice = createSlice({
       const index = state.courses.findIndex((i) => i._id === action.payload);
       if (index !== -1) {
         state.courses.splice(index, 1);
-        state.totalHits = state.totalHits - 1;
+        if (state.totalCourses) {
+          state.totalCourses = state.totalCourses - 1;
+        }
       }
     },
     setCourseToEdit: (state, action) => {
@@ -106,20 +139,23 @@ const courseSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchCourses.pending, handlePending)
-      .addCase(fetchCourses.fulfilled, handleFulfilledPosts)
+      .addCase(fetchCourses.fulfilled, handleFulfilledCourses)
       .addCase(fetchCourseById.pending, handlePending)
-      .addCase(fetchCourseById.fulfilled, handleFulfilledPostById)
-      // .addCase(addCourse.pending, handlePending)
-      // .addCase(addCourse.fulfilled, handleFulfilledAddPost)
+      .addCase(fetchCourseById.fulfilled, handleFulfilledCourseById)
+      .addCase(fetchCoursesCount.fulfilled, handleFulfilledCoursesCount)
+      .addCase(addCourse.pending, handlePending)
+      .addCase(addCourse.fulfilled, handleFulfilledAddCourse)
+      .addCase(editCourse.pending, handlePending)
+      .addCase(editCourse.fulfilled, handleFulfilledEditCourse)
       .addCase(addRemoveFavoritesCourse.fulfilled, handleFulfilledAddFavorites)
       .addCase(deleteCourse.pending, handlePending)
-      .addCase(deleteCourse.fulfilled, handleFulfilledDeletePost)
+      .addCase(deleteCourse.fulfilled, handleFulfilledDeleteCourse)
       .addMatcher(
-        ({ type }) => type.endsWith("/rejected") && type.startsWith("posts"),
+        ({ type }) => type.endsWith("/rejected") && type.startsWith("courses"),
         handleRejected
       )
       .addMatcher(
-        (action) => action.type.endsWith("fulfilled"),
+        ({ type }) => type.startsWith("courses") && type.endsWith("/fulfilled"),
         handleFulfilled
       );
   },

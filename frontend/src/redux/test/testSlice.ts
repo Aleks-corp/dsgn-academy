@@ -14,10 +14,10 @@ const handleAlphaFulfilled = (
 
 const handleTesterFulfilled = (
   state: TestState,
-  action: PayloadAction<boolean>
+  action: PayloadAction<{ isTester: boolean }>
 ) => {
   state.isLoading = false;
-  state.isTester = action.payload;
+  state.isTester = action.payload.isTester;
 };
 
 const handleRejected = (state: TestState, action: PayloadAction<string>) => {

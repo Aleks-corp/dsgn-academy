@@ -9,8 +9,15 @@ const nextConfig: NextConfig = {
         port: "",
         pathname: "/video/**",
       },
+      {
+        protocol: "https",
+        hostname: "lh3.googleusercontent.com",
+        port: "",
+        pathname: "/**",
+      },
     ],
   },
+
   /* config options here */
   //devIndicators: false,
 };

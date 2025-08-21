@@ -1,14 +1,18 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { instance } from "../../lib/api/axios";
 import { AxiosError } from "axios";
-// import { AddPost, EditPost } from "../../types/posts.types";
+import { AddVideo } from "@/types/videos.type";
 
 interface Query {
   page?: number;
   limit?: number;
+  category?: string;
   filter?: string;
-  favorites?: boolean;
+  free?: boolean;
+  recommended?: boolean;
   search?: string;
+  favorites?: boolean;
+  watched?: boolean;
 }
 
 export const fetchVideos = createAsyncThunk(
@@ -16,21 +20,89 @@ export const fetchVideos = createAsyncThunk(
   async (
     {
       page = 1,
-      limit = 12,
+      limit = 9,
+      category = "",
       filter = "",
-      favorites = false,
+      free = false,
+      recommended = false,
       search = "",
     }: Query,
     thunkAPI
   ) => {
+    const params = new URLSearchParams({
+      page: String(page),
+      limit: String(limit),
+    });
+    if (category) params.append("category", category);
+    if (filter) params.append("filter", filter);
+    if (free) params.append("free", "true");
+    if (recommended) params.append("recommended", "true");
+    if (search) params.append("q", search);
     try {
-      const response = await instance.get(
-        `/videos?page=${page}&limit=${limit}${
-          filter ? `&filter=${filter}` : ``
-        }${favorites ? `&favorites=${favorites}` : ``}${
-          search ? `&search=${search}` : ``
-        }`
-      );
+      const response = await instance.get(`/videos?${params.toString()}`);
+      return response.data;
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        return thunkAPI.rejectWithValue(
+          error.response?.data.message ?? error.message
+        );
+      }
+    }
+  }
+);
+
+export const fetchRecommended = createAsyncThunk(
+  "videos/fetchRecommendedVideos",
+  async ({ page = 1, limit = 5, recommended = false }: Query, thunkAPI) => {
+    const params = new URLSearchParams({
+      page: String(page),
+      limit: String(limit),
+    });
+    if (recommended) params.append("recommended", "true");
+    try {
+      const response = await instance.get(`/videos?${params.toString()}`);
+      return response.data;
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        return thunkAPI.rejectWithValue(
+          error.response?.data.message ?? error.message
+        );
+      }
+    }
+  }
+);
+
+export const fetchFavoritesVideos = createAsyncThunk(
+  "videos/fetchFavoritesVideos",
+  async ({ page = 1, limit = 9, favorites = false }: Query, thunkAPI) => {
+    const params = new URLSearchParams({
+      page: String(page),
+      limit: String(limit),
+    });
+    if (favorites) params.append("favorites", "true");
+    try {
+      const response = await instance.get(`/videos?${params.toString()}`);
+      return response.data;
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        return thunkAPI.rejectWithValue(
+          error.response?.data.message ?? error.message
+        );
+      }
+    }
+  }
+);
+
+export const fetchWatchedVideos = createAsyncThunk(
+  "videos/fetchWatchedVideos",
+  async ({ page = 1, limit = 9, watched = false }: Query, thunkAPI) => {
+    const params = new URLSearchParams({
+      page: String(page),
+      limit: String(limit),
+    });
+    if (watched) params.append("watched", "true");
+    try {
+      const response = await instance.get(`/videos?${params.toString()}`);
       return response.data;
     } catch (error) {
       if (error instanceof AxiosError) {
@@ -47,6 +119,22 @@ export const fetchVideoById = createAsyncThunk(
   async (id: string, thunkAPI) => {
     try {
       const response = await instance.get(`/videos/${id}`);
+      return response.data;
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        return thunkAPI.rejectWithValue(
+          error.response?.data.message ?? error.message
+        );
+      }
+    }
+  }
+);
+
+export const fetchVideosCount = createAsyncThunk(
+  "videos/fetchVideosCount",
+  async (_, thunkAPI) => {
+    try {
+      const response = await instance.get(`/videos/counts`);
       return response.data;
     } catch (error) {
       if (error instanceof AxiosError) {
@@ -76,37 +164,40 @@ export const checkDownloadPermission = createAsyncThunk(
   }
 );
 
-// export const addVideo = createAsyncThunk(
-//   "videos/addVideo",
-//   async (data: AddVideo, thunkAPI) => {
-//     try {
-//       const response = await instance.post("/videos", data);
-//       return response.data;
-//     } catch (error) {
-//       if (error instanceof AxiosError) {
-//         return thunkAPI.rejectWithValue(
-//           error.response?.data.message ?? error.message
-//         );
-//       }
-//     }
-//   }
-// );
+export const addVideo = createAsyncThunk(
+  "videos/addVideo",
+  async (data: AddVideo, thunkAPI) => {
+    try {
+      const response = await instance.post("/videos", data);
+      return response.data;
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        return thunkAPI.rejectWithValue(
+          error.response?.data.message ?? error.message
+        );
+      }
+    }
+  }
+);
 
-// export const editVideo = createAsyncThunk(
-//   "videos/editVideo",
-//   async ({ video, videoId }: { video: EditVideo; videoId: string }, thunkAPI) => {
-//     try {
-//       const response = await instance.patch(`/videos/${videoId}`, video);
-//       return response.data;
-//     } catch (error) {
-//       if (error instanceof AxiosError) {
-//         return thunkAPI.rejectWithValue(
-//           error.response?.data.message ?? error.message
-//         );
-//       }
-//     }
-//   }
-// );
+export const editVideo = createAsyncThunk(
+  "videos/editVideo",
+  async (
+    { video, videoId }: { video: AddVideo; videoId: string },
+    thunkAPI
+  ) => {
+    try {
+      const response = await instance.patch(`/videos/${videoId}`, video);
+      return response.data;
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        return thunkAPI.rejectWithValue(
+          error.response?.data.message ?? error.message
+        );
+      }
+    }
+  }
+);
 
 export const addRemoveFavoritesVideo = createAsyncThunk(
   "videos/favorites",

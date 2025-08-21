@@ -17,10 +17,9 @@ export const isAlpha = createAsyncThunk("test/isalpha", async (_, thunkAPI) => {
 
 export const isTester = createAsyncThunk(
   "test/istester",
-  async (_, thunkAPI) => {
+  async (token: string, thunkAPI) => {
     try {
-      const response = await instance.get("/testing/login");
-
+      const response = await instance.get(`/testing/login/${token}`);
       return response.data;
     } catch (error) {
       if (error instanceof AxiosError) {

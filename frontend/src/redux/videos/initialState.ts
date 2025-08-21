@@ -3,7 +3,12 @@ import { VideoState } from "../../types/state.types";
 export const initialState: VideoState = {
   videos: [],
   totalHits: 0,
-  currentFilter: "",
+  categories: [],
+  filters: [],
+  selectedCategory: null,
+  totalVideos: undefined,
+  totalFree: undefined,
+  currentFreeFilter: false,
   selectedVideo: null,
   isLoading: false,
   error: "",
