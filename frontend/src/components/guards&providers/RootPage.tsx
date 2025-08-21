@@ -1,48 +1,30 @@
 "use client";
 
-import { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
-import Lenis from "lenis";
+// import Lenis from "lenis";
+import { Toaster } from "react-hot-toast";
 
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { refreshUser } from "@/redux/auth/auth.thunk";
-
-import Header from "@/components/Header";
-import Aside from "@/components/aside/Aside";
-import ProfileAside from "@/components/aside/ProfileAside";
+import { isAlpha } from "@/redux/test/test.thunk";
 import {
   selectIsAdmin,
   selectIsLoggedIn,
   selectIsRefreshing,
-} from "@/redux/selectors/auth.selectors";
+} from "@/selectors/auth.selectors";
+
+import Header from "@/components/Header";
+import Aside from "@/components/aside/Aside";
+import ProfileAside from "@/components/aside/ProfileAside";
 import LoaderBlur from "@/components/loaders/LoadingBlur";
-import { isAlpha } from "@/redux/test/test.thunk";
-import AdminAside from "../aside/AdminAside";
-import { Toaster } from "react-hot-toast";
+import AdminAside from "@/components/aside/AdminAside";
+
 import { useSelectedPage } from "./useAside";
 import Loader from "../loaders/LoaderCircle";
-
-// --- 1) хук для брейкпоінта lg (1024px)
-function useIsLg() {
-  const [isLg, setIsLg] = useState<boolean>(false);
-  useEffect(() => {
-    const mql = window.matchMedia("(min-width: 1024px)");
-    const onChange = (e: MediaQueryListEvent | MediaQueryList) =>
-      setIsLg("matches" in e ? e.matches : (e as MediaQueryList).matches);
-    onChange(mql);
-    mql.addEventListener?.(
-      "change",
-      onChange as (e: MediaQueryListEvent) => void
-    );
-    return () =>
-      mql.removeEventListener?.(
-        "change",
-        onChange as (e: MediaQueryListEvent) => void
-      );
-  }, []);
-  return isLg;
-}
+import useIsLg from "./useScreenWidth";
+import LenisProvider from "./LenisProvider";
 
 export default function RootPage({ children }: { children: React.ReactNode }) {
   const dispatch = useAppDispatch();
@@ -84,20 +66,6 @@ export default function RootPage({ children }: { children: React.ReactNode }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const wrapperEl = scrollContainerRef.current;
-    if (!wrapperEl) return;
-    const lenis = new Lenis({ wrapper: wrapperEl, smoothWheel: true });
-    function raf(time: number) {
-      lenis.raf(time);
-      requestAnimationFrame(raf);
-    }
-    requestAnimationFrame(raf);
-    return () => lenis.destroy();
-  }, []);
-
   // --- 5) ширина контенту змінюється тільки на lg+
   const asideWidth = isLg && isOpenAside ? 264 : 0;
 
@@ -114,7 +82,7 @@ export default function RootPage({ children }: { children: React.ReactNode }) {
   return (
     <div className="relative w-screen h-screen">
       {/* Передай сеттер у Header — там уже є кнопка меню */}
-      <div className="fixed w-full">
+      <div className="fixed w-full h-20">
         <Header isOpenAside={isOpenAside} setIsOpenAside={setIsOpenAside} />
       </div>
 
@@ -133,7 +101,6 @@ export default function RootPage({ children }: { children: React.ReactNode }) {
       {/* --- 7) Aside: 
             - на lg: «вписаний» і зсуває контент (x: 0 або -264)
             - на мобілі: оф-канвас поверх контенту з затемненням (z-30) */}
-
       <motion.div
         initial={false}
         animate={{ x: isOpenAside ? 0 : -264 }}
@@ -162,20 +129,20 @@ export default function RootPage({ children }: { children: React.ReactNode }) {
       <motion.div
         animate={{ width: isLg ? `calc(100vw - ${asideWidth}px)` : "100vw" }}
         transition={{ duration: 0.35, ease: "easeInOut" }}
-        className="fixed top-20 right-0 bottom-0 flex flex-col"
+        className="fixed top-20 right-0 bottom-0 flex flex-col h-[calc(100%-80px)]"
       >
-        <div
-          ref={scrollContainerRef}
-          className={`flex-1 overflow-y-auto scroll-container ${
-            !isLg && isOpenAside ? "pointer-events-none" : ""
-          }`}
-        >
-          <main className="relative w-full max-w-[1440px] mx-auto flex items-center justify-center sm:items-start px-5 py-5">
-            {children}
-          </main>
-          <LoaderBlur />
-          {/* <Footer /> */}
-        </div>
+        <LenisProvider>
+          <div
+            className={`flex-1 ${
+              !isLg && isOpenAside ? "pointer-events-none" : ""
+            }`}
+          >
+            <main className="relative w-full max-w-[1440px] mx-auto flex items-center justify-center sm:items-start px-5 py-5">
+              {children}
+            </main>
+          </div>
+        </LenisProvider>
+        <LoaderBlur />
       </motion.div>
 
       <Toaster position="top-center" />

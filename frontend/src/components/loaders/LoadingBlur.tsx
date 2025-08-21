@@ -2,14 +2,26 @@
 
 import "@/styles/blur.css";
 import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
 
 export default function LoaderBlur() {
+  const [vh20, setVh20] = useState(0);
+
+  useEffect(() => {
+    const update = () => setVh20(window.innerHeight * 0.4);
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, []);
+
+  if (!vh20) return null; // щоб не мигало на SSR
   return (
     <motion.div
       initial={{ y: 0 }}
-      animate={{ y: 160 }}
-      transition={{ duration: 10, ease: "easeInOut" }}
-      className="absolute bottom-0 right-0 w-screen h-40 pointer-events-none"
+      animate={{ y: vh20 * 0.5 }}
+      transition={{ duration: 3, ease: "easeInOut" }}
+      style={{ height: vh20 }}
+      className="absolute bottom-0 right-0 w-screen pointer-events-none z-999"
     >
       <div className="blur1" />
       <div className="blur2" />

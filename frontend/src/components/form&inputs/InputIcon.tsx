@@ -25,7 +25,7 @@ export default function IconInput({
     <div
       // animate={{ width: isExpanded ? "100%" : "40px" }}
       // transition={{ duration: 0.5, ease: "easeInOut" }}
-      className={`font-inter relative transition-all duration-300  shadow-input rounded-md
+      className={`font-inter relative  shadow-input rounded-md
         ${isExpanded ? "w-full " : "w-10 overflow-hidden"}  
         md:w-56 lg:w-64
         ${wrapperClassName}`}

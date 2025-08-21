@@ -5,6 +5,7 @@ import { signIn as signInWith } from "next-auth/react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { Eye, EyeClosed } from "lucide-react";
 import { useForm, SubmitHandler } from "react-hook-form";
 
@@ -25,6 +26,8 @@ export default function SignInForm() {
   const dispatch = useAppDispatch();
   const isLoading = useAppSelector(selectIsLogining);
   const router = useRouter();
+  const params = useSearchParams();
+  const error = params.get("error");
 
   const [loading, setLoading] = useState<"google" | "linkedin" | null>(null);
 
@@ -108,8 +111,8 @@ export default function SignInForm() {
             height={24}
           />
           {loading === "google"
-            ? "Реєстрація через Google..."
-            : "Зареєструватися через Google"}
+            ? "Вхід через Google..."
+            : "Увійти через Google"}
         </button>
         <button
           type="button"
@@ -127,13 +130,24 @@ export default function SignInForm() {
             height={24}
           />
           {loading === "linkedin"
-            ? "Реєстрація через LinkedIn..."
-            : "Зареєструватися через LinkedIn"}
+            ? "Вхід через LinkedIn..."
+            : "Увійти через LinkedIn"}
         </button>
+        {error && (
+          <div
+            role="alert"
+            className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700"
+          >
+            {error === "OAuthCallback"
+              ? "Помилка авторизації. Спробуйте ще раз."
+              : "Не вдалося увійти. Повторіть спробу."}
+          </div>
+        )}
       </div>
       <p className="my-6 text-center text-[11px] font-medium text-muted leading-4 tracking-[-0.11px]">
         Або за допомогою електронної пошти
       </p>
+
       {serverError && (
         <div
           role="alert"
@@ -206,7 +220,6 @@ export default function SignInForm() {
           )}
         </label>
       </div>
-
       <button
         type="submit"
         disabled={submitting}

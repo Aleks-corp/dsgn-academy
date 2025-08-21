@@ -8,7 +8,7 @@ export default function Logo() {
     <button
       type="button"
       onClick={() => redirect("/")}
-      className="relative flex items-center gap-2 bg-white pl-5 pr-6 py-3 rounded-3xl cursor-pointer"
+      className="relative w-[175px] flex items-center gap-2 bg-white pl-5 pr-6 py-3 rounded-3xl cursor-pointer"
     >
       <Beta />
       <div className="absolute -top-3 left-10">

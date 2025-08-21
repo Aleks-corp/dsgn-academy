@@ -17,6 +17,8 @@ const handlePending = (state: VideoState) => {
 const handleRejected = (state: VideoState, action: PayloadAction<string>) => {
   state.isLoading = false;
   state.error = action.payload;
+  if (action.payload === "Not authorized") {
+  }
 };
 
 const handleFulfilled = (state: VideoState) => {

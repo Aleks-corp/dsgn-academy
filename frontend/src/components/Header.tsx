@@ -83,7 +83,11 @@ export default function Header({ isOpenAside, setIsOpenAside }: Props) {
   return (
     <header className="flex items-center lg:justify-between bg-background border-b border-border w-full">
       <div className="w-full lg:w-auto flex items-center justify-between lg:justify-normal">
-        <div className="flex gap-2 items-center px-5 pt-4 pb-3 border-r border-border shrink-0">
+        <div
+          className={`flex gap-2 items-center px-5 pt-4 pb-3 border-r transition-all duration-300 ${
+            isOpenAside ? "border-border" : "border-background"
+          }  shrink-1`}
+        >
           <button
             className="hidden lg:w-10 lg:h-10 lg:flex lg:items-center lg:justify-center lg:p-2 lg:cursor-pointer"
             onClick={() => setIsOpenAside(!isOpenAside)}

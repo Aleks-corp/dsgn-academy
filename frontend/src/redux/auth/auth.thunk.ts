@@ -24,7 +24,7 @@ export const signUp = createAsyncThunk(
         if (error.response?.status === 409) {
           const data = JSON.parse(error.response.config.data);
           toast.error(
-            `Email: ${data.email} is registered. Please try another or Login.`
+            `Електронна пошта: ${data.email} вже використовується. Будь ласка, увійдіть.`
           );
         } else {
           toast.error(`${error.response?.data.message ?? error.message}`);
@@ -47,7 +47,7 @@ export const signIn = createAsyncThunk(
     } catch (error) {
       if (error instanceof AxiosError) {
         toast.error(
-          `${error.response?.data.message ?? error.message}. Please try again.`
+          `${error.response?.data.message ?? error.message}. Спробуйте ще раз.`
         );
         return thunkAPI.rejectWithValue(error.response ?? error.message);
       }
@@ -63,7 +63,7 @@ export const signOut = createAsyncThunk("auth/logout", async (_, thunkAPI) => {
   } catch (error) {
     if (error instanceof AxiosError) {
       toast.error(
-        `${error.response?.data.message ?? error.message}. Please reload page.`
+        `${error.response?.data.message ?? error.message}. Оновіть сторінку.`
       );
       return thunkAPI.rejectWithValue(
         error.response?.data.message ?? error.message
@@ -79,7 +79,7 @@ export const refreshUser = createAsyncThunk<IUser, void, { state: RootState }>(
     const persistedToken = state.auth.token;
 
     if (!persistedToken) {
-      return thunkAPI.rejectWithValue("Unable to Login");
+      return thunkAPI.rejectWithValue("Спочатку увійдіть");
     }
 
     try {
@@ -171,7 +171,7 @@ export const forgotPassword = createAsyncThunk(
     } catch (error) {
       if (error instanceof AxiosError) {
         toast.error(
-          `${error.response?.data.message ?? error.message} Please try again.`
+          `${error.response?.data.message ?? error.message} Спробуйте ще раз.`
         );
         return thunkAPI.rejectWithValue(error.response ?? error.message);
       }
@@ -189,7 +189,7 @@ export const changePassword = createAsyncThunk(
     } catch (error) {
       if (error instanceof AxiosError) {
         toast.error(
-          `${error.response?.data.message ?? error.message} Please try again.`
+          `${error.response?.data.message ?? error.message} Спробуйте ще раз.`
         );
         return thunkAPI.rejectWithValue(error.response ?? error.message);
       }

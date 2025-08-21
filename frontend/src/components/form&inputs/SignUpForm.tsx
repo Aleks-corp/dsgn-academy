@@ -5,6 +5,7 @@ import { signIn } from "next-auth/react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { Eye, EyeClosed } from "lucide-react";
 import { useForm, SubmitHandler } from "react-hook-form";
 
@@ -28,6 +29,8 @@ type SignUpResult = SignUpSuccess | SignUpError;
 export default function SignUpForm() {
   const dispatch = useAppDispatch();
   const router = useRouter();
+  const params = useSearchParams();
+  const error = params.get("error");
 
   const [loading, setLoading] = useState<"google" | "linkedin" | null>(null);
 
@@ -119,7 +122,17 @@ export default function SignUpForm() {
           {loading === "linkedin"
             ? "Реєстрація через LinkedIn..."
             : "Зареєструватися через LinkedIn"}
-        </button>
+        </button>{" "}
+        {error && (
+          <div
+            role="alert"
+            className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700"
+          >
+            {error === "OAuthCallback"
+              ? "Помилка авторизації. Спробуйте ще раз."
+              : "Не вдалося увійти. Повторіть спробу."}
+          </div>
+        )}
       </div>
       <p className="my-6 text-center text-[11px] font-medium text-muted leading-4 tracking-[-0.11px]">
         Заповніть поля нижче, ми надішлемо лист підтвердження.

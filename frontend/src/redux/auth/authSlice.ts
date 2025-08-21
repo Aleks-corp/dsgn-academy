@@ -15,6 +15,7 @@ import {
 } from "./auth.thunk";
 import { AuthState } from "../../types/state.types";
 import { IUser, GetUser, UserSubscription } from "../../types/users.type";
+import { delToken } from "@/lib/api/axios";
 
 const handleFulfilled = (state: AuthState) => {
   state.isLogining = false;
@@ -75,6 +76,7 @@ const handleRefreshRejected = (
 ) => {
   if (action.payload !== "Network Error") {
     state.token = "";
+    delToken();
   }
   state.isRefreshing = false;
   state.isLogining = false;

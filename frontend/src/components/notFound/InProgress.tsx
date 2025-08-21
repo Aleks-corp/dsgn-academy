@@ -28,7 +28,7 @@ export default function InProgressComponent({
             }}
           />
         </div>
-        <div className="md:flex-1/2">
+        <div className="w-[30%] md:w-full md:flex-1/2">
           <p className="font-inter text-4xl lg:text-5xl lg:leading-14 tracking-[-1.44px] mb-4 max-w-2xs md:max-w-96 m-auto md:m-0">
             {title} {/* Розділ про Spline */}
             <br /> вже на підході.
