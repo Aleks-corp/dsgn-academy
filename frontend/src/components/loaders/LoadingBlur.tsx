@@ -18,8 +18,8 @@ export default function LoaderBlur() {
   return (
     <motion.div
       initial={{ y: 0 }}
-      animate={{ y: vh20 * 0.5 }}
-      transition={{ duration: 3, ease: "easeInOut" }}
+      animate={{ y: vh20 }}
+      transition={{ duration: 5, ease: "easeInOut" }}
       style={{ height: vh20 }}
       className="absolute bottom-0 right-0 w-screen pointer-events-none z-999"
     >

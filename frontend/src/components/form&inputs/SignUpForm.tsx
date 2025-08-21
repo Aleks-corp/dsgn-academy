@@ -81,7 +81,7 @@ export default function SignUpForm() {
       className="w-full max-w-80 mx-auto pt-5"
       noValidate
     >
-      <h1 className="text-center text-2xl font-semibold mb-10">
+      <h1 className="text-center text-2xl font-normal mb-12">
         Створіть свій акаунт
       </h1>
       <div className="flex flex-col gap-4">

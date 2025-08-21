@@ -11,9 +11,7 @@ export default function SignWith() {
 
   return (
     <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-lg ring-1 ring-black/5">
-      <h2 className="mb-4 text-center text-xl font-semibold">
-        Або за допомогою
-      </h2>
+      <h2 className="mb-4 text-center text-xl font-medium">Або за допомогою</h2>
 
       <div className="flex flex-col gap-3">
         <Button

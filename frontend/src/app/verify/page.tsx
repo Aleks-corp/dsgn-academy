@@ -57,12 +57,12 @@ const VerifyPage = () => {
         <>
           <div className="w-full lg:w-[45%]">
             {token === "0" && verifyMessage !== "Верифікацію вже пройдено" && (
-              <h3 className="font-inter text-2xl mt-10">
+              <h3 className="font-inter text-2xl mt-12">
                 Перевірте пошту для підтвердження акаунта
               </h3>
             )}
             {!isLoggining && verifyMessage === "Верифікацію пройдено" && (
-              <div className="mt-10 flex flex-col gap-10 items-center">
+              <div className="mt-12 flex flex-col gap-10 items-center">
                 <h3 className="font-inter text-2xl">Підтвердження успішне</h3>
                 <div>
                   <NavLink text="Увійти" rout="/signin" />
@@ -74,7 +74,7 @@ const VerifyPage = () => {
             {verifyMessage === "Верифікацію вже пройдено" &&
               !isLoggining &&
               !isLoggedIn && (
-                <div className="mt-10 flex flex-col gap-10 items-center">
+                <div className="mt-12 flex flex-col gap-10 items-center">
                   <h3 className="font-inter text-2xl">
                     Акаунт уже підтверджено
                   </h3>
@@ -84,13 +84,13 @@ const VerifyPage = () => {
                 </div>
               )}
           </div>
-          <div className="w-0 lg:w-[55%] overflow-hidden">
+          <div className="w-0 lg:w-[55%] overflow-hidden rounded-xl">
             <Image
               src={"/images/reglog.jpg"}
               alt="Registration Logo"
               width={780}
               height={860}
-              className="object-cover w-auto h-auto"
+              className="object-cover w-full h-full rounded-xl"
             />
           </div>
         </>

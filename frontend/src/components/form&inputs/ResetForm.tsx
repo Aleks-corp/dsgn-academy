@@ -72,7 +72,7 @@ export default function ResetForm() {
       className="w-full max-w-80 mx-auto pt-5"
       noValidate
     >
-      <h1 className="text-center text-2xl font-semibold mb-10">
+      <h1 className="text-center text-2xl font-normal mb-12">
         Створіть новий пароль
       </h1>
       <p className="my-6 text-center text-[11px] font-medium text-muted leading-4 tracking-[-0.11px]">

@@ -91,7 +91,7 @@ export default function SignInForm() {
       className="w-full max-w-80 mx-auto pt-5"
       noValidate
     >
-      <h1 className="text-center text-2xl font-semibold mb-10">
+      <h1 className="text-center text-2xl font-normal mb-12">
         Вхід до Дизайн Академії
       </h1>
       <div className="flex flex-col gap-4">
