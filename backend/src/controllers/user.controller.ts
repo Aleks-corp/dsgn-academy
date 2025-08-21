@@ -21,7 +21,7 @@ import {
   oauthUpsertService,
 } from "../services/user.service.js";
 
-const { FRONT_SERVER } = process.env;
+const { FRONT_SERVER, FRONT_WEB_SERVER } = process.env;
 
 const register = async (req: Request, res: Response): Promise<void> => {
   const { name, email, password } = req.body;
@@ -37,7 +37,9 @@ const register = async (req: Request, res: Response): Promise<void> => {
     password,
     ip,
   });
-  res.status(201).json({ ok: true, message: "Thank you for signing up" });
+  res
+    .status(201)
+    .json({ ok: true, message: "Вітаємо! Ви успішно зареєструвалися!" });
 };
 
 const login = async (req: Request, res: Response): Promise<void> => {
@@ -241,13 +243,15 @@ const paymentReturn = async (req: Request, res: Response): Promise<void> => {
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Processing Payment</title>
+        <title>Перевіряється оплата</title>
     </head>
     <body>
-        <h2>Processing your payment...</h2>
+        <h2>Перевіряється оплата...</h2>
         <script>
             setTimeout(() => {
-                window.location.href = "${FRONT_SERVER}/payment-success";
+                window.location.href = "${
+                  FRONT_WEB_SERVER ? FRONT_WEB_SERVER : FRONT_SERVER
+                }/payment-success";
             }, 500);
         </script>
     </body>

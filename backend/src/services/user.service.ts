@@ -101,8 +101,8 @@ export const registerService = async ({
 export const loginService = async ({
   email,
   password,
-}: // ip,
-{
+  ip,
+}: {
   email: string;
   password: string;
   ip: string;
@@ -128,24 +128,23 @@ export const loginService = async ({
   const token = jwt.sign({ id: user._id }, JWT_SECRET ? JWT_SECRET : "", {
     expiresIn: "333h",
   });
-  // if (ip && ip !== "") {
-  //   try {
-  //     const { data } = await axios.get(`https://v2.api.iphub.info/ip/${ip}`, {
-  //       headers: {
-  //         "X-Key": IPHUB_API_KEY as string,
-  //       },
-  //     });
-  //     if (data.block === 1 || data.block === 2) {
-  //       await UserModel.findByIdAndUpdate(user._id, { token });
-  //       return { token, updatedUser };
-  //     }
-  //   } catch (error) {
-  //     console.error("🚀 ~ error:", error); // log
-  //   }
-
-  //   await UserModel.findByIdAndUpdate(user._id, { token, ip });
-  //   return { token, updatedUser };
-  // }
+  if (ip && ip !== "") {
+    //   try {
+    //     const { data } = await axios.get(`https://v2.api.iphub.info/ip/${ip}`, {
+    //       headers: {
+    //         "X-Key": IPHUB_API_KEY as string,
+    //       },
+    //     });
+    //     if (data.block === 1 || data.block === 2) {
+    //       await UserModel.findByIdAndUpdate(user._id, { token });
+    //       return { token, updatedUser };
+    //     }
+    //   } catch (error) {
+    //     console.error("🚀 ~ error:", error); // log
+    //   }
+    await UserModel.findByIdAndUpdate(user._id, { token, ip });
+    return { token, updatedUser };
+  }
 
   await UserModel.findByIdAndUpdate(user._id, { token });
   return { token, updatedUser };
@@ -186,7 +185,6 @@ export const oauthUpsertService = async ({
     const hasAccount = user.accounts?.some(
       (a) => a.provider === provider && a.providerId === providerId
     );
-
     if (!hasAccount) {
       user.accounts?.push({ provider, providerId });
     }
@@ -196,18 +194,20 @@ export const oauthUpsertService = async ({
     if (avatar && !user.avatar) user.avatar = avatar;
     if (emailLc) user.verify = true;
   }
+  if (ip) user.ip = ip;
   const updatedUser = await checkSubscriptionStatus(user);
+  const token = jwt.sign(
+    { id: updatedUser._id },
+    JWT_SECRET ? JWT_SECRET : "",
+    {
+      expiresIn: "333h",
+    }
+  );
 
-  const token = jwt.sign({ id: updatedUser._id }, JWT_SECRET || "", {
-    expiresIn: "333h",
+  await UserModel.findByIdAndUpdate(updatedUser._id, {
+    ...updatedUser.toObject(),
+    token,
   });
-
-  if (ip) {
-    await UserModel.findByIdAndUpdate(updatedUser._id, { token, ip });
-  } else {
-    await UserModel.findByIdAndUpdate(updatedUser._id, { token });
-  }
-
   return { token, updatedUser };
 };
 
