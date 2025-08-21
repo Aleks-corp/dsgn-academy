@@ -6,7 +6,7 @@ import { withAlphaGuard } from "@/components/guards&providers/WithAlphaGuard";
 
 function SignupPage() {
   return (
-    <div className="flex w-full">
+    <div className="flex w-full max-h-[690px]">
       <div className="w-full lg:w-[45%]">
         <SignUpForm />
       </div>
@@ -14,8 +14,8 @@ function SignupPage() {
         <Image
           src={"/images/reglog.jpg"}
           alt="Registration Logo"
-          width={780}
-          height={860}
+          width={2340}
+          height={2280}
           className="object-cover w-full h-full rounded-xl"
         />
       </div>

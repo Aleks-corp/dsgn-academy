@@ -47,7 +47,7 @@ const VerifyPage = () => {
   }, [dispatch, token]);
 
   return (
-    <div className="flex w-full">
+    <div className="flex w-full max-h-[690px]">
       {isLoggining && (
         <div className="w-20 h-20 mt-20">
           <Loader />
@@ -57,12 +57,12 @@ const VerifyPage = () => {
         <>
           <div className="w-full lg:w-[45%]">
             {token === "0" && verifyMessage !== "Верифікацію вже пройдено" && (
-              <h3 className="font-inter text-2xl mt-12">
+              <h3 className="font-inter text-2xl mt-6">
                 Перевірте пошту для підтвердження акаунта
               </h3>
             )}
             {!isLoggining && verifyMessage === "Верифікацію пройдено" && (
-              <div className="mt-12 flex flex-col gap-10 items-center">
+              <div className="mt-6 flex flex-col gap-10 items-center">
                 <h3 className="font-inter text-2xl">Підтвердження успішне</h3>
                 <div>
                   <NavLink text="Увійти" rout="/signin" />
@@ -74,7 +74,7 @@ const VerifyPage = () => {
             {verifyMessage === "Верифікацію вже пройдено" &&
               !isLoggining &&
               !isLoggedIn && (
-                <div className="mt-12 flex flex-col gap-10 items-center">
+                <div className="mt-6 flex flex-col gap-10 items-center">
                   <h3 className="font-inter text-2xl">
                     Акаунт уже підтверджено
                   </h3>
@@ -88,8 +88,8 @@ const VerifyPage = () => {
             <Image
               src={"/images/reglog.jpg"}
               alt="Registration Logo"
-              width={780}
-              height={860}
+              width={2340}
+              height={2280}
               className="object-cover w-full h-full rounded-xl"
             />
           </div>

@@ -72,11 +72,11 @@ export default function ResetForm() {
       className="w-full max-w-80 mx-auto pt-5"
       noValidate
     >
-      <h1 className="text-center text-2xl font-normal mb-12">
+      <h1 className="text-center text-2xl font-normal mb-6">
         Створіть новий пароль
       </h1>
-      <p className="my-6 text-center text-[11px] font-medium text-muted leading-4 tracking-[-0.11px]">
-        Заповніть поля нижче, для створення нового пароля.
+      <p className="mb-6 text-center text-[11px] font-medium text-muted-text leading-4 tracking-[-0.11px]">
+        Заповніть поля нижче, для створення нового пароля
       </p>
       {serverError && (
         <div
@@ -88,7 +88,7 @@ export default function ResetForm() {
       )}
       <div className="flex flex-col gap-4 mb-6">
         <label className="font-inter text-xs font-medium text-foreground tracking-[-0.12px]">
-          <p className="mb-2">Пароль</p>
+          <p className="mb-1.5">Пароль</p>
           <div className="relative">
             <InputWithIcon
               hookformprop={register("password")}
@@ -113,7 +113,7 @@ export default function ResetForm() {
           )}
         </label>
         <label className="font-inter text-xs font-medium text-foreground tracking-[-0.12px]">
-          <p className="mb-2">Повторіть пароль</p>
+          <p className="mb-1.5">Повторіть пароль</p>
           <div className="relative">
             <InputWithIcon
               hookformprop={register("confpass")}
@@ -144,12 +144,12 @@ export default function ResetForm() {
         className="w-full justify-center items-center gap-1 py-4 px-5 rounded-xl shadow-btn cursor-pointer disabled:cursor-not-allowed disabled:opacity-60 bg-[#323232]"
       >
         <p className="font-inter text-sm font-semibold text-icon">
-          {submitting ? "ВІдправка…" : "Змінити"}
+          {submitting ? "Зберегти" : "Зберегти"}
         </p>
       </button>
       <Link
         href="/signin"
-        className="flex justify-center font-inter font-medium text-[11px] text-muted tracking-[-0.11px] mt-4"
+        className="flex justify-center font-inter font-medium text-[11px] text-muted tracking-[-0.11px] mt-2.5"
       >
         Повернутись до входу
       </Link>

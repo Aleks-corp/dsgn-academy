@@ -30,6 +30,7 @@ const config: Config = {
           DEFAULT: "var(--muted)",
           foreground: "var(--muted-foreground)",
           background: "var(--muted-background)",
+          text: "var(--muted-text)",
         },
         accent: {
           DEFAULT: "var(--accent)",

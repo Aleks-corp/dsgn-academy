@@ -91,10 +91,10 @@ export default function SignInForm() {
       className="w-full max-w-80 mx-auto pt-5"
       noValidate
     >
-      <h1 className="text-center text-2xl font-normal mb-12">
+      <h1 className="text-center text-2xl font-normal mb-6">
         Вхід до Дизайн Академії
       </h1>
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-3">
         <button
           type="button"
           className="btn-gradient inline-flex justify-center items-center gap-2 py-2 px-5 rounded-[10px] font-inter font-semibold text-sm tracking-[-0.28px] shadow-btn cursor-pointer disabled:cursor-default"
@@ -144,7 +144,7 @@ export default function SignInForm() {
           </div>
         )}
       </div>
-      <p className="my-6 text-center text-[11px] font-medium text-muted leading-4 tracking-[-0.11px]">
+      <p className="my-6 text-center text-[11px] font-medium text-muted-text leading-4 tracking-[-0.11px]">
         Або за допомогою електронної пошти
       </p>
 
@@ -170,7 +170,7 @@ export default function SignInForm() {
       )}
       <div className="flex flex-col gap-4 mb-6">
         <label className="font-inter text-xs font-medium text-foreground tracking-[-0.12px]">
-          <p className="mb-2">Електронна пошта</p>
+          <p className="mb-1.5">Електронна пошта</p>
           <InputWithIcon
             hookformprop={register("email")}
             type="email"
@@ -186,7 +186,7 @@ export default function SignInForm() {
         </label>
         <label className="font-inter text-xs font-medium text-foreground tracking-[-0.12px]">
           <div className="flex w-full justify-between">
-            <p className="mb-2">Пароль</p>
+            <p className="mb-1.5">Пароль</p>
 
             <Link
               href="/forgot-password"
@@ -231,7 +231,7 @@ export default function SignInForm() {
       </button>
       <Link
         href="/signup"
-        className="flex justify-center font-inter font-medium text-[11px] text-muted tracking-[-0.11px] mt-4"
+        className="flex justify-center font-inter font-medium text-[11px] text-muted tracking-[-0.11px] mt-2.5"
       >
         Ще немає акаунта?
       </Link>
