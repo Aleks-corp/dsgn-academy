@@ -23,3 +23,11 @@ export const userSubscriptionConst: Record<
   TESTER: "tester",
   ADMIN: "admin",
 };
+
+export const userSubscriptionConstText = {
+  free: "Безкоштовний",
+  trial: "Тріал",
+  premium: "Преміум",
+  tester: "Тестовий",
+  admin: "АдміньКа",
+};

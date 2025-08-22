@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { signIn } from "next-auth/react";
-import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
@@ -14,6 +13,8 @@ import { useAppDispatch } from "@/redux/hooks";
 import { signUp } from "@/redux/auth/auth.thunk";
 import InputWithIcon from "@/components/form&inputs/FormInput";
 import { regSchema } from "@/schemas/users.schemas";
+import ButtonBlack from "@/components/buttons/ButtonsBlack";
+import LinkInline from "@/components/links/LinkInline";
 
 type FormValues = {
   name: string;
@@ -81,13 +82,13 @@ export default function SignUpForm() {
       className="w-full max-w-80 mx-auto pt-5"
       noValidate
     >
-      <h1 className="text-center text-2xl font-normal mb-6">
+      <h1 className="font-inter text-center text-[32px] font-normal leading-10 tracking-thinest mb-6">
         Створіть свій акаунт
       </h1>
       <div className="flex flex-col gap-3">
         <button
           type="button"
-          className="btn-gradient inline-flex justify-center items-center gap-2 py-2 px-5 rounded-[10px] font-inter font-semibold text-sm tracking-[-0.28px] shadow-btn cursor-pointer"
+          className="btn-gradient inline-flex justify-center items-center gap-2 py-2 px-5 rounded-[10px] font-inter font-semibold text-sm tracking-thiner shadow-btn cursor-pointer"
           onClick={() => {
             signIn("google", { callbackUrl: "/oauth/finish" });
             setLoading("google");
@@ -106,7 +107,7 @@ export default function SignUpForm() {
         </button>
         <button
           type="button"
-          className="btn-gradient inline-flex justify-center items-center gap-2 py-2 px-5 rounded-[10px] font-inter font-semibold text-sm tracking-[-0.28px] shadow-btn cursor-pointer"
+          className="btn-gradient inline-flex justify-center items-center gap-2 py-2 px-5 rounded-[10px] font-inter font-semibold text-sm tracking-thiner shadow-btn cursor-pointer"
           onClick={() => {
             signIn("linkedin", { callbackUrl: "/oauth/finish" });
             setLoading("linkedin");
@@ -126,7 +127,7 @@ export default function SignUpForm() {
         {error && (
           <div
             role="alert"
-            className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700"
+            className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700 tracking-thin"
           >
             {error === "OAuthCallback"
               ? "Помилка авторизації. Спробуйте ще раз."
@@ -134,19 +135,19 @@ export default function SignUpForm() {
           </div>
         )}
       </div>
-      <p className="my-6 text-center text-[11px] font-medium text-muted-text leading-4 tracking-[-0.11px]">
+      <p className="my-6 text-center text-[11px] font-medium text-muted-text leading-4 tracking-thin">
         Або зареєструйтеся за допомогою електронної пошти
       </p>
       {serverError && (
         <div
           role="alert"
-          className="mb-4 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700"
+          className="mb-4 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700 tracking-thin"
         >
           {serverError}
         </div>
       )}
       <div className="flex flex-col gap-4 mb-6">
-        <label className="font-inter text-xs font-medium text-foreground tracking-[-0.12px]">
+        <label className="font-inter text-xs font-medium text-foreground tracking-tracking-thin">
           <p className="mb-1.5">Ім&apos;я</p>
           <InputWithIcon
             hookformprop={register("name")}
@@ -156,12 +157,12 @@ export default function SignUpForm() {
             wrapperClassName="w-full"
           />
           {errors?.name && (
-            <p className="mt-1 block text-xs text-red-600">
+            <p className="mt-1 block text-xs text-red-600 tracking-thin">
               {errors.name.message}
             </p>
           )}
         </label>
-        <label className="font-inter text-xs font-medium text-foreground tracking-[-0.12px]">
+        <label className="font-inter text-xs font-medium text-foreground tracking-tracking-thin">
           <p className="mb-1.5">Електронна пошта</p>
           <InputWithIcon
             hookformprop={register("email")}
@@ -171,12 +172,12 @@ export default function SignUpForm() {
             wrapperClassName="w-full"
           />
           {errors?.email && (
-            <p className="mt-1 block text-xs text-red-600">
+            <p className="mt-1 block text-xs text-red-600 tracking-thin">
               {errors.email.message}
             </p>
           )}
         </label>
-        <label className="font-inter text-xs font-medium text-foreground tracking-[-0.12px]">
+        <label className="font-inter text-xs font-medium text-foreground tracking-tracking-thin">
           <p className="mb-1.5">Пароль</p>
           <div className="relative">
             <InputWithIcon
@@ -187,21 +188,25 @@ export default function SignUpForm() {
               wrapperClassName="w-full"
             />
             <button
-              className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 text-muted-foreground hover:text-foreground"
+              className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 text-muted-foreground hover:text-foreground cursor-pointer"
               type="button"
               tabIndex={-1}
               onClick={() => setShowPass(!showPass)}
             >
-              {showPass ? <Eye size={20} /> : <EyeClosed size={20} />}
+              {showPass ? (
+                <Eye size={20} color="#7b7b7b" />
+              ) : (
+                <EyeClosed size={20} color="#7b7b7b" />
+              )}
             </button>
           </div>
           {errors?.password && (
-            <p className="mt-1 block text-xs text-red-600">
+            <p className="mt-1 block text-xs text-red-600 tracking-thin">
               {errors.password.message}
             </p>
           )}
         </label>
-        <label className="font-inter text-xs font-medium text-foreground tracking-[-0.12px]">
+        <label className="font-inter text-xs font-medium text-foreground tracking-tracking-thin">
           <p className="mb-1.5">Повторіть пароль</p>
           <div className="relative">
             <InputWithIcon
@@ -212,36 +217,37 @@ export default function SignUpForm() {
               wrapperClassName="w-full"
             />
             <button
-              className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 text-muted-foreground hover:text-foreground"
+              className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 text-muted-foreground hover:text-foreground cursor-pointer"
               type="button"
               tabIndex={-1}
               onClick={() => setShowConfPass(!showConfPass)}
             >
-              {showConfPass ? <Eye size={20} /> : <EyeClosed size={20} />}
+              {showConfPass ? (
+                <Eye size={20} color="#7b7b7b" />
+              ) : (
+                <EyeClosed size={20} color="#7b7b7b" />
+              )}
             </button>
           </div>
           {errors?.confpass && (
-            <p className="mt-1 block text-xs text-red-600">
+            <p className="mt-1 block text-xs text-red-600 tracking-thin">
               {errors.confpass.message}
             </p>
           )}
         </label>
       </div>
-      <button
+      <ButtonBlack
+        text="Створити акаунт"
+        textPressed="Реєстрація…"
+        pressed={submitting}
         type="submit"
-        disabled={submitting}
-        className="w-full justify-center items-center gap-1 py-4 px-5 rounded-xl shadow-btn cursor-pointer disabled:cursor-not-allowed disabled:opacity-60 bg-[#323232]"
-      >
-        <p className="font-inter text-sm font-semibold text-icon">
-          {submitting ? "Реєстрація…" : "Створити акаунт"}
-        </p>
-      </button>
-      <Link
+        className=""
+      />
+      <LinkInline
         href="/signin"
-        className="flex justify-center font-inter font-medium text-[11px] text-muted tracking-[-0.11px] mt-2.5"
-      >
-        Вже маєте акаунт?
-      </Link>
+        text=" Вже маєте акаунт?"
+        className="flex justify-center mt-2.5"
+      />
     </form>
   );
 }

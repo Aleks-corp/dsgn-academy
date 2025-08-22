@@ -54,12 +54,12 @@ export default function Aside({ selectedPage, setSelectedPage }: Props) {
   }
 
   return isAlphaTesting && !isTester ? null : (
-    <aside className="flex flex-col items-center gap-3 w-full py-5 border-r border-border h-[calc(100%-80px)] transition-all">
+    <aside className="flex flex-col items-center gap-3 w-full p-5 border-r border-border h-[calc(100%-80px)] transition-all">
       <div className="flex flex-col w-full items-center gap-0.5">
         <button
           type="button"
           name="all-videos"
-          className={`w-full cursor-pointer rounded-xl border-[1px] border-background hover:bg-muted-background hover:border-border ${
+          className={`w-full cursor-pointer rounded-xl border-1 border-background hover:bg-muted-background hover:border-border ${
             selectedPage === "all-videos"
               ? "bg-muted-background border-border"
               : ""
@@ -72,7 +72,11 @@ export default function Aside({ selectedPage, setSelectedPage }: Props) {
             text="Всі відео"
             rout="/videos"
             icon={
-              <div className="flex items-center justify-center w-8 h-8 p-1.5 bg-icon shadow-icon rounded-lg">
+              <div
+                className={`flex items-center justify-center w-8 h-8 p-1.5 rounded-lg ${
+                  selectedPage === "all-videos" ? "bg-icon shadow-icon" : ""
+                }`}
+              >
                 <Image
                   src="/icons/menu-icons/grid.svg"
                   alt="Grid"
@@ -100,7 +104,11 @@ export default function Aside({ selectedPage, setSelectedPage }: Props) {
             text="Курси"
             rout="/courses"
             icon={
-              <div className="flex items-center justify-center w-8 h-8 p-1.5 bg-icon shadow-icon rounded-lg">
+              <div
+                className={`flex items-center justify-center w-8 h-8 p-1.5 rounded-lg ${
+                  selectedPage === "courses" ? "bg-icon shadow-icon" : ""
+                }`}
+              >
                 <Image
                   src="/icons/menu-icons/layer.svg"
                   alt="Grid"
@@ -128,7 +136,11 @@ export default function Aside({ selectedPage, setSelectedPage }: Props) {
             text="Без оплати"
             rout="/videos?free"
             icon={
-              <div className="flex items-center justify-center w-8 h-8 p-1.5 bg-icon shadow-icon rounded-lg">
+              <div
+                className={`flex items-center justify-center w-8 h-8 p-1.5 rounded-lg ${
+                  selectedPage === "free-videos" ? "bg-icon shadow-icon" : ""
+                }`}
+              >
                 <Image
                   src="/icons/menu-icons/settings.svg"
                   alt="Grid"
@@ -154,7 +166,11 @@ export default function Aside({ selectedPage, setSelectedPage }: Props) {
             text="Короткі відео"
             rout="/shorts"
             icon={
-              <div className="flex items-center justify-center w-8 h-8 p-1.5 bg-icon shadow-icon rounded-lg">
+              <div
+                className={`flex items-center justify-center w-8 h-8 p-1.5 rounded-lg ${
+                  selectedPage === "shorts" ? "bg-icon shadow-icon" : ""
+                }`}
+              >
                 <Image
                   src="/icons/menu-icons/zap.svg"
                   alt="Grid"
@@ -168,8 +184,9 @@ export default function Aside({ selectedPage, setSelectedPage }: Props) {
         </button>
       </div>
       <div className="flex flex-col w-full">
-        <p>Категорії</p>
-
+        <p className="p-2.5 font-inter font-medium text-xs text-muted leading-4 tracking-thin">
+          Категорії
+        </p>
         {filteredCategories.map((c, i) => (
           <button
             key={i}
@@ -186,7 +203,11 @@ export default function Aside({ selectedPage, setSelectedPage }: Props) {
               text={c.charAt(0).toUpperCase() + c.slice(1)}
               rout={`/videos?category=${c}`}
               icon={
-                <div className="flex justify-center items-center w-8 h-8 p-1.5">
+                <div
+                  className={`flex items-center justify-center w-8 h-8 p-1.5 rounded-lg ${
+                    selectedPage === c ? "bg-icon shadow-icon" : ""
+                  }`}
+                >
                   <Image
                     src={`/icons/${c}.svg`}
                     alt={c.charAt(0).toUpperCase() + c.slice(1)}

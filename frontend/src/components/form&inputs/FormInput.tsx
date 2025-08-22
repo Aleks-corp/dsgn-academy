@@ -29,7 +29,7 @@ export default function FormInputWithIcon({
         {...hookformprop}
         className={`${
           icon ? "pl-10" : ""
-        } font-inter leading-4 tracking-[-0.13px] w-full border-0 px-6 py-3 rounded-xl bg-icon shadow-input focus:shadow-input-hover focus:outline-0 ${inputClassName}`}
+        } font-inter font-medium text-xs leading-4 tracking-[-0.12px] w-full border-1 border-border px-6 py-3 rounded-xl bg-icon focus:border-border-focus focus:outline-0 ${inputClassName}`}
       />
     </div>
   );

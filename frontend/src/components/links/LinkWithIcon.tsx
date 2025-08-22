@@ -21,13 +21,13 @@ export default function NavLinkIcon({
     >
       <div className="flex justify-center items-center gap-2.5">
         {icon}
-        <p className="font-medium text-xs leading-4 tracking-[-0.12px] overflow-ellipsis">
+        <p className="font-inter font-medium text-xs leading-4 tracking-thin overflow-ellipsis">
           {text}
         </p>
       </div>
       {count && count !== 0 && (
         <div className="flex justify-center items-center px-1.5 py-0.5 rounded-md bg-muted-background shadow-count">
-          <p className="text-muted text-[11px] font-medium leading-4 tracking-[-0.11px]">
+          <p className="font-inter text-muted text-[11px] font-medium leading-4 tracking-thin">
             {count}
           </p>
         </div>

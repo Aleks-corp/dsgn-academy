@@ -20,6 +20,7 @@ import NavLink from "@/components/links/Link";
 import Logo from "@/components/Logo";
 import HeaderTimer from "@/components/HeaderTimer";
 import Image from "next/image";
+import Link from "next/link";
 
 type Props = {
   isOpenAside: boolean;
@@ -113,8 +114,8 @@ export default function Header({ isOpenAside, setIsOpenAside }: Props) {
               autoComplete="off"
               autoCorrect="off"
               spellCheck={false}
-              placeholder="Пошук"
-              aria-label="Пошук по відео"
+              placeholder="Пошук відео..."
+              aria-label="Пошук відео"
               value={search}
               onChange={setSearch}
               onKeyDown={(e) => {
@@ -134,7 +135,7 @@ export default function Header({ isOpenAside, setIsOpenAside }: Props) {
                 >
                   <path
                     d="M14 14L11.1 11.1M12.6667 7.33333C12.6667 10.2789 10.2789 12.6667 7.33333 12.6667C4.38781 12.6667 2 10.2789 2 7.33333C2 4.38781 4.38781 2 7.33333 2C10.2789 2 12.6667 4.38781 12.6667 7.33333Z"
-                    stroke="#717179"
+                    stroke="#7b7b7b"
                     strokeWidth="1.5"
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -146,9 +147,15 @@ export default function Header({ isOpenAside, setIsOpenAside }: Props) {
         </div>
       </div>
       <div className="hidden lg:flex lg:gap-4 p-5">
-        <button className=" ">Про проект</button>
+        <Link
+          href="/command"
+          className="flex items-center text-[#727272] font-inter font-medium text-[13px] leading-5 tracking-thin hover:text-foreground transition-colors duration-300 mr-4"
+          passHref
+        >
+          Про проект
+        </Link>
         {(subscription === "free" || !subscription) && (
-          <NavLink rout="/sub" text="Преміум доступ" />
+          <NavLink rout="/check-sub" text="Преміум доступ" />
         )}
         {!isLoggedIn ? (
           <NavLink rout="/signin" text="Увійти" style="accent" />

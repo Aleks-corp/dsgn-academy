@@ -57,13 +57,14 @@ const VerifyPage = () => {
         <>
           <div className="w-full lg:w-[45%]">
             {token === "0" && verifyMessage !== "Верифікацію вже пройдено" && (
-              <h3 className="font-inter text-2xl mt-6">
-                Перевірте пошту для підтвердження акаунта
+              <h3 className="font-inter text-xl font-normal mt-6">
+                Перевірте пошту
+                <br /> для підтвердження акаунта
               </h3>
             )}
             {!isLoggining && verifyMessage === "Верифікацію пройдено" && (
               <div className="mt-6 flex flex-col gap-10 items-center">
-                <h3 className="font-inter text-2xl">Підтвердження успішне</h3>
+                <h3 className="font-inter text-xl">Підтвердження успішне</h3>
                 <div>
                   <NavLink text="Увійти" rout="/signin" />
                 </div>
@@ -75,7 +76,7 @@ const VerifyPage = () => {
               !isLoggining &&
               !isLoggedIn && (
                 <div className="mt-6 flex flex-col gap-10 items-center">
-                  <h3 className="font-inter text-2xl">
+                  <h3 className="font-inter text-xl">
                     Акаунт уже підтверджено
                   </h3>
                   <div>

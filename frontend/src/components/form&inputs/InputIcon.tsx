@@ -25,7 +25,7 @@ export default function IconInput({
     <div
       // animate={{ width: isExpanded ? "100%" : "40px" }}
       // transition={{ duration: 0.5, ease: "easeInOut" }}
-      className={`font-inter relative  shadow-input rounded-md
+      className={`font-inter relative  shadow-input rounded-xl
         ${isExpanded ? "w-full " : "w-10 overflow-hidden"}  
         md:w-56 lg:w-64
         ${wrapperClassName}`}
@@ -39,7 +39,7 @@ export default function IconInput({
         {...props}
         className={`${
           icon ? "pl-10" : ""
-        } border-0 px-3 py-2 w-full rounded-md shadow-input focus:shadow-input-hover focus:outline-0 ${inputClassName}`}
+        } font-inter font-medium text-xs leading-4 tracking-[-0.12px] w-full border-1 border-border px-6 py-3 rounded-xl bg-icon focus:border-border-focus focus:outline-0 ${inputClassName}`}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         onBlur={() => {

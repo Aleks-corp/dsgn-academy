@@ -32,8 +32,13 @@ const config: Config = {
           background: "var(--muted-background)",
           text: "var(--muted-text)",
         },
+        text: {
+          DEFAULT: "var(--text-grey)",
+          white: "var(--text-white)",
+        },
         accent: {
           DEFAULT: "var(--accent)",
+          hover: "var(--accent-hover)",
           foreground: "var(--accent-foreground)",
         },
         hover: {
@@ -51,8 +56,15 @@ const config: Config = {
         border: {
           DEFAULT: "var(--border-bg)",
           foreground: "var(--border-foreground)",
+          focus: "var(--border-bg-focus)",
         },
       },
+      letterSpacing: {
+        thin: "-0.01em",
+        thiner: "-0.02em",
+        thinest: "-0.03em",
+      },
+
       boxShadow: {
         btn: "var(--box-shadow-btn)",
         input: {
@@ -61,6 +73,7 @@ const config: Config = {
         },
         icon: "var(--box-shadow-icon)",
         count: "var(--box-shadow-count)",
+        sub: "var(--box-shadow-sub)",
       },
     },
   },

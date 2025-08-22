@@ -10,7 +10,7 @@ type Props = {
 
 export default function ProfileAside({ selectedPage, setSelectedPage }: Props) {
   return (
-    <aside className="flex flex-col items-center gap-3 w-full py-5 border-r border-border h-[calc(100%-80px)] transition-all">
+    <aside className="flex flex-col items-center gap-3 w-full p-5 border-r border-border h-[calc(100%-80px)] transition-all">
       <div className="flex flex-col w-full items-center gap-0.5">
         <button
           type="button"
@@ -28,12 +28,18 @@ export default function ProfileAside({ selectedPage, setSelectedPage }: Props) {
             text="Профіль"
             rout="/profile"
             icon={
-              <Image
-                src="/icons/menu-icons/grid.svg"
-                alt="Grid"
-                width={20}
-                height={20}
-              />
+              <div
+                className={`flex items-center justify-center w-8 h-8 p-1.5 rounded-lg ${
+                  selectedPage === "profile" ? "bg-icon shadow-icon" : ""
+                }`}
+              >
+                <Image
+                  src="/icons/menu-icons/user.svg"
+                  alt="Grid"
+                  width={20}
+                  height={20}
+                />
+              </div>
             }
           />
         </button>
@@ -53,12 +59,18 @@ export default function ProfileAside({ selectedPage, setSelectedPage }: Props) {
             text="Безпека"
             rout="/profile/security"
             icon={
-              <Image
-                src="/icons/menu-icons/layer.svg"
-                alt="Grid"
-                width={20}
-                height={20}
-              />
+              <div
+                className={`flex items-center justify-center w-8 h-8 p-1.5 rounded-lg ${
+                  selectedPage === "security" ? "bg-icon shadow-icon" : ""
+                }`}
+              >
+                <Image
+                  src="/icons/menu-icons/sec.svg"
+                  alt="Grid"
+                  width={20}
+                  height={20}
+                />
+              </div>
             }
           />
         </button>
@@ -78,12 +90,20 @@ export default function ProfileAside({ selectedPage, setSelectedPage }: Props) {
             text="Підписка"
             rout="/profile/subscription"
             icon={
-              <Image
-                src="/icons/menu-icons/settings.svg"
-                alt="Grid"
-                width={20}
-                height={20}
-              />
+              <div
+                className={`flex items-center justify-center w-8 h-8 p-1.5 rounded-lg ${
+                  selectedPage === "subscription"
+                    ? "bg-icon shadow-icon text-foreground fill-foreground stroke-foreground"
+                    : ""
+                }`}
+              >
+                <Image
+                  src="/icons/menu-icons/pay.svg"
+                  alt="Grid"
+                  width={20}
+                  height={20}
+                />
+              </div>
             }
           />
         </button>

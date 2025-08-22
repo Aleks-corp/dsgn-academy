@@ -1,29 +1,26 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
 import { Eye, EyeClosed } from "lucide-react";
 import { useForm, SubmitHandler } from "react-hook-form";
 
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useAppDispatch } from "@/redux/hooks";
-import { setNewPassword } from "@/redux/auth/auth.thunk";
+import { changePassword } from "@/redux/auth/auth.thunk";
 import InputWithIcon from "@/components/form&inputs/FormInput";
-import { resetPassSchema } from "@/schemas/users.schemas";
-import ButtonBlack from "@/components/buttons/ButtonsBlack";
-import LinkInline from "@/components/links/LinkInline";
+import { changePassSchema } from "@/schemas/users.schemas";
+import Button from "@/components/buttons/Button";
 
 type FormValues = {
-  password: string;
+  oldPassword: string;
+  newPassword: string;
   confpass: string;
 };
 
-export default function ResetForm() {
+export default function ChangePassForm() {
   const dispatch = useAppDispatch();
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const token = searchParams.get("token") || "";
 
+  const [showOldPass, setShowOldPass] = useState(false);
   const [showPass, setShowPass] = useState(false);
   const [showConfPass, setShowConfPass] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -35,16 +32,19 @@ export default function ResetForm() {
     formState: { errors },
     reset,
   } = useForm<FormValues>({
-    resolver: yupResolver(resetPassSchema),
+    resolver: yupResolver(changePassSchema),
   });
   const onSubmit: SubmitHandler<FormValues> = async (data) => {
     setServerError(null);
     setSubmitting(true);
-    const { password } = data;
+    const { oldPassword, newPassword } = data;
 
     try {
       const res = await dispatch(
-        setNewPassword({ newPassToken: token, password })
+        changePassword({
+          oldPassword,
+          newPassword,
+        })
       );
 
       if (res?.type === "auth/resetpassword/rejected") {
@@ -54,7 +54,6 @@ export default function ResetForm() {
         }
       }
       reset();
-      router.push("/signin");
     } catch (err) {
       if (err instanceof Error) {
         setServerError(err.message || "Помилка реєстрації. Спробуйте ще раз.");
@@ -70,15 +69,9 @@ export default function ResetForm() {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="w-full max-w-80 mx-auto pt-5"
+      className="w-full max-w-80"
       noValidate
     >
-      <h1 className="font-inter text-center text-[32px] font-normal leading-10 tracking-thinest mb-6">
-        Створіть новий пароль
-      </h1>
-      <p className="mb-6 text-center text-[11px] font-medium text-muted-text leading-4 tracking-[-0.11px]">
-        Заповніть поля нижче, для створення нового пароля
-      </p>
       {serverError && (
         <div
           role="alert"
@@ -88,33 +81,67 @@ export default function ResetForm() {
         </div>
       )}
       <div className="flex flex-col gap-4 mb-6">
-        <label className="font-inter text-xs font-medium text-foreground tracking-[-0.12px]">
-          <p className="mb-1.5">Пароль</p>
+        <label className="font-inter text-xs font-medium leading-4 tracking-thin">
+          <p className="mb-1.5">Введіть старий пароль</p>
           <div className="relative">
             <InputWithIcon
-              hookformprop={register("password")}
+              hookformprop={register("oldPassword")}
+              type={showOldPass ? "text" : "password"}
+              required
+              placeholder="Пароль"
+              wrapperClassName="w-full"
+            />
+            <button
+              className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 text-muted-foreground hover:text-foreground cursor-pointer"
+              type="button"
+              tabIndex={-1}
+              onClick={() => setShowOldPass(!showOldPass)}
+            >
+              {showOldPass ? (
+                <Eye size={20} color="#7b7b7b" />
+              ) : (
+                <EyeClosed size={20} color="#7b7b7b" />
+              )}
+            </button>
+          </div>
+          {errors?.oldPassword && (
+            <p className="mt-1 block text-xs text-red-600">
+              {errors.oldPassword.message}
+            </p>
+          )}
+        </label>
+
+        <label className="font-inter text-xs font-medium leading-4 tracking-thin">
+          <p className="mb-1.5">Введіть новий пароль</p>
+          <div className="relative">
+            <InputWithIcon
+              hookformprop={register("newPassword")}
               type={showPass ? "text" : "password"}
               required
               placeholder="Пароль"
               wrapperClassName="w-full"
             />
             <button
-              className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 text-muted-foreground hover:text-foreground"
+              className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 text-muted-foreground hover:text-foreground cursor-pointer"
               type="button"
               tabIndex={-1}
               onClick={() => setShowPass(!showPass)}
             >
-              {showPass ? <Eye size={20} /> : <EyeClosed size={20} />}
+              {showPass ? (
+                <Eye size={20} color="#7b7b7b" />
+              ) : (
+                <EyeClosed size={20} color="#7b7b7b" />
+              )}
             </button>
           </div>
-          {errors?.password && (
+          {errors?.newPassword && (
             <p className="mt-1 block text-xs text-red-600">
-              {errors.password.message}
+              {errors.newPassword.message}
             </p>
           )}
         </label>
-        <label className="font-inter text-xs font-medium text-foreground tracking-[-0.12px]">
-          <p className="mb-1.5">Повторіть пароль</p>
+        <label className="font-inter text-xs font-medium leading-4 tracking-thin">
+          <p className="mb-1.5">Повторіть новий пароль</p>
           <div className="relative">
             <InputWithIcon
               hookformprop={register("confpass")}
@@ -124,12 +151,16 @@ export default function ResetForm() {
               wrapperClassName="w-full"
             />
             <button
-              className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 text-muted-foreground hover:text-foreground"
+              className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 text-muted-foreground hover:text-foreground cursor-pointer"
               type="button"
               tabIndex={-1}
               onClick={() => setShowConfPass(!showConfPass)}
             >
-              {showConfPass ? <Eye size={20} /> : <EyeClosed size={20} />}
+              {showConfPass ? (
+                <Eye size={20} color="#7b7b7b" />
+              ) : (
+                <EyeClosed size={20} color="#7b7b7b" />
+              )}
             </button>
           </div>
           {errors?.confpass && (
@@ -139,17 +170,7 @@ export default function ResetForm() {
           )}
         </label>
       </div>
-      <ButtonBlack
-        type="submit"
-        text="Зберегти"
-        textPressed="Зберегти"
-        pressed={submitting}
-      />
-      <LinkInline
-        href="/signin"
-        text="Повернутись до входу"
-        className="flex justify-center mt-2.5"
-      />
+      <Button type="submit" text="Зберегти" disabled={submitting} />
     </form>
   );
 }

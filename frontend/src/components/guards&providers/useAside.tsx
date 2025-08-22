@@ -11,16 +11,20 @@ export function useSelectedPage() {
 
   useEffect(() => {
     // --- Videos / Aside ---
+
     if (
       pathname === "/videos" &&
       !searchParams.get("free") &&
+      !(searchParams.get("free") === "") &&
       !searchParams.get("category")
     ) {
       setSelectedPage("all-videos");
       return;
     }
-    if (pathname === "/videos" && searchParams.get("free") !== null) {
-      // ???
+    if (
+      (pathname === "/videos" && searchParams.get("free")) ||
+      searchParams.get("free") === ""
+    ) {
       setSelectedPage("free-videos");
       return;
     }
@@ -45,7 +49,7 @@ export function useSelectedPage() {
       setSelectedPage("profile");
       return;
     }
-    if (pathname === "/profile/courses") {
+    if (pathname === "/profile/security") {
       setSelectedPage("security");
       return;
     }

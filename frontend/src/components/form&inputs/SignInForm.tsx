@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { signIn as signInWith } from "next-auth/react";
-import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
@@ -16,6 +15,8 @@ import InputWithIcon from "@/components/form&inputs/FormInput";
 import { loginSchema } from "@/schemas/users.schemas";
 
 import { selectIsLogining } from "@/redux/selectors/auth.selectors";
+import ButtonBlack from "@/components/buttons/ButtonsBlack";
+import LinkInline from "@/components/links/LinkInline";
 
 type FormValues = {
   email: string;
@@ -91,13 +92,15 @@ export default function SignInForm() {
       className="w-full max-w-80 mx-auto pt-5"
       noValidate
     >
-      <h1 className="text-center text-2xl font-normal mb-6">
-        Вхід до Дизайн Академії
-      </h1>
+      <h2 className="font-inter text-center text-[32px] font-normal leading-10 tracking-thinest mb-6">
+        Вхід до
+        <br />
+        Дизайн Академії
+      </h2>
       <div className="flex flex-col gap-3">
         <button
           type="button"
-          className="btn-gradient inline-flex justify-center items-center gap-2 py-2 px-5 rounded-[10px] font-inter font-semibold text-sm tracking-[-0.28px] shadow-btn cursor-pointer disabled:cursor-default"
+          className="btn-gradient inline-flex justify-center items-center gap-2 py-2 px-5 rounded-[10px] font-inter font-semibold text-sm tracking-thiner shadow-btn cursor-pointer disabled:cursor-default"
           onClick={() => {
             signInWith("google", { callbackUrl: "/oauth/finish" });
             setLoading("google");
@@ -116,7 +119,7 @@ export default function SignInForm() {
         </button>
         <button
           type="button"
-          className="btn-gradient inline-flex justify-center items-center gap-2 py-2 px-5 rounded-[10px] font-inter font-semibold text-sm tracking-[-0.28px] shadow-btn cursor-pointer"
+          className="btn-gradient inline-flex justify-center items-center gap-2 py-2 px-5 rounded-[10px] font-inter font-semibold text-sm tracking-thiner shadow-btn cursor-pointer"
           onClick={() => {
             signInWith("linkedin", { callbackUrl: "/oauth/finish" });
             setLoading("linkedin");
@@ -136,7 +139,7 @@ export default function SignInForm() {
         {error && (
           <div
             role="alert"
-            className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700"
+            className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700 tracking-thin"
           >
             {error === "OAuthCallback"
               ? "Помилка авторизації. Спробуйте ще раз."
@@ -144,14 +147,13 @@ export default function SignInForm() {
           </div>
         )}
       </div>
-      <p className="my-6 text-center text-[11px] font-medium text-muted-text leading-4 tracking-[-0.11px]">
+      <p className="my-6 text-center text-[11px] font-medium text-muted-text leading-4 tracking-thin">
         Або за допомогою електронної пошти
       </p>
-
       {serverError && (
         <div
           role="alert"
-          className="mb-4 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700"
+          className="mb-4 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700 tracking-thin"
         >
           {serverError}
           {serverError ===
@@ -159,7 +161,7 @@ export default function SignInForm() {
             <button
               type="button"
               onClick={resend}
-              className="flex justify-center font-inter font-medium text-[11px] text-muted tracking-[-0.11px] cursor-pointer"
+              className="flex justify-center font-inter font-medium text-[11px] text-muted tracking-thin cursor-pointer"
               tabIndex={-1}
               disabled={isLoading}
             >
@@ -169,7 +171,7 @@ export default function SignInForm() {
         </div>
       )}
       <div className="flex flex-col gap-4 mb-6">
-        <label className="font-inter text-xs font-medium text-foreground tracking-[-0.12px]">
+        <label className="font-inter text-xs font-medium text-foreground ttracking-thin">
           <p className="mb-1.5">Електронна пошта</p>
           <InputWithIcon
             hookformprop={register("email")}
@@ -179,22 +181,20 @@ export default function SignInForm() {
             wrapperClassName="w-full"
           />
           {errors?.email && (
-            <p className="mt-1 block text-xs text-red-600">
+            <p className="mt-1 block text-xs text-red-600 tracking-thin">
               {errors.email.message}
             </p>
           )}
         </label>
-        <label className="font-inter text-xs font-medium text-foreground tracking-[-0.12px]">
+        <label className="font-inter text-xs font-medium text-foreground tracking-thin">
           <div className="flex w-full justify-between">
             <p className="mb-1.5">Пароль</p>
-
-            <Link
+            <LinkInline
               href="/forgot-password"
-              className="font-inter font-medium text-[11px] text-muted tracking-[-0.11px]"
+              text="Забули пароль?"
               tabIndex={-1}
-            >
-              Забули пароль?
-            </Link>
+              className="flex justify-center"
+            />
           </div>
           <div className="relative">
             <InputWithIcon
@@ -205,12 +205,16 @@ export default function SignInForm() {
               wrapperClassName="w-full"
             />
             <button
-              className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 text-muted-foreground hover:text-foreground"
+              className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 text-muted-foreground hover:text-foreground cursor-pointer"
               type="button"
               tabIndex={-1}
               onClick={() => setShowPass(!showPass)}
             >
-              {showPass ? <Eye size={20} /> : <EyeClosed size={20} />}
+              {showPass ? (
+                <Eye size={20} color="#7b7b7b" />
+              ) : (
+                <EyeClosed size={20} color="#7b7b7b" />
+              )}
             </button>
           </div>
           {errors?.password && (
@@ -220,21 +224,18 @@ export default function SignInForm() {
           )}
         </label>
       </div>
-      <button
+      <ButtonBlack
+        text="Увійти"
+        textPressed="Вхід…"
+        pressed={submitting}
         type="submit"
-        disabled={submitting}
-        className="w-full justify-center items-center gap-1 py-4 px-5 rounded-xl shadow-btn cursor-pointer disabled:cursor-not-allowed disabled:opacity-60 bg-[#323232]"
-      >
-        <p className="font-inter text-sm font-semibold text-icon">
-          {submitting ? "Вхід…" : "Увійти"}
-        </p>
-      </button>
-      <Link
+        className=""
+      />
+      <LinkInline
         href="/signup"
-        className="flex justify-center font-inter font-medium text-[11px] text-muted tracking-[-0.11px] mt-2.5"
-      >
-        Ще немає акаунта?
-      </Link>
+        text="Ще немає акаунта?"
+        className="inline-flex justify-center mt-2.5"
+      />
     </form>
   );
 }

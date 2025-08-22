@@ -1,0 +1,56 @@
+.btn-black {
+  background: linear-gradient(
+    160deg,
+    var(--Shade-7-100, #323232) 0%,
+    var(--Shade-8-100, #222) 100%
+  );
+  box-shadow: 0 0.5px 1px 0 rgba(255, 255, 255, 0.15) inset,
+    0 2px 4px -1px rgba(13, 13, 13, 0.5), 0 -1px 1.2px 0.35px #121212 inset,
+    0 0 0 1px #333;
+  transition: all 0.3s ease-in-out;
+}
+
+.btn-black:hover {
+  background: linear-gradient(
+    180deg,
+    var(--Shade-7-100, #323232) 0%,
+    var(--Shade-8-100, #222) 100%
+  );
+  box-shadow: 0 0.5px 1px 0 rgba(255, 255, 255, 0.15) inset,
+    0 2px 4px -1px rgba(13, 13, 13, 0.5), 0 -1px 1.2px 0.35px #121212 inset,
+    0 0 0 1px #333;
+}
+
+.btn-black:focus {
+  background: linear-gradient(
+    180deg,
+    var(--Shade-7-100, #323232) 0%,
+    var(--Shade-8-100, #222) 100%
+  );
+  box-shadow: 0 0 0 1px var(--Surface-01, #fcfcfc) inset,
+    0 0.5px 1px 0 rgba(255, 255, 255, 0.15) inset,
+    0 2px 4px -1px rgba(13, 13, 13, 0.5), 0 -1px 1.2px 0.35px #121212 inset,
+    0 0 0 1px #333;
+}
+
+.btn-black:disabled {
+  opacity: 0.3;
+  background: linear-gradient(
+    180deg,
+    var(--Shade-7-100, #323232) 0%,
+    var(--Shade-8-100, #222) 100%
+  );
+  box-shadow: 0 0.5px 1px 0 rgba(255, 255, 255, 0.15) inset,
+    0 2px 4px -1px rgba(13, 13, 13, 0.5), 0 -1px 1.2px 0.35px #121212 inset,
+    0 0 0 1px #333;
+}
+.btn-black:active {
+  background: linear-gradient(
+    180deg,
+    var(--Shade-8-100, #222) 0%,
+    var(--Shade-7-100, #323232) 100%
+  );
+  box-shadow: 0 0.5px 1px 0 rgba(255, 255, 255, 0.15) inset,
+    0 2px 4px -1px rgba(13, 13, 13, 0.5), 0 -1px 1.2px 0.35px #121212 inset,
+    0 0 0 1px #333;
+}

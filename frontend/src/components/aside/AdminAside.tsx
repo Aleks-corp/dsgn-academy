@@ -10,7 +10,7 @@ type Props = {
 
 export default function AdminAside({ selectedPage, setSelectedPage }: Props) {
   return (
-    <aside className="flex flex-col items-center gap-3 w-full py-5 border-r border-border h-[calc(100%-80px)] transition-all">
+    <aside className="flex flex-col items-center gap-3 w-full p-5 border-r border-border h-[calc(100%-80px)] transition-all">
       <div className="flex flex-col w-full items-center gap-0.5">
         <button
           type="button"
@@ -28,12 +28,18 @@ export default function AdminAside({ selectedPage, setSelectedPage }: Props) {
             text="Додати відео"
             rout="/da-admin/add/video"
             icon={
-              <Image
-                src="/icons/menu-icons/grid.svg"
-                alt="Grid"
-                width={20}
-                height={20}
-              />
+              <div
+                className={`flex items-center justify-center w-8 h-8 p-1.5 rounded-lg ${
+                  selectedPage === "add-video" ? "bg-icon shadow-icon" : ""
+                }`}
+              >
+                <Image
+                  src="/icons/menu-icons/grid.svg"
+                  alt="Grid"
+                  width={20}
+                  height={20}
+                />
+              </div>
             }
           />
         </button>
@@ -53,12 +59,18 @@ export default function AdminAside({ selectedPage, setSelectedPage }: Props) {
             text="Додати курс"
             rout="/da-admin/add/course"
             icon={
-              <Image
-                src="/icons/menu-icons/layer.svg"
-                alt="Grid"
-                width={20}
-                height={20}
-              />
+              <div
+                className={`flex items-center justify-center w-8 h-8 p-1.5 rounded-lg ${
+                  selectedPage === "add-course" ? "bg-icon shadow-icon" : ""
+                }`}
+              >
+                <Image
+                  src="/icons/menu-icons/layer.svg"
+                  alt="Grid"
+                  width={20}
+                  height={20}
+                />
+              </div>
             }
           />
         </button>
@@ -78,12 +90,18 @@ export default function AdminAside({ selectedPage, setSelectedPage }: Props) {
             text="Редагувати відео"
             rout="/da-admin/edit/video"
             icon={
-              <Image
-                src="/icons/menu-icons/grid.svg"
-                alt="Grid"
-                width={20}
-                height={20}
-              />
+              <div
+                className={`flex items-center justify-center w-8 h-8 p-1.5 rounded-lg ${
+                  selectedPage === "edit-video" ? "bg-icon shadow-icon" : ""
+                }`}
+              >
+                <Image
+                  src="/icons/menu-icons/grid.svg"
+                  alt="Grid"
+                  width={20}
+                  height={20}
+                />
+              </div>
             }
           />
         </button>
@@ -103,12 +121,18 @@ export default function AdminAside({ selectedPage, setSelectedPage }: Props) {
             text="Редагувати курс"
             rout="/da-admin/edit/course"
             icon={
-              <Image
-                src="/icons/menu-icons/layer.svg"
-                alt="Grid"
-                width={20}
-                height={20}
-              />
+              <div
+                className={`flex items-center justify-center w-8 h-8 p-1.5 rounded-lg ${
+                  selectedPage === "edit-course" ? "bg-icon shadow-icon" : ""
+                }`}
+              >
+                <Image
+                  src="/icons/menu-icons/layer.svg"
+                  alt="Grid"
+                  width={20}
+                  height={20}
+                />
+              </div>
             }
           />
         </button>
@@ -126,12 +150,18 @@ export default function AdminAside({ selectedPage, setSelectedPage }: Props) {
             text="Юзери"
             rout="/da-admin/users"
             icon={
-              <Image
-                src="/icons/menu-icons/settings.svg"
-                alt="Grid"
-                width={20}
-                height={20}
-              />
+              <div
+                className={`flex items-center justify-center w-8 h-8 p-1.5 rounded-lg ${
+                  selectedPage === "users" ? "bg-icon shadow-icon" : ""
+                }`}
+              >
+                <Image
+                  src="/icons/menu-icons/settings.svg"
+                  alt="Grid"
+                  width={20}
+                  height={20}
+                />
+              </div>
             }
           />
         </button>
@@ -151,12 +181,18 @@ export default function AdminAside({ selectedPage, setSelectedPage }: Props) {
             text="Аналітика"
             rout="/da-admin/analitics"
             icon={
-              <Image
-                src="/icons/menu-icons/zap.svg"
-                alt="Grid"
-                width={20}
-                height={20}
-              />
+              <div
+                className={`flex items-center justify-center w-8 h-8 p-1.5 rounded-lg ${
+                  selectedPage === "analitics" ? "bg-icon shadow-icon" : ""
+                }`}
+              >
+                <Image
+                  src="/icons/menu-icons/zap.svg"
+                  alt="Grid"
+                  width={20}
+                  height={20}
+                />
+              </div>
             }
           />
         </button>

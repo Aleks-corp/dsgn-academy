@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -9,6 +8,8 @@ import { useAppDispatch } from "@/redux/hooks";
 import { forgotPassword } from "@/redux/auth/auth.thunk";
 import InputWithIcon from "@/components/form&inputs/FormInput";
 import { forgotPassSchema } from "@/schemas/users.schemas";
+import LinkInline from "@/components/links/LinkInline";
+import ButtonBlack from "@/components/buttons/ButtonsBlack";
 
 type FormValues = {
   email: string;
@@ -65,9 +66,11 @@ export default function Forgotorm() {
       className="w-full max-w-80 mx-auto pt-5"
       noValidate
     >
-      <h1 className="text-center text-2xl font-normal mb-6">Забули пароль</h1>
+      <h1 className="font-inter text-center text-[32px] font-normal leading-10 tracking-thinest mb-6">
+        Забули пароль
+      </h1>
 
-      <p className="mb-6 text-center text-[11px] font-medium text-muted-text leading-4 tracking-[-0.11px]">
+      <p className="mb-6 text-center text-[11px] font-medium text-muted-text leading-4 tracking-thin">
         Введіть електронну пошту для відновлення
       </p>
       {serverError && (
@@ -79,7 +82,7 @@ export default function Forgotorm() {
         </div>
       )}
       <div className="flex flex-col gap-4 mb-6">
-        <label className="font-inter text-xs font-medium text-foreground tracking-[-0.12px]">
+        <label className="font-inter text-xs font-medium text-foreground tracking-thin">
           <p className="mb-1.5">Електронна пошта</p>
           <InputWithIcon
             hookformprop={register("email")}
@@ -95,22 +98,17 @@ export default function Forgotorm() {
           )}
         </label>
       </div>
-
-      <button
+      <ButtonBlack
         type="submit"
-        disabled={submitting}
-        className="w-full justify-center items-center gap-1 py-4 px-5 rounded-xl shadow-btn cursor-pointer disabled:cursor-not-allowed disabled:opacity-60 bg-[#323232]"
-      >
-        <p className="font-inter text-sm font-semibold text-icon">
-          {submitting ? "Відновлюємо" : "Відновити пароль"}
-        </p>
-      </button>
-      <Link
+        text="Відновити пароль"
+        textPressed="Відновлюємо..."
+        pressed={submitting}
+      />
+      <LinkInline
         href="/signin"
-        className="flex justify-center font-inter font-medium text-[11px] text-muted tracking-[-0.11px] mt-2.5"
-      >
-        Повернутись до входу
-      </Link>
+        text="Повернутись до входу"
+        className="flex justify-center mt-2.5"
+      />
     </form>
   );
 }
