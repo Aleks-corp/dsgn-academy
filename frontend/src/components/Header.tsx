@@ -155,7 +155,7 @@ export default function Header({ isOpenAside, setIsOpenAside }: Props) {
           Про проект
         </Link>
         {(subscription === "free" || !subscription) && (
-          <NavLink rout="/check-sub" text="Преміум доступ" />
+          <NavLink rout="/check-subscription" text="Преміум доступ" />
         )}
         {!isLoggedIn ? (
           <NavLink rout="/signin" text="Увійти" style="accent" />
