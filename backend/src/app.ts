@@ -6,7 +6,6 @@ import morgan from "morgan";
 import cors from "cors";
 import "dotenv/config";
 import cookieParser from "cookie-parser";
-import { startRenderPing } from "./utils/ping.utils.js";
 
 import type { Err } from "./types/error.type.js";
 
@@ -86,7 +85,5 @@ app.use((error: Err, _req: Request, res: Response, ___: NextFunction): void => {
   res.status(status).json({ message });
   console.error("📩 Error Response:", res.statusCode, res.statusMessage);
 });
-
-startRenderPing();
 
 export default app;
