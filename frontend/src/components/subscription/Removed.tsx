@@ -1,21 +1,33 @@
 "use client";
 
-import Button from "@/components/buttons/Button";
 import { formatDateToDDMMYYYY } from "@/lib/date.utils";
 import { IUser } from "@/types/users.type";
-import { Check } from "lucide-react";
+import SubCard from "../SubCard";
+import { premiumDescription } from "@/constants/sub.desc.constants";
+import NavLink from "../links/Link";
 
 export default function RemovedSubProfile({ profile }: { profile: IUser }) {
   return (
-    <div className="w-full max-w-96">
+    <>
       <p className="font-inter text-xs font-medium leading-4 tracking-thin mb-4">
         Доступ до Преміум завершиться {formatDateToDDMMYYYY(profile.subend)}
       </p>
-      <p className="font-inter text-xs font-medium leading-4 tracking-thin text-muted mb-7">
-        Після завершення періоду у вас залишиться лише базовий безкоштовний
-        доступ
-      </p>
-      <div className="py-3 border-1 border-[#E2E2E2] rounded-[20px]">
+      <SubCard
+        title="Скасовано"
+        subTitle="Після завершення періоду у вас залишиться лише базовий безкоштовний
+        доступ."
+        description={premiumDescription}
+        amount={profile.amount}
+        submitComponent={
+          <NavLink
+            rout="/check-subscription"
+            text="Відновити підписку"
+            style="accent"
+          />
+        }
+        subscription="premiumRemoved"
+      />
+      {/* <div className="py-3 border-1 border-[#E2E2E2] rounded-[20px]">
         <p className="font-inter font-medium text-xl leading-7 tracking-thinest px-3 mb-3">
           Скасовано
         </p>
@@ -53,7 +65,7 @@ export default function RemovedSubProfile({ profile }: { profile: IUser }) {
             Необмежені короткі відео
           </li>
         </ul>
-      </div>
-    </div>
+      </div> */}
+    </>
   );
 }

@@ -11,7 +11,7 @@ import { selectCourses } from "@/redux/selectors/courses.selector";
 import CoursesSection from "@/components/courses/CoursesSection";
 import NotFoundComponent from "@/components/notFound/NotFound";
 
-import { withAlphaGuard } from "@/components/guards&providers/WithAlphaGuard";
+import { withAlphaGuard } from "@/guards&providers/WithAlphaGuard";
 
 function CoursesPage() {
   const dispatch = useAppDispatch();

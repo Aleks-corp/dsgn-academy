@@ -3,7 +3,7 @@
 import { signOut } from "@/redux/auth/auth.thunk";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 
-import { withUserGuard } from "@/components/guards&providers/WithUserGuard";
+import { withUserGuard } from "@/guards&providers/WithUserGuard";
 // import Image from "next/image";
 // import Button from "@/components/buttons/Button";
 import { selectUser } from "@/redux/selectors/auth.selectors";

@@ -45,7 +45,7 @@ export default function OAuthFinishPage() {
 
   if (error) return <div className="p-6 text-red-600">{error}</div>;
   return (
-    <div className="w-20 h-20 mt-20">
+    <div className="w-20 h-20 mt-20 mx-auto">
       <Loader />
     </div>
   );

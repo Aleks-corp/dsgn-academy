@@ -47,7 +47,7 @@ const VerifyPage = () => {
   }, [dispatch, token]);
 
   return (
-    <div className="flex w-full max-h-[690px]">
+    <div className="flex w-full items-center">
       {isLoggining && (
         <div className="w-20 h-20 mt-20">
           <Loader />
@@ -85,13 +85,13 @@ const VerifyPage = () => {
                 </div>
               )}
           </div>
-          <div className="w-0 lg:w-[55%] overflow-hidden rounded-xl">
+          <div className="w-0 lg:w-[55%] h-full min-h-[500px] overflow-hidden rounded-xl">
             <Image
               src={"/images/reglog.jpg"}
               alt="Registration Logo"
               width={2340}
               height={2280}
-              className="object-cover w-full h-full rounded-xl"
+              className="object-cover object-center w-full h-full min-h-[500px] max-h-[calc(100vh-120px)] rounded-xl"
             />
           </div>
         </>

@@ -4,7 +4,7 @@ import "./globals.css";
 import { metadata } from "@/lib/metadata";
 import { ReduxProvider } from "@/redux/provider";
 
-import RootPage from "@/components/guards&providers/RootPage";
+import RootPage from "@/guards&providers/RootPage";
 
 const sora = Sora({
   weight: ["400", "500", "600", "800"],

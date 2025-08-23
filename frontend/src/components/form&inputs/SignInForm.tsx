@@ -89,7 +89,7 @@ export default function SignInForm() {
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
-      className="w-full max-w-80 mx-auto pt-5"
+      className="w-full max-w-80 mx-auto"
       noValidate
     >
       <h2 className="font-inter text-center text-[32px] font-normal leading-10 tracking-thinest mb-6">

@@ -9,13 +9,13 @@ import HeroSection from "@/components/mainPage/HeroSection";
 import CoursesSection from "@/components/mainPage/CourseSection";
 import VideosSection from "@/components/mainPage/VideoSection";
 import FilterSection from "@/components/videos/FilterSection";
-import { withAlphaGuard } from "@/components/guards&providers/WithAlphaGuard";
+import { withAlphaGuard } from "@/guards&providers/WithAlphaGuard";
 
 function HomePage() {
   const dispatch = useAppDispatch();
   useEffect(() => {
-    dispatch(fetchCourses({ limit: 3 }));
-    dispatch(fetchVideos({ limit: 3 }));
+    dispatch(fetchCourses({ limit: 4 }));
+    dispatch(fetchVideos({ limit: 4 }));
   }, [dispatch]);
 
   return (

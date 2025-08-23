@@ -58,13 +58,17 @@
     0 2px 0.8px 0 rgba(255, 255, 255, 0.27) inset,
     0 -1px 0.6px 0 rgba(0, 0, 0, 0.2) inset,
     0 1px 4.2px -1px rgba(0, 0, 0, 0.25);
+  --box-shadow-switch-box: 0 1px 1.9px 0 rgba(50, 50, 50, 0.1) inset;
+  --box-shadow-switch-btn: 0 1.25px 3px 0 rgba(50, 50, 50, 0.1),
+    0 1.25px 1px 0 #fff inset;
 
   --box-shadow-sub: 0 2px 2px 0 rgba(255, 255, 255, 0.8) inset,
     0 16px 4px 0 rgba(0, 0, 0, 0), 0 10px 4px 0 rgba(0, 0, 0, 0),
     0 6px 3px 0 rgba(0, 0, 0, 0.01), 0 3px 3px 0 rgba(0, 0, 0, 0.02),
     0 1px 1px 0 rgba(0, 0, 0, 0.02);
-}
 
+  --box-shadow-video-card: 0 38px 38px 0 rgba(0, 0, 0, 0.06);
+}
 @media (prefers-color-scheme: light) {
   :root {
     --background: #f7f7f7;
@@ -123,4 +127,21 @@ body {
 }
 .scrollable-smooth {
   overscroll-behavior: contain;
+}
+
+.sub-gradient {
+  background: linear-gradient(109deg, #587784 -2.78%, #c0dae7 64.27%);
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  overflow-x: auto;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }

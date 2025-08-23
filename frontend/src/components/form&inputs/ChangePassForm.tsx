@@ -80,7 +80,7 @@ export default function ChangePassForm() {
           {serverError}
         </div>
       )}
-      <div className="flex flex-col gap-4 mb-6">
+      <div className="flex flex-col gap-4 mb-4">
         <label className="font-inter text-xs font-medium leading-4 tracking-thin">
           <p className="mb-1.5">Введіть старий пароль</p>
           <div className="relative">

@@ -11,7 +11,7 @@ import { fetchVideoData } from "@/lib/api/getVideoData";
 import { AddVideo } from "@/types/videos.type";
 import { categoriesConstant } from "@/constants/categories.constant";
 
-import { withAdminGuard } from "@/components/guards&providers/WithAdminGuard";
+import { withAdminGuard } from "@/guards&providers/WithAdminGuard";
 import SwitchSelector from "@/components/form&inputs/SwitchSelector";
 import Switch from "@/components/form&inputs/Switch";
 import Input from "@/components/form&inputs/Input";

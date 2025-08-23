@@ -1,43 +1,49 @@
 "use client";
 
-import Image from "next/image";
-import Link from "next/link";
 import { useAppSelector } from "@/redux/hooks";
 import { selectVideos } from "@/selectors/videos.selectors";
+import VideosCard from "../videos/VideosCard";
+import { useWindowWidth } from "@/lib/useWindowWidth";
 
 export default function VideosSection() {
   const videos = useAppSelector(selectVideos);
+  const width = useWindowWidth();
+
+  let visibleCount = 4;
+  if (width <= 1560) visibleCount = 3;
+  if (width <= 1200) visibleCount = 4;
+  if (width <= 630) visibleCount = 3;
+
+  const visibleVideos =
+    videos.length > visibleCount ? videos.slice(0, visibleCount) : videos;
   return (
-    <section className="px-5 py-2">
-      <h2 className="text-xl font-bold mb-4">Останні відео</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-        {videos.length === 0 ? (
+    <section className="w-full mt-4">
+      <h2 className="font-medium text-xl leading-7 tracking-thinest mb-4">
+        Останні відео
+      </h2>
+      <div
+        className={`grid gap-3 mx-auto
+          ${width <= 630 ? "grid grid-cols-1 justify-items-center" : ""}
+          ${
+            width > 630 && width <= 1200
+              ? "grid-cols-2 justify-items-stretch"
+              : ""
+          }
+          ${
+            width > 1200 && width <= 1560
+              ? "grid-cols-3 justify-items-stretch"
+              : ""
+          }
+          ${width > 1560 ? "grid-cols-4 justify-items-stretch" : ""}
+        `}
+      >
+        {visibleVideos.length === 0 ? (
           <div className="col-span-3 text-center text-gray-400">
             Відео ще не додані
           </div>
         ) : (
-          videos.map((video) => (
-            <Link key={video._id} href={`/videos/${video._id}`}>
-              <div className="relative rounded-3xl p-2 shadow-sm bg-white hover:shadow-lg transition group overflow-hidden flex flex-col">
-                <Image
-                  src={video.cover}
-                  alt={video.title}
-                  width={400}
-                  height={180}
-                  className="relative w-full h-[180px] object-cover rounded-2xl z-7"
-                />{" "}
-                <div className="absolute top-5 left-1/2 -translate-x-1/2 bg-[#B3B3B3] w-[90%] h-[175px] z-5 rounded-2xl" />
-                <div className="absolute top-8 left-1/2 -translate-x-1/2 bg-[#E6E6E6] w-[80%] h-[170px] z-3 rounded-2xl" />
-                <div className="p-4 flex-1 flex flex-col">
-                  <div className="font-bold text-lg mb-2">{video.title}</div>
-                  {video.category && (
-                    <div className="text-xs text-[#8E8E9B] mb-1">
-                      {video.category}
-                    </div>
-                  )}
-                </div>
-              </div>
-            </Link>
+          visibleVideos.map((video) => (
+            <VideosCard video={video} key={video._id} />
           ))
         )}
       </div>

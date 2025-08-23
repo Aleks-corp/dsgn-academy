@@ -53,11 +53,15 @@ export const fetchVideos = createAsyncThunk(
 
 export const fetchRecommended = createAsyncThunk(
   "videos/fetchRecommendedVideos",
-  async ({ page = 1, limit = 5, recommended = false }: Query, thunkAPI) => {
+  async (
+    { page = 1, limit = 5, recommended = false, filter = "" }: Query,
+    thunkAPI
+  ) => {
     const params = new URLSearchParams({
       page: String(page),
       limit: String(limit),
     });
+    if (filter) params.append("filter", filter);
     if (recommended) params.append("recommended", "true");
     try {
       const response = await instance.get(`/videos?${params.toString()}`);

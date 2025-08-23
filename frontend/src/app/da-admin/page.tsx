@@ -5,7 +5,7 @@ import { useAppDispatch } from "@/redux/hooks";
 import { signOut } from "@/redux/auth/auth.thunk";
 import Button from "@/components/buttons/Button";
 
-import { withAdminGuard } from "@/components/guards&providers/WithAdminGuard";
+import { withAdminGuard } from "@/guards&providers/WithAdminGuard";
 // import { handleRouter } from "@/lib/handleRouter";
 
 function AdminPage() {

@@ -15,8 +15,9 @@ const config: Config = {
         tab: "502px",
         tabx: "630px",
         lg: "1024px",
-        xl: "1280px",
+        xl: "1200px",
         xxl: "1440px",
+        "2xl": "1560px",
       },
       borderRadius: {
         lg: "8px",
@@ -74,6 +75,13 @@ const config: Config = {
         icon: "var(--box-shadow-icon)",
         count: "var(--box-shadow-count)",
         sub: "var(--box-shadow-sub)",
+        switch: {
+          box: "var(--box-shadow-switch-box)",
+          btn: "var(--box-shadow-switch-btn)",
+        },
+        card: {
+          video: "var(--box-shadow-video-card)",
+        },
       },
     },
   },

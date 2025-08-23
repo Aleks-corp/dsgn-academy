@@ -21,14 +21,18 @@ export default function Button({
       type={type}
       className={`${
         style === "accent"
-          ? "bg-accent text-text-white hover:bg-accent-hover transition-colors duration-300"
+          ? "bg-accent text-text-white hover:bg-accent-hover transition-colors duration-300 disabled:opacity-40"
           : "btn-gradient"
-      } inline-flex font-inter font-semibold text-base leading-5 tracking-thiner justify-center items-center gap-1 py-2 px-6 rounded-xl shadow-btn cursor-pointer ${className}`}
+      } inline-flex justify-center items-center gap-1 py-2 px-6 rounded-xl shadow-btn cursor-pointer disabled:cursor-default ${className}`}
       onClick={onClick}
       disabled={disabled}
     >
       {icon}
-      {text && <p>{text}</p>}
+      {text && (
+        <p className="font-inter font-semibold text-sm leading-5 tracking-thiner ">
+          {text}
+        </p>
+      )}
     </button>
   );
 }

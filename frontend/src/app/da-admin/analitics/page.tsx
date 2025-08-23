@@ -1,6 +1,6 @@
 "use client";
 
-import { withAdminGuard } from "@/components/guards&providers/WithAdminGuard";
+import { withAdminGuard } from "@/guards&providers/WithAdminGuard";
 
 function AnaliticPage() {
   return <div>AnaliticPage</div>;

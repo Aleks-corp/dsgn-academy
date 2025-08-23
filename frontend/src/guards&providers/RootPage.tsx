@@ -22,9 +22,9 @@ import LoaderBlur from "@/components/loaders/LoadingBlur";
 import AdminAside from "@/components/aside/AdminAside";
 
 import { useSelectedPage } from "./useAside";
-import Loader from "../loaders/LoaderCircle";
+import Loader from "../components/loaders/LoaderCircle";
 import useIsLg from "./useScreenWidth";
-import LenisProvider from "./LenisProvider";
+// import LenisProvider from "./LenisProvider";
 
 export default function RootPage({ children }: { children: React.ReactNode }) {
   const dispatch = useAppDispatch();
@@ -91,7 +91,7 @@ export default function RootPage({ children }: { children: React.ReactNode }) {
         <motion.div
           onClick={() => setIsOpenAside(false)}
           initial={{ opacity: 0 }}
-          animate={{ opacity: 0.5 }}
+          animate={{ opacity: 0.65 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
           className="fixed top-20 left-0 right-0 bottom-0 z-20 bg-black"
@@ -131,17 +131,18 @@ export default function RootPage({ children }: { children: React.ReactNode }) {
         transition={{ duration: 0.35, ease: "easeInOut" }}
         className="fixed top-20 right-0 bottom-0 flex flex-col h-[calc(100%-80px)]"
       >
-        <LenisProvider>
-          <div
-            className={`flex-1 ${
-              !isLg && isOpenAside ? "pointer-events-none" : ""
-            }`}
-          >
-            <main className="relative w-full max-w-[1440px] mx-auto flex items-center justify-center sm:items-start px-5 py-5">
-              {children}
-            </main>
-          </div>
-        </LenisProvider>
+        <div
+          className={`w-full h-full overflow-hidden overflow-y-auto ${
+            !isLg && isOpenAside ? "pointer-events-none" : ""
+          }`}
+        >
+          {/* <LenisProvider> */}
+          <main className="relative w-full mx-auto px-5 pt-5 mb-5">
+            {children}
+          </main>
+          {/* </LenisProvider> */}
+        </div>
+
         <LoaderBlur />
       </motion.div>
 

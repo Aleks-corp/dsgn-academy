@@ -18,10 +18,10 @@ export default function FilterSection() {
 
   const btnClasses = useCallback(
     (isSelected: boolean) =>
-      `px-3 py-1.5 rounded-full font-inter cursor-pointer transition-colors text-sm font-medium leading-5 ${
+      `px-3 py-1.5 text-center transition-colors whitespace-nowrap font-inter text-sm font-medium tracking-thinest leading-5 select-none rounded-lg cursor-pointer ${
         isSelected
-          ? "bg-[#0F0F0F] text-background"
-          : "bg-[#00000010] text-black hover:bg-[#00000020]"
+          ? "bg-[#0F0F0F] text-white"
+          : "bg-[#00000010] text-[#0f0f0f] hover:bg-[#00000020]"
       }`,
     []
   );
@@ -47,8 +47,8 @@ export default function FilterSection() {
   if (!filters || filters.length === 0) return null;
 
   return (
-    <section className="flex flex-col text-center px-5 py-2 gap-4">
-      <div className="flex gap-3 flex-wrap">
+    <section className="flex flex-col">
+      <div className="flex gap-3 overflow-x-auto no-scrollbar">
         {items.map((label) => {
           const isSelected =
             (label === ALL_LABEL && !activeFilter && !isRecommended) ||

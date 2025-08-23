@@ -30,7 +30,7 @@ export default function TimerPage() {
     redirect("/");
   }
   return (
-    <div className="flex flex-col items-center gap-3 w-full mx-auto mt-16">
+    <div className="flex flex-col items-center gap-3 w-full max-w-[1440px] mx-auto mt-16">
       <HeroSection />
       <TimerSection timer={timer} />
       <FaqSection />

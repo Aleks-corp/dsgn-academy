@@ -17,7 +17,7 @@ import NotFoundComponent from "@/components/notFound/NotFound";
 import SafeImage from "@/components/SafeImage";
 import { PlayIcon } from "lucide-react";
 
-import { withAlphaGuard } from "@/components/guards&providers/WithAlphaGuard";
+import { withAlphaGuard } from "@/guards&providers/WithAlphaGuard";
 
 type RecommendedVideo = {
   _id: string;
