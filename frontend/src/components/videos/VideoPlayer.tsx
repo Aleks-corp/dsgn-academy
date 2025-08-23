@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { useAppSelector } from "@/redux/hooks";
 
-import { selectVideo } from "@/redux/selectors/videos.selectors";
 import Image from "next/image";
 import Vimeo from "@u-wave/react-vimeo";
 import { selectUser } from "@/redux/selectors/auth.selectors";
@@ -13,13 +12,13 @@ import { FaXTwitter } from "react-icons/fa6";
 import toast from "react-hot-toast";
 import { PiThreadsLogoFill } from "react-icons/pi";
 import { ChevronUp } from "lucide-react";
+import { IVideo } from "@/types/videos.type";
 
-export default function VideoPlayer() {
+export default function VideoPlayer({ video }: { video: IVideo }) {
   const profile = useAppSelector(selectUser);
   const [isReady, setIsReady] = useState(false);
   const [expanded, setExpanded] = useState(false);
 
-  const video = useAppSelector(selectVideo);
   const isBlocked = !profile || video?.free;
   console.log("🚀 ~ isBlocked:", isBlocked);
 

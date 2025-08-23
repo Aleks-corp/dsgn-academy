@@ -8,12 +8,13 @@ import {
   selectIsLoadingVideos,
   selectVideo,
 } from "@/redux/selectors/videos.selectors";
-import Loader from "@/components/loaders/LoaderCircle";
-import NotFoundComponent from "@/components/notFound/NotFound";
+
 import { clearVideo } from "@/redux/videos/videoSlice";
 import { withAlphaGuard } from "@/guards&providers/WithAlphaGuard";
 import VideoPlayer from "@/components/videos/VideoPlayer";
 import RecommendedList from "@/components/Recommended";
+// import NotFoundComponent from "@/components/notFound/NotFound";
+import { VideoCardSkeleton } from "@/components/skeleton/VideoCardSkeleton";
 
 function VideoPage() {
   const dispatch = useAppDispatch();
@@ -29,20 +30,17 @@ function VideoPage() {
   }, [dispatch, id]);
 
   if (isLoading) {
-    return (
-      <div className="w-20 h-20 mt-10">
-        <Loader />
-      </div>
-    );
+    // return null;
+    return <VideoCardSkeleton />;
   }
 
-  if (!video) {
-    return <NotFoundComponent />;
-  }
+  // if (!video) {
+  //   return <NotFoundComponent />;
+  // }
   return (
     <div className="flex flex-col lg:flex-row justify-center gap-8 smx-auto">
       {/* Ліва частина */}
-      <VideoPlayer />
+      {video && <VideoPlayer video={video} />}
       {/* Права частина — рекомендації */}
       <RecommendedList />
     </div>

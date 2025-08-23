@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 function useIsLg() {
   const [isLg, setIsLg] = useState<boolean>(false);
   useEffect(() => {
-    const mql = window.matchMedia("(min-width: 880px)");
+    const mql = window.matchMedia("(min-width: 1024px)");
     const onChange = (e: MediaQueryListEvent | MediaQueryList) =>
       setIsLg("matches" in e ? e.matches : (e as MediaQueryList).matches);
     onChange(mql);

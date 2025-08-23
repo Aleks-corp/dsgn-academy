@@ -4,7 +4,7 @@ import {
   fetchVideos,
   fetchVideoById,
   fetchVideosCount,
-  // addVideo,
+  addVideo,
   addRemoveFavoritesVideo,
   deleteVideo,
 } from "./video.thunk";
@@ -14,6 +14,7 @@ import { initialState } from "./initialState";
 const handlePending = (state: VideoState) => {
   state.isLoading = true;
 };
+
 const handleRejected = (state: VideoState, action: PayloadAction<string>) => {
   state.isLoading = false;
   state.error = action.payload;
@@ -24,6 +25,10 @@ const handleRejected = (state: VideoState, action: PayloadAction<string>) => {
 const handleFulfilled = (state: VideoState) => {
   state.error = "";
   state.isLoading = false;
+};
+
+const handleFetchVideosPending = (state: VideoState) => {
+  state.isLoading = true;
 };
 
 export const handleFulfilledVideos = (
@@ -140,13 +145,13 @@ const videoSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchVideos.pending, handlePending)
+      .addCase(fetchVideos.pending, handleFetchVideosPending)
       .addCase(fetchVideos.fulfilled, handleFulfilledVideos)
       .addCase(fetchVideoById.pending, handlePending)
       .addCase(fetchVideoById.fulfilled, handleFulfilledVideoById)
       .addCase(fetchVideosCount.fulfilled, handleFulfilledVideosCount)
-      // .addCase(addVideo.pending, handlePending)
-      // .addCase(addVideo.fulfilled, handleFulfilledAddVideo)
+      .addCase(addVideo.pending, handlePending)
+      .addCase(addVideo.fulfilled, handleFulfilledAddVideo)
       .addCase(addRemoveFavoritesVideo.fulfilled, handleFulfilledAddFavorites)
       .addCase(deleteVideo.pending, handlePending)
       .addCase(deleteVideo.fulfilled, handleFulfilledDeleteVideo)

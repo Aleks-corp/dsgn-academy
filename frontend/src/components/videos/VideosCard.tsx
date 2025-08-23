@@ -8,7 +8,7 @@ import { durationStringToString } from "@/lib/duration.utils";
 export default function VideosCard({ video }: { video: IVideo }) {
   return (
     <Link key={video._id} href={`/videos/${video._id}`}>
-      <div className="relative flex flex-col max-w-[370px] min-w-[260px] p-2 rounded-3xl bg-white overflow-hidden hover:shadow-card-video">
+      <div className="relative flex flex-col max-w-[370px] min-w-[260px] p-2 rounded-3xl bg-white overflow-hidden hover:shadow-card-video transition-all duration-300">
         <Image
           src={video.cover}
           alt={video.title}

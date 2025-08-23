@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { fetchRecommended } from "@/redux/videos/video.thunk";
 import { selectVideo } from "@/redux/selectors/videos.selectors";
-import NotFoundComponent from "@/components/notFound/NotFound";
 import Image from "next/image";
 import Link from "next/link";
 import FilterRecommended from "./Filters";
@@ -32,7 +31,7 @@ export default function RecommendedList() {
   }, [active, dispatch]);
 
   if (!video) {
-    return <NotFoundComponent />;
+    return null;
   }
 
   return (
@@ -52,7 +51,7 @@ export default function RecommendedList() {
               type="button"
               href={`/videos/${rec._id}`}
               key={rec._id}
-              className="flex gap-2 cursor-pointer rounded-xl hover:bg-muted-background p-1.5"
+              className="flex gap-2 cursor-pointer rounded-xl hover:bg-muted-background p-1.5 transition-all duration-300"
             >
               <div className="relative max-w-44 flex-shrink-0 bg-muted rounded-xl overflow-hidden">
                 <Image
