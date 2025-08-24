@@ -15,12 +15,14 @@ import VideoPlayer from "@/components/videos/VideoPlayer";
 import RecommendedList from "@/components/Recommended";
 // import NotFoundComponent from "@/components/notFound/NotFound";
 import { VideoCardSkeleton } from "@/components/skeleton/VideoCardSkeleton";
+import { useCanWatchVideo } from "@/lib/useCanWatchVideo";
 
 function VideoPage() {
   const dispatch = useAppDispatch();
   const { id } = useParams();
   const isLoading = useAppSelector(selectIsLoadingVideos);
   const video = useAppSelector(selectVideo);
+  const canWatch = useCanWatchVideo();
 
   useEffect(() => {
     dispatch(fetchVideoById(id as string));
@@ -30,19 +32,20 @@ function VideoPage() {
   }, [dispatch, id]);
 
   if (isLoading) {
-    // return null;
     return <VideoCardSkeleton />;
   }
 
-  // if (!video) {
-  //   return <NotFoundComponent />;
-  // }
+  if (!video) {
+    return null;
+    // return <NotFoundComponent />;
+  }
+
   return (
     <div className="flex flex-col lg:flex-row justify-center gap-8 smx-auto">
-      {/* Ліва частина */}
-      {video && <VideoPlayer video={video} />}
-      {/* Права частина — рекомендації */}
-      <RecommendedList />
+      {video && <VideoPlayer canWatch={video.free || canWatch} video={video} />}
+      <div className="max-h-[600px] rounded-xl shadow px-5 py-4 overflow-y-auto no-scrollbar">
+        <RecommendedList />
+      </div>
     </div>
   );
 }

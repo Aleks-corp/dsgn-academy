@@ -13,11 +13,21 @@ import toast from "react-hot-toast";
 import { PiThreadsLogoFill } from "react-icons/pi";
 import { ChevronUp } from "lucide-react";
 import { IVideo } from "@/types/videos.type";
+import { useWindowWidth } from "@/lib/useWindowWidth";
+import Restricted from "../Restricted";
 
-export default function VideoPlayer({ video }: { video: IVideo }) {
+export default function VideoPlayer({
+  video,
+  canWatch,
+}: {
+  video: IVideo;
+  canWatch: boolean;
+}) {
   const profile = useAppSelector(selectUser);
   const [isReady, setIsReady] = useState(false);
   const [expanded, setExpanded] = useState(false);
+
+  const width = useWindowWidth();
 
   const isBlocked = !profile || video?.free;
   console.log("🚀 ~ isBlocked:", isBlocked);
@@ -71,7 +81,7 @@ export default function VideoPlayer({ video }: { video: IVideo }) {
 
   return (
     <div className="">
-      <div className="aspect-video w-auto max-h-[80vh] object-contain rounded-lg overflow-hidden mb-5">
+      <div className="relative aspect-video w-auto max-h-[80vh] object-contain rounded-lg overflow-hidden mb-5">
         {!isReady && (
           <div className="w-full h-full flex items-center justify-center">
             <Image
@@ -80,22 +90,38 @@ export default function VideoPlayer({ video }: { video: IVideo }) {
               width={752}
               height={423}
               priority
-              className="w-full h-full object-cover"
+              className="w-full h-full object-cover "
             />
           </div>
         )}
-        <Vimeo
-          key={video.video}
-          video={video.video}
-          responsive
-          pip
-          speed
-          autoplay={false}
-          width="100%"
-          height="100%"
-          playsInline
-          onReady={() => setIsReady(true)}
-        />
+        {!canWatch ? (
+          <>
+            <Image
+              src={video.cover}
+              alt={video.title}
+              width={752}
+              height={423}
+              priority
+              className="w-full h-full object-cover "
+            />
+            <div className="absolute top-0 botom-0 right-0 left-0 w-full backdrop-blur-[48px] h-full">
+              <Restricted />
+            </div>
+          </>
+        ) : (
+          <Vimeo
+            key={video.video}
+            video={video.video}
+            responsive
+            pip
+            speed
+            autoplay={false}
+            width="100%"
+            height="100%"
+            playsInline
+            onReady={() => setIsReady(true)}
+          />
+        )}
       </div>
       <div className="max-w-[990px] px-5 pt-5 flex flex-col bg-white rounded-3xl">
         <div className="flex flex-col gap-4 w-full xl:flex-row xl:justify-between">
@@ -134,29 +160,31 @@ export default function VideoPlayer({ video }: { video: IVideo }) {
         <div className="mt-5 text-sm text-[#131313] leading-5">
           <p
             className={`whitespace-pre-line transition-all duration-300 ${
-              expanded ? "line-clamp-none" : "line-clamp-3"
+              expanded || width >= 1024 ? "line-clamp-none" : "line-clamp-3"
             }`}
           >
             {video.description}
           </p>
 
-          {video.description && video.description.length > 120 && (
-            <div className="w-full flex justify-center translate-y-3">
-              <button
-                type="button"
-                onClick={() => setExpanded((prev) => !prev)}
-                className="flex justify-center items-center w-10 h-10 text-muted bg-white font-medium rounded-full hover:text-muted-background cursor-pointer transition-all duration-300 shadow-icon"
-              >
-                <div
-                  className={` ${
-                    !expanded ? "rotate-180" : "rotate-0"
-                  } transition-transform duration-300`}
+          {video.description &&
+            video.description.length > 120 &&
+            width < 1024 && (
+              <div className="w-full flex justify-center translate-y-3">
+                <button
+                  type="button"
+                  onClick={() => setExpanded((prev) => !prev)}
+                  className="flex justify-center items-center w-10 h-10 text-muted bg-white font-medium rounded-full hover:text-muted-background cursor-pointer transition-all duration-300 shadow-icon"
                 >
-                  <ChevronUp />
-                </div>
-              </button>
-            </div>
-          )}
+                  <div
+                    className={` ${
+                      !expanded ? "rotate-180" : "rotate-0"
+                    } transition-transform duration-300`}
+                  >
+                    <ChevronUp />
+                  </div>
+                </button>
+              </div>
+            )}
         </div>
       </div>
     </div>

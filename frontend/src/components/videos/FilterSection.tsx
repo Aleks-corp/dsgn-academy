@@ -47,7 +47,7 @@ export default function FilterSection() {
   if (!filters || filters.length === 0) return null;
 
   return (
-    <section className="flex flex-col">
+    <section className="relative flex flex-col">
       <div className="flex gap-3 overflow-x-auto no-scrollbar">
         {items.map((label) => {
           const isSelected =

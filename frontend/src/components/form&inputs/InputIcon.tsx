@@ -27,7 +27,7 @@ export default function IconInput({
       // transition={{ duration: 0.5, ease: "easeInOut" }}
       className={`font-inter relative  shadow-input rounded-xl
         ${isExpanded ? "w-full " : "w-10 overflow-hidden"}  
-        md:w-56 lg:w-64
+        md:w-48 lg:w-64
         ${wrapperClassName}`}
     >
       {icon && (
@@ -48,7 +48,7 @@ export default function IconInput({
           }
         }}
         onClick={() => {
-          if (window.innerWidth < 740) {
+          if (window.innerWidth < 760) {
             setIsExpanded(true);
           }
         }}

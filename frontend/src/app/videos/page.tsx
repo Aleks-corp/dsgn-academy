@@ -14,7 +14,7 @@ import {
 
 import { withAlphaGuard } from "@/guards&providers/WithAlphaGuard";
 import { useWindowWidth } from "@/lib/useWindowWidth";
-// import NotFoundComponent from "@/components/notFound/NotFound";
+import NotFoundComponent from "@/components/notFound/NotFound";
 // import Loader from "@/components/loaders/LoaderCircle";
 import { VideoCardsSkeleton } from "@/components/skeleton/VideoCardSkeleton";
 
@@ -97,7 +97,6 @@ function VideosPage() {
   }, [dispatch, videos.length, total, makeQuery, loadMoreCount, isLoading]);
 
   if (isLoadingVideo && pageRef.current === 1) {
-    console.log("🚀 ~ null:", null);
     return (
       <div className="flex justify-center flex-wrap gap-5">
         <VideoCardsSkeleton />
@@ -108,9 +107,9 @@ function VideosPage() {
     );
   }
 
-  // if (videos.length === 0) {
-  //   return <NotFoundComponent />;
-  // }
+  if (videos.length === 0) {
+    return <NotFoundComponent />;
+  }
 
   return (
     <div className="flex flex-col gap-8 w-full mx-auto">

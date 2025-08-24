@@ -14,7 +14,9 @@ export default function CoursesSection() {
 
   // якщо <1600 → обрізаємо до 3
   const visibleCourses =
-    isBelow1600 && courses.length > 3 ? courses.slice(0, 3) : courses;
+    isBelow1600 && courses.length > 3
+      ? courses.slice(0, 3)
+      : courses.slice(0, 4);
 
   // якщо <1280 і курсів >3 → скрол
   const enableScroll = isBelow1280 && courses.length > 3;
@@ -40,7 +42,7 @@ export default function CoursesSection() {
             Курси ще не додані
           </div>
         ) : (
-          visibleCourses.map((course) => (
+          (enableScroll ? courses : visibleCourses).map((course) => (
             <CoursesCard course={course} key={course._id} />
           ))
         )}

@@ -1,13 +1,17 @@
+"use client";
+
 import Image from "next/image";
-import { redirect } from "next/navigation";
+import { permanentRedirect } from "next/navigation";
 import Beta from "@/components/Beta";
 import { MiniTimer } from "@/components/timerPage/MiniTimer";
+// import { useWindowWidth } from "@/lib/useWindowWidth";
 
 export default function Logo() {
+  // const width = useWindowWidth();
   return (
     <button
       type="button"
-      onClick={() => redirect("/")}
+      onClick={() => permanentRedirect("/")}
       className="relative w-[175px] flex items-center gap-2 bg-white pl-5 pr-6 py-3 rounded-3xl cursor-pointer"
     >
       <Beta />

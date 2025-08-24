@@ -82,22 +82,18 @@ export default function Header({ isOpenAside, setIsOpenAside }: Props) {
   }
 
   return (
-    <header className="flex items-center lg:justify-between bg-background border-b border-border w-full">
-      <div className="w-full lg:w-auto flex items-center justify-between lg:justify-normal">
-        <div
-          className={`flex gap-2 items-center px-5 pt-4 pb-3 border-r transition-all duration-300 ${
-            isOpenAside ? "border-border" : "border-background"
-          }  shrink-1`}
-        >
+    <header className="relative max-h-[80px] flex items-center md:justify-between bg-background border-b border-border w-full z-50">
+      <div className="w-full md:w-auto flex items-center justify-between md:justify-normal">
+        <div className={`flex items-center px-5 pt-4 pb-3 shrink-1`}>
           <button
-            className="hidden lg:w-10 lg:h-10 lg:flex lg:items-center lg:justify-center lg:p-2 lg:cursor-pointer"
+            className="hidden w-10 h-10 md:flex items-center justify-center p-2 cursor-pointer"
             onClick={() => setIsOpenAside(!isOpenAside)}
           >
             <Menu />
           </button>
           <Logo />
         </div>
-        <div className="p-5">
+        <div className={`p-5  transition-all duration-300 `}>
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -146,10 +142,10 @@ export default function Header({ isOpenAside, setIsOpenAside }: Props) {
           </form>
         </div>
       </div>
-      <div className="hidden lg:flex lg:gap-4 p-5">
+      <div className="hidden md:flex md:gap-4 p-5">
         <Link
           href="/command"
-          className="flex items-center text-[#727272] font-inter font-medium text-[13px] leading-5 tracking-thin hover:text-foreground transition-colors duration-300 mr-4"
+          className="hidden lg:flex items-center text-[#727272] font-inter font-medium text-[13px] leading-5 tracking-thin hover:text-foreground transition-colors duration-300 mr-4"
           passHref
         >
           Про проект
@@ -193,7 +189,7 @@ export default function Header({ isOpenAside, setIsOpenAside }: Props) {
           </div>
         )}
       </div>
-      <div className="lg:hidden p-5 flex-1">
+      <div className="md:hidden p-5 flex-1">
         <button
           className="w-10 h-10 flex items-center justify-center p-2 cursor-pointer"
           onClick={() => setIsOpenAside(!isOpenAside)}

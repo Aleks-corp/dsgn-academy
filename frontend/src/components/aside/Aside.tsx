@@ -54,7 +54,7 @@ export default function Aside({ selectedPage, setSelectedPage }: Props) {
   }
 
   return isAlphaTesting && !isTester ? null : (
-    <aside className="flex flex-col items-center gap-3 w-full p-5 border-r border-border h-[calc(100%-80px)] transition-all">
+    <aside className="flex flex-col items-center gap-3 w-full p-5 h-[calc(100%-80px)] transition-all">
       <div className="flex flex-col w-full items-center gap-0.5">
         <button
           type="button"

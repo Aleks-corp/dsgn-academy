@@ -105,7 +105,7 @@ export default function RootPage({ children }: { children: React.ReactNode }) {
         initial={false}
         animate={{ x: isOpenAside ? 0 : -264 }}
         transition={{ duration: 0.35, ease: "easeInOut" }}
-        className="fixed top-20 bottom-0 left-0 z-30 bg-background w-[264px] overflow-y-auto overscroll-contain"
+        className="fixed top-20 bottom-0 left-0 z-30 bg-background border-r border-border w-[264px] overflow-y-auto overscroll-contain"
       >
         {pathname.startsWith("/da-admin") && isLoggedIn && isAdmin ? (
           <AdminAside
@@ -129,7 +129,7 @@ export default function RootPage({ children }: { children: React.ReactNode }) {
       <motion.div
         animate={{ width: isLg ? `calc(100vw - ${asideWidth}px)` : "100vw" }}
         transition={{ duration: 0.35, ease: "easeInOut" }}
-        className="fixed top-20 right-0 bottom-0 flex flex-col h-[calc(100%-80px)]"
+        className="fixed right-0 bottom-0 flex flex-col h-[calc(100%-81px)]"
       >
         <div
           className={`w-full h-full overflow-hidden overflow-y-auto ${

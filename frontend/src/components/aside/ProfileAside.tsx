@@ -46,7 +46,7 @@ export default function ProfileAside({ selectedPage, setSelectedPage }: Props) {
         <button
           type="button"
           name="security"
-          className={`w-full cursor-pointer rounded-xl border-[1px] border-background hover:bg-muted-background hover:border-border ${
+          className={`w-full cursor-pointer rounded-xl hover:bg-muted-background hover:border-border ${
             selectedPage === "security"
               ? "bg-muted-background border-border"
               : ""
