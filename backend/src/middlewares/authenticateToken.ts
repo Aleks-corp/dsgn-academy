@@ -5,7 +5,7 @@ import type { Document, ObjectId } from "mongoose";
 import "dotenv/config";
 
 import { ctrlWrapper } from "../decorators/index.js";
-import { HttpError } from "../utils/index.js";
+import { checkSubscriptionStatus, HttpError } from "../utils/index.js";
 import { UserModel } from "../models/index.js";
 
 import type { IUser } from "../types/user.type.js";
@@ -34,7 +34,8 @@ const authenticateToken = async (
       ) as JwtPayload;
       const user = (await UserModel.findById(jwtPayload.id)) as UserDocument;
       if (user && user.token) {
-        req.user = user;
+        const updatedUser = await checkSubscriptionStatus(user);
+        req.user = updatedUser;
       } else {
         return next(HttpError(401));
       }

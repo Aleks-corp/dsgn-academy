@@ -52,6 +52,7 @@ const userSchema = new Schema<IUser, IUserModelType>(
       match: [emailRegexp, "Будь ласка, вкажіть коректну електронну адресу"],
       required: true,
     },
+    phone: { type: String },
     password: {
       type: String,
       required: false,

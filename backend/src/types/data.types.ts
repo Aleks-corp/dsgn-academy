@@ -1,6 +1,8 @@
 export interface PaymentData {
   orderReference: string;
   orderDate: number;
+  amount: string;
+  regularMode: string;
   clientAccountId: string;
   clientEmail: string;
   dateNext: string;

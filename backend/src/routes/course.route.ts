@@ -4,6 +4,7 @@ import {
   isValidId,
   authenticateToken,
   authenticateAdmin,
+  authenticateUser,
 } from "../middlewares/index.js";
 import { validateBody } from "../decorators/index.js";
 import { coursesSchemas } from "../schemas/index.js";
@@ -43,16 +44,17 @@ coursesRouter.patch(
   isValidId,
   isEmptyBody,
   validateBody(courseUpdateSchema),
+  authenticateUser,
   updateCourse
 );
 
 coursesRouter.patch(
   "/:id/favorite",
-
   isValidId,
+  authenticateUser,
   toggleFavoriteCourse
 );
 
-coursesRouter.delete("/:id", isValidId, deleteCourseById);
+coursesRouter.delete("/:id", isValidId, authenticateUser, deleteCourseById);
 
 export default coursesRouter;

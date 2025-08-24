@@ -203,7 +203,7 @@ const changePassword = async (req: Request, res: Response): Promise<void> => {
 };
 
 const createPayment = async (req: Request, res: Response): Promise<void> => {
-  const { data }: { data: PaymentData } = req.body;
+  const data: PaymentData = req.body;
   const userId = req.user._id as ObjectId;
   const paymentData = await createPaymentService({ data, userId });
   res.json(paymentData);
@@ -240,23 +240,52 @@ const unsubscribeWebhook = async (
   const updatedUser = await unsubscribeWebhookService(user);
   res.json(updatedUser);
 };
+
 const paymentReturn = async (req: Request, res: Response): Promise<void> => {
+  const status = req.body.transactionStatus || "";
+  const reason = req.body.reason || "";
+  const baseUrl = FRONT_WEB_SERVER ? FRONT_WEB_SERVER : FRONT_SERVER;
+
+  // вибираємо куди редіректити
+  const redirectUrl =
+    status === "Approved"
+      ? `${baseUrl}/payment-success`
+      : `${baseUrl}/payment-error?reason=${encodeURIComponent(reason)}`;
+
   res.send(`
     <!DOCTYPE html>
-    <html lang="en">
+    <html lang="uk">
     <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Перевіряється оплата</title>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Оплата</title>
+        <style>
+          body {
+            font-family: sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: #f5f5f5;
+          }
+          .card {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            text-align: center;
+          }
+        </style>
     </head>
     <body>
-        <h2>Перевіряється оплата...</h2>
+        <div class="card">
+          <h2>Перевіряється оплата...</h2>
+          <p>Зачекайте, зараз ми перевіримо статус.</p>
+        </div>
         <script>
             setTimeout(() => {
-                window.location.href = "${
-                  FRONT_WEB_SERVER ? FRONT_WEB_SERVER : FRONT_SERVER
-                }/payment-success";
-            }, 500);
+                window.location.href = "${redirectUrl}";
+            }, 1000);
         </script>
     </body>
     </html>

@@ -1,5 +1,5 @@
 import { Router } from "express";
-
+import multer from "multer";
 import { userController } from "../controllers/index.js";
 import { usersSchemas } from "../schemas/index.js";
 import { validateBody } from "../decorators/index.js";
@@ -31,6 +31,8 @@ const {
   oauthUpsert,
 } = userController;
 
+const upload = multer();
+
 const usersRouter = Router();
 
 usersRouter.post("/register", validateBody(usersRegSchema), register);
@@ -59,7 +61,7 @@ usersRouter.post(
 
 usersRouter.post("/create-payment", authenticateUser, createPayment);
 usersRouter.post("/payment-webhook", paymentWebhook);
-usersRouter.post("/payment-return", paymentReturn);
+usersRouter.post("/payment-return", upload.none(), paymentReturn);
 usersRouter.get("/payment-status", authenticateUser, paymentStatus);
 usersRouter.get("/unsubscribe", authenticateUser, unsubscribeWebhook);
 

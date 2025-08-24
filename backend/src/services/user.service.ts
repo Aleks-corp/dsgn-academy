@@ -37,7 +37,7 @@ const {
   WFP_SECRET_KEY,
   WFP_MERCHANT_ACCOUNT,
   WFP_MERCHANT_DOMAIN_NAME,
-  VITE_BASE_URL,
+  BASE_URL,
   // IPHUB_API_KEY,
 } = process.env;
 
@@ -276,7 +276,8 @@ export const forgotPasswordService = async (
   user.resetPasswordToken = resetToken;
   user.resetPasswordExpires = Date.now() + 3600000;
   await UserModel.findByIdAndUpdate(user._id, {
-    ...user,
+    resetPasswordToken: resetToken,
+    resetPasswordExpires: user.resetPasswordExpires,
   });
 
   await sendMail({
@@ -360,6 +361,12 @@ export const createPaymentService = async ({
   await UserModel.findByIdAndUpdate(userId, {
     orderReference: data.orderReference,
   });
+  const amountPriceData = {
+    amount: Number(data.amount).toFixed(2),
+    productPrice: [Number(data.amount).toFixed(2)],
+    regularAmount: Number(data.amount).toFixed(2),
+  };
+
   const secretKey = WFP_SECRET_KEY ? WFP_SECRET_KEY : "";
   const merchantAccount = WFP_MERCHANT_ACCOUNT;
   const merchantDomainName = WFP_MERCHANT_DOMAIN_NAME;
@@ -368,25 +375,57 @@ export const createPaymentService = async ({
     merchantDomainName,
     data.orderReference,
     data.orderDate,
-    amountData.amount,
+    amountPriceData.amount,
     amountData.currency,
     ...amountData.productName,
     ...amountData.productCount,
-    ...amountData.productPrice,
+    ...amountPriceData.productPrice,
   ].join(";");
   const hmac = crypto.createHmac("md5", secretKey);
   hmac.update(string);
-
   const merchantSignature = hmac.digest("hex");
+
   const paymentData = {
-    ...data,
     ...amountData,
+    ...data,
+    ...amountPriceData,
     merchantAccount,
     merchantDomainName,
     merchantSignature,
-    returnUrl: `${VITE_BASE_URL}/users/payment-return`,
-    serviceUrl: `${VITE_BASE_URL}/users/payment-webhook`,
+    returnUrl: `${BASE_URL}/auth/payment-return`,
+    serviceUrl: `${BASE_URL}/auth/payment-webhook`,
   };
+
+  // const newPaymentData = {
+  //   merchantAccount, //
+  //   merchantDomainName, //
+  //   merchantAuthType: amountData.merchantAuthType, //
+  //   merchantTransactionSecureType: amountData.merchantTransactionSecureType, //
+
+  //   orderReference: data.orderReference, //
+  //   orderDate: data.orderDate, //
+  //   amount: amountPriceData.amount, //
+  //   currency: amountData.currency, //
+
+  //   productName: amountData.productName, //
+  //   productCount: amountData.productCount, //
+  //   productPrice: amountPriceData.productPrice, //
+
+  //   regularAmount: amountPriceData.regularAmount, //
+  //   regularMode: data.regularMode, //
+  //   regularBehavior: amountData.regularBehavior, //
+  //   regularOn: amountData.regularOn, //
+  //   recurringToken: amountData.recurringToken, //
+
+  //   clientAccountId: data.clientAccountId, //
+  //   clientEmail: data.clientEmail, //
+  //   dateNext: data.dateNext, //
+  //   dateEnd: data.dateEnd, //
+
+  //   merchantSignature, //
+  //   returnUrl: `${BASE_URL}/auth/payment-return`,
+  //   serviceUrl: `${BASE_URL}/auth/payment-webhook`,
+  // };
   return paymentData;
 };
 
@@ -414,9 +453,9 @@ export const paymentWebhookService = async (
         subscription: userSubscriptionConst.PREMIUM,
         phone,
         status: "Active",
-        regularDateEnd: new Date(
-          regularDateEnd.split(".").reverse().join(", ")
-        ),
+        regularDateEnd: regularDateEnd
+          ? new Date(regularDateEnd.split(".").reverse().join("-"))
+          : null,
         substart: new Date(parseInt(arr[1])),
         subend: setSubDate(parseInt(arr[1])),
       }

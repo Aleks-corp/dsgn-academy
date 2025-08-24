@@ -5,6 +5,7 @@ import {
   isValidId,
   authenticateToken,
   authenticateAdmin,
+  authenticateUser,
 } from "../middlewares/index.js";
 import { validateBody } from "../decorators/index.js";
 import { videosSchemas } from "../schemas/index.js";
@@ -35,9 +36,9 @@ videosRouter.get("/categories", getCategoriesVideos);
 
 videosRouter.get("/counts", getVideosCounts);
 
-videosRouter.get("/favorites", getFavoriteVideos);
+videosRouter.get("/favorites", authenticateUser, getFavoriteVideos);
 
-videosRouter.get("/watched", getWatchedVideos);
+videosRouter.get("/watched", authenticateUser, getWatchedVideos);
 
 videosRouter.get(
   "/data/vimeo/:vimeoId",
@@ -60,16 +61,17 @@ videosRouter.patch(
   isValidId,
   isEmptyBody,
   validateBody(videoUpdateSchema),
+  authenticateUser,
   updateVideo
 );
 
 videosRouter.patch(
   "/:id/favorite",
-
   isValidId,
+  authenticateUser,
   toggleFavoriteVideo
 );
 
-videosRouter.delete("/:id", isValidId, deleteVideoById);
+videosRouter.delete("/:id", isValidId, authenticateUser, deleteVideoById);
 
 export default videosRouter;

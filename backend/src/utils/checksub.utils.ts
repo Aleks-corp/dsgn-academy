@@ -31,9 +31,6 @@ const checkSubscriptionStatus = async (user: IUser): Promise<IUser> => {
         headers: { "Content-Type": "application/json" },
       });
       if (data.status === "Active") {
-        if (data.lastPayedStatus === "Declined") {
-          user.subscription = userSubscriptionConst.FREE;
-        }
         if (data.lastPayedStatus === "Approved") {
           user.subscription = userSubscriptionConst.PREMIUM;
         }
@@ -50,11 +47,13 @@ const checkSubscriptionStatus = async (user: IUser): Promise<IUser> => {
           );
         }
         const currentDate = new Date(data.dateBegin + "000");
-        user.substart = new Date(
-          currentDate.setMonth(
-            currentDate.getMonth() === 0 ? 11 : currentDate.getMonth() - 1
-          )
-        );
+        if (!user.substart) {
+          user.substart = new Date(
+            currentDate.setMonth(
+              currentDate.getMonth() === 0 ? 11 : currentDate.getMonth() - 1
+            )
+          );
+        }
         await UserModel.findByIdAndUpdate(user._id, {
           subscription: user.subscription,
           status: user.status,
@@ -68,26 +67,15 @@ const checkSubscriptionStatus = async (user: IUser): Promise<IUser> => {
         return user;
       }
       if (data.status === "Created") {
-        user.subscription = userSubscriptionConst.FREE;
         user.status = data.status;
         await UserModel.findByIdAndUpdate(user._id, {
-          subscription: user.subscription,
           status: user.status,
-        });
-        return user;
-      } else {
-        user.subscription = userSubscriptionConst.FREE;
-        user.orderReference = "";
-        await UserModel.findByIdAndUpdate(user._id, {
-          subscription: user.subscription,
-          orderReference: user.orderReference,
         });
         return user;
       }
     } catch (error) {
       console.error("Error checking WayForPay subscription:", error);
     }
-    return user;
   }
   if (user.subend && newDateTime > user.subend.getTime()) {
     const payload = {
@@ -102,9 +90,6 @@ const checkSubscriptionStatus = async (user: IUser): Promise<IUser> => {
       });
 
       if (data.status === "Active") {
-        if (data.lastPayedStatus === "Declined") {
-          user.subscription = userSubscriptionConst.FREE;
-        }
         if (data.lastPayedStatus === "Approved") {
           user.subscription = userSubscriptionConst.PREMIUM;
         }
@@ -121,11 +106,13 @@ const checkSubscriptionStatus = async (user: IUser): Promise<IUser> => {
           );
         }
         const currentDate = new Date(data.dateBegin + "000");
-        user.substart = new Date(
-          currentDate.setMonth(
-            currentDate.getMonth() === 0 ? 11 : currentDate.getMonth() - 1
-          )
-        );
+        if (!user.substart) {
+          user.substart = new Date(
+            currentDate.setMonth(
+              currentDate.getMonth() === 0 ? 11 : currentDate.getMonth() - 1
+            )
+          );
+        }
         await UserModel.findByIdAndUpdate(user._id, {
           subscription: user.subscription,
           status: user.status,
@@ -205,9 +192,6 @@ const checkSubscriptionStatus = async (user: IUser): Promise<IUser> => {
         headers: { "Content-Type": "application/json" },
       });
       if (data.status === "Active") {
-        if (data.lastPayedStatus === "Declined") {
-          user.subscription = userSubscriptionConst.FREE;
-        }
         if (data.lastPayedStatus === "Approved") {
           user.subscription = userSubscriptionConst.PREMIUM;
         }
@@ -225,11 +209,13 @@ const checkSubscriptionStatus = async (user: IUser): Promise<IUser> => {
           );
         }
         const currentDate = new Date(data.dateBegin + "000");
-        user.substart = new Date(
-          currentDate.setMonth(
-            currentDate.getMonth() === 0 ? 11 : currentDate.getMonth() - 1
-          )
-        );
+        if (!user.substart) {
+          user.substart = new Date(
+            currentDate.setMonth(
+              currentDate.getMonth() === 0 ? 11 : currentDate.getMonth() - 1
+            )
+          );
+        }
         await UserModel.findByIdAndUpdate(user._id, {
           subscription: user.subscription,
           status: user.status,

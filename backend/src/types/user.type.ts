@@ -24,6 +24,7 @@ export interface IUser extends Document {
   name: string;
   avatar: string;
   email: string;
+  phone?: string;
   password: string;
   accounts: IUserAccount[];
   ip: string;
