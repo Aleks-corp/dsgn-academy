@@ -1,6 +1,7 @@
 export const amountData = {
   currency: "EUR",
-  productName: ["Dsgn-academy-subscription"],
+  productNameMonth: ["Dsgn-academy-monthly"],
+  productNameYear: ["Dsgn-academy-yearly"],
   productCount: [1],
   merchantAuthType: "SimpleSignature",
   merchantTransactionSecureType: "AUTO",
