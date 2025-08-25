@@ -97,7 +97,7 @@ function CoursesPage() {
       </div>
     );
   }
-  if (error) {
+  if (error && !isLoadingVideo && courses.length === 0) {
     return <NotFoundComponent />;
   }
 

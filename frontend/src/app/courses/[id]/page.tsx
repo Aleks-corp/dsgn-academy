@@ -39,19 +39,14 @@ function CoursePage() {
   }, [dispatch, id]);
 
   if (isLoading) {
-    return (
-      <>
-        <VideoCardSkeleton />
-        <VideoCardSkeleton />
-      </>
-    );
-  }
-
-  if (error) {
-    return <NotFoundComponent />;
+    return <VideoCardSkeleton />;
   }
   if (!course) {
     return null;
+  }
+
+  if (error && !isLoading && !course) {
+    return <NotFoundComponent />;
   }
 
   return (

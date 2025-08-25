@@ -95,7 +95,7 @@ function VideosPage() {
     };
   }, [dispatch, videos.length, total, makeQuery, loadMoreCount, isLoading]);
 
-  if (error) {
+  if (error && !isLoadingVideo && videos.length === 0) {
     if (searchParams) {
       const category = searchParams.get("category") || "";
       return (
