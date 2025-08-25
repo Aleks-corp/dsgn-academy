@@ -5,7 +5,7 @@ import { useAppSelector } from "@/redux/hooks";
 
 import Image from "next/image";
 import Vimeo from "@u-wave/react-vimeo";
-import { selectIsAdmin, selectUser } from "@/redux/selectors/auth.selectors";
+import { selectIsAdmin } from "@/redux/selectors/auth.selectors";
 import Button from "@/components/buttons/Button";
 import { FaTelegramPlane } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
@@ -25,16 +25,12 @@ export default function VideoPlayer({
   video: IVideo;
   canWatch: boolean;
 }) {
-  const profile = useAppSelector(selectUser);
   const [isReady, setIsReady] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const isAdmin = useAppSelector(selectIsAdmin);
   const { id: videoId } = useParams();
 
   const width = useWindowWidth();
-
-  const isBlocked = !profile || video?.free;
-  console.log("🚀 ~ isBlocked:", isBlocked);
 
   if (!video) {
     return null;

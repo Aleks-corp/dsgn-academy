@@ -36,7 +36,7 @@ function VideoPage() {
     return <VideoCardSkeleton />;
   }
 
-  if (!error) {
+  if (error) {
     return <NotFoundComponent />;
   }
 
