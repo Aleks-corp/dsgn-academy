@@ -3,8 +3,10 @@ import "./globals.css";
 
 import { metadata } from "@/lib/metadata";
 import { ReduxProvider } from "@/redux/provider";
+import { GoogleAnalytics } from "@next/third-parties/google";
 
 import RootPage from "@/app/RootPage";
+import AnalyticsTracker from "@/hooks/useAnalyticsTracker";
 
 const sora = Sora({
   weight: ["400", "500", "600", "800"],
@@ -35,6 +37,8 @@ export default function RootLayout({
       <body className={`${sora.variable} ${inter.variable} antialiased`}>
         <ReduxProvider>
           <RootPage>{children}</RootPage>
+          <AnalyticsTracker />
+          <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID!} />
         </ReduxProvider>
       </body>
     </html>

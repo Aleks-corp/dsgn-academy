@@ -61,10 +61,6 @@ const generatePaymentData = async (data: PaymemtData) => {
   return response.data;
 };
 
-//test amount
-const testMAmount = 0.11;
-const testYAmount = 0.12;
-
 export const handleWayForPay = async (
   email: string,
   amount: number,
@@ -79,7 +75,7 @@ export const handleWayForPay = async (
   const data = {
     orderReference: `WFPDA-${currentDate.getTime()}`,
     orderDate: currentDate.getTime(),
-    amount: duration === "monthly" ? testMAmount : testYAmount,
+    amount,
     regularMode: duration,
     clientAccountId: `${email}`,
     clientEmail: `${email}`,
