@@ -10,25 +10,17 @@ import { VideoCardsSkeleton } from "../skeleton/VideoCardSkeleton";
 export default function VideosSection({
   videos,
   isLoadingVideo,
-  page,
 }: {
   videos: IVideo[];
   isLoadingVideo: boolean;
-  page: number;
 }) {
   const width = useWindowWidth();
-  if (isLoadingVideo && page === 1) {
-    return (
-      <div className="flex justify-center flex-wrap gap-5">
-        <VideoCardsSkeleton />
-        <VideoCardsSkeleton />
-        <VideoCardsSkeleton />
-        <VideoCardsSkeleton />
-      </div>
-    );
-  }
-  const cols = width <= 630 ? 1 : width <= 1200 ? 2 : width <= 1560 ? 3 : 4;
 
+  const cols = width <= 630 ? 1 : width <= 1200 ? 2 : width <= 1560 ? 3 : 4;
+  const arr = [];
+  for (let index = 0; index < cols; index++) {
+    arr.push(index);
+  }
   return (
     <section className="w-full mt-4">
       <h2 className="font-medium text-xl leading-7 tracking-thinest mb-4">
@@ -42,13 +34,18 @@ export default function VideosSection({
           ${cols === 4 ? "grid-cols-4 justify-items-stretch" : ""}
         `}
       >
-        {videos.length === 0 ? (
-          <div className="col-span-full text-center text-gray-400">
-            Відео ще не додані
-          </div>
-        ) : (
-          videos.map((video) => <VideosCard video={video} key={video._id} />)
-        )}
+        {videos.length !== 0 &&
+          videos.map((video) => <VideosCard video={video} key={video._id} />)}
+      </div>
+      <div
+        className={`grid gap-4 mx-auto
+          ${cols === 1 ? "grid-cols-1 justify-items-center" : ""}
+          ${cols === 2 ? "grid-cols-2 justify-items-stretch" : ""}
+          ${cols === 3 ? "grid-cols-3 justify-items-stretch" : ""}
+          ${cols === 4 ? "grid-cols-4 justify-items-stretch" : ""}
+        `}
+      >
+        {isLoadingVideo && arr.map((i) => <VideoCardsSkeleton key={i} />)}
       </div>
     </section>
   );

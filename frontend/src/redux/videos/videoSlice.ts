@@ -22,11 +22,6 @@ const handleRejected = (state: VideoState, action: PayloadAction<string>) => {
   }
 };
 
-const handleFulfilled = (state: VideoState) => {
-  state.error = "";
-  state.isLoading = false;
-};
-
 const handleFetchVideosPending = (state: VideoState) => {
   state.isLoading = true;
 };
@@ -51,6 +46,18 @@ export const handleFulfilledVideos = (
     state.videos = [...state.videos, ...newVideos];
   }
   state.totalHits = action.payload.total;
+  state.error = "";
+  state.isLoading = false;
+};
+
+export const handleRejectVideos = (
+  state: VideoState,
+  action: PayloadAction<unknown>
+): void => {
+  if (action.payload === "Відео не знайдено") {
+    state.videos = [];
+    state.totalHits = 0;
+  }
 };
 
 export const handleFulfilledVideosCount = (
@@ -79,6 +86,8 @@ export const handleFulfilledVideoById = (
   action: PayloadAction<IVideo>
 ): void => {
   state.selectedVideo = action.payload;
+  state.error = "";
+  state.isLoading = false;
 };
 
 export const handleFulfilledAddVideo = (
@@ -87,6 +96,8 @@ export const handleFulfilledAddVideo = (
 ): void => {
   state.videos.push({ ...action.payload });
   state.selectedVideo = { ...action.payload };
+  state.error = "";
+  state.isLoading = false;
 };
 
 export const handleFulfilledAddFavorites = (
@@ -101,6 +112,8 @@ export const handleFulfilledAddFavorites = (
   if (state.selectedVideo) {
     state.selectedVideo.favoritedBy = updatedVideo.favoritedBy;
   }
+  state.error = "";
+  state.isLoading = false;
 };
 
 export const handleFulfilledDeleteVideo = (
@@ -114,6 +127,8 @@ export const handleFulfilledDeleteVideo = (
     state.videos.splice(postIndex, 1);
   }
   state.selectedVideo = null;
+  state.error = "";
+  state.isLoading = false;
 };
 
 const videoSlice = createSlice({
@@ -147,6 +162,7 @@ const videoSlice = createSlice({
     builder
       .addCase(fetchVideos.pending, handleFetchVideosPending)
       .addCase(fetchVideos.fulfilled, handleFulfilledVideos)
+      .addCase(fetchVideos.rejected, handleRejectVideos)
       .addCase(fetchVideoById.pending, handlePending)
       .addCase(fetchVideoById.fulfilled, handleFulfilledVideoById)
       .addCase(fetchVideosCount.fulfilled, handleFulfilledVideosCount)
@@ -158,12 +174,6 @@ const videoSlice = createSlice({
       .addMatcher(
         ({ type }) => type.endsWith("/rejected") && type.startsWith("videos"),
         handleRejected
-      )
-      .addMatcher(
-        (action) =>
-          action.type.endsWith("/fulfilled") &&
-          action.type.startsWith("videos"),
-        handleFulfilled
       );
   },
 });

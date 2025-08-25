@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 
-export default function PaymentSuccessPage() {
+function PaymentErrorPage() {
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const params = useSearchParams();
   const reason = params.get("reason") || "Невідома помилка";
@@ -43,3 +43,4 @@ export default function PaymentSuccessPage() {
     </div>
   );
 }
+export default PaymentErrorPage;

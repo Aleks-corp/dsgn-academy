@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-export default function CommandPage() {
+function CommandPage() {
   return (
     <div className="flex flex-col gap-16 md:gap-20 max-w-5xl py-4">
       <div className="grid grid-cols-1 md:grid-cols-[216px_64px_1fr] lg:grid-cols-[216px_128px_1fr] gap-y-10 md:gap-y-0 items-start w-full max-w-5xl mx-auto">
@@ -131,3 +131,4 @@ export default function CommandPage() {
     </div>
   );
 }
+export default CommandPage;

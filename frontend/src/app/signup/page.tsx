@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import SignUpForm from "@/components/form&inputs/SignUpForm";
-import { withAlphaGuard } from "@/guards/WithAlphaGuard";
 
 function SignupPage() {
   return (
@@ -23,5 +22,4 @@ function SignupPage() {
   );
 }
 
-export default withAlphaGuard(SignupPage);
-// export default SignupPage
+export default SignupPage;

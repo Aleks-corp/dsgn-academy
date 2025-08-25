@@ -4,6 +4,7 @@
 @import "../styles/loader.css";
 @import "../styles/buttonGradient.css";
 @import "../styles/buttonBlack.css";
+@import "../styles/scroll.css";
 
 @font-face {
   font-family: "Helvetica Neue";

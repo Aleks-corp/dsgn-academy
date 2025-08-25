@@ -34,16 +34,23 @@ export default function FilterSection() {
   );
 
   const handleSelect = (label: string) => {
+    const params = new URLSearchParams(window.location.search);
+
     if (label === ALL_LABEL) {
-      router.push("/videos"); // прибираємо всі query
-      return;
+      // прибираємо ВСІ фільтри
+      params.delete("filter");
+      params.delete("recommended");
+    } else if (label === RECO_LABEL) {
+      // лишаємо всі інші параметри, додаємо recommended
+      params.delete("filter");
+      params.set("recommended", "");
+    } else {
+      // конкретний фільтр
+      params.set("filter", label);
+      params.delete("recommended");
     }
-    if (label === RECO_LABEL) {
-      router.push("/videos?recommended"); // рівно ?recommended
-      return;
-    }
-    // інші фільтри
-    router.push(`/videos?filter=${encodeURIComponent(label)}`);
+
+    router.push(`/videos?${params.toString()}`, { scroll: false });
   };
 
   if (!filters || filters.length === 0) return null;

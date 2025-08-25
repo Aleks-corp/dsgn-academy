@@ -11,12 +11,11 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import {
   selectIsLoadingVideos,
   selectVideos,
+  selectVideosError,
 } from "@/redux/selectors/videos.selectors";
 
-import { withAlphaGuard } from "@/guards/WithAlphaGuard";
 import { useWindowWidth } from "@/hooks/useWindowWidth";
-// import NotFoundComponent from "@/components/notFound/NotFound";
-// import Loader from "@/components/loaders/LoaderCircle";
+import NotFoundComponent from "@/components/notFound/NotFound";
 import { VideoCardsSkeleton } from "@/components/skeleton/VideoCardSkeleton";
 import { fetchCourses } from "@/redux/courses/course.thunk";
 
@@ -29,7 +28,7 @@ function HomePage() {
   const dispatch = useAppDispatch();
   const videos = useAppSelector(selectVideos);
   const isLoadingVideo = useAppSelector(selectIsLoadingVideos);
-
+  const error = useAppSelector(selectVideosError);
   const width = useWindowWidth();
   const [total, setTotal] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -93,7 +92,7 @@ function HomePage() {
     };
   }, [dispatch, videos.length, total, makeQuery, loadMoreCount, isLoading]);
 
-  if (isLoadingVideo && pageRef.current === 1) {
+  if (isLoadingVideo && !pageRef.current) {
     const arr = [];
     for (let index = 0; index < cols * 2; index++) {
       arr.push(index);
@@ -107,24 +106,20 @@ function HomePage() {
     );
   }
 
-  // if (videos.length === 0) {
-  //   return <NotFoundComponent />;
-  // }
+  if (error) {
+    return <NotFoundComponent />;
+  }
 
   return (
     <div className="flex flex-col w-full mx-auto">
       <HeroSection />
       <FilterSection />
       <CoursesSection />
-      {videos && (
-        <VideosSection
-          videos={videos}
-          isLoadingVideo={isLoadingVideo}
-          page={pageRef.current}
-        />
+      {videos.length !== 0 && (
+        <VideosSection videos={videos} isLoadingVideo={isLoadingVideo} />
       )}
       <div ref={loaderRef} className="h-10" />
     </div>
   );
 }
-export default withAlphaGuard(HomePage);
+export default HomePage;

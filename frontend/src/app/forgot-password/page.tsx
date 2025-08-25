@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import ForgotForm from "@/components/form&inputs/ForgotForm";
-import { withAlphaGuard } from "@/guards/WithAlphaGuard";
 
 function ForgotPage() {
   return (
@@ -22,5 +21,4 @@ function ForgotPage() {
     </div>
   );
 }
-export default withAlphaGuard(ForgotPage);
-// export default SignInPage
+export default ForgotPage;

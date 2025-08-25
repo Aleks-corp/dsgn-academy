@@ -3,11 +3,6 @@
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import Image from "next/image";
 import {
-  selectIsAlpha,
-  selectIsLoadingTest,
-  selectIsTester,
-} from "@/selectors/test.selectors";
-import {
   selectTotalFree,
   selectTotalVideos,
   selectVideoCategories,
@@ -29,9 +24,6 @@ type Props = {
 
 export default function Aside({ selectedPage, setSelectedPage }: Props) {
   const dispatch = useAppDispatch();
-  const isAlphaTesting = useAppSelector(selectIsAlpha);
-  const isTester = useAppSelector(selectIsTester);
-  const isLoading = useAppSelector(selectIsLoadingTest);
   const sub = useAppSelector(selectSubscription);
 
   useEffect(() => {
@@ -40,6 +32,27 @@ export default function Aside({ selectedPage, setSelectedPage }: Props) {
     // dispatch(fetchShortsCount());
   }, [dispatch]);
 
+  const handleFetch = (options: {
+    all?: boolean;
+    free?: boolean;
+    category?: string;
+  }) => {
+    if (options.all) {
+      // всі відео → пусто
+      dispatch(fetchVideosCount(""));
+      return;
+    }
+    if (options.free) {
+      // безкоштовні
+      dispatch(fetchVideosCount("free"));
+      return;
+    }
+    if (options.category) {
+      // конкретна категорія
+      dispatch(fetchVideosCount(options.category));
+      return;
+    }
+  };
   const videosCount = useAppSelector(selectTotalVideos);
   const coursesCount = useAppSelector(selectTotalCourses);
   const shortsCount = useAppSelector(selectTotalShorts);
@@ -51,12 +64,7 @@ export default function Aside({ selectedPage, setSelectedPage }: Props) {
   const filteredCategories = fullCategories.filter(
     (c, i) => fullCategories.indexOf(c) === i
   );
-
-  if (isLoading) {
-    return null;
-  }
-
-  return isAlphaTesting && !isTester ? null : (
+  return (
     <aside className="flex flex-col items-center gap-3 w-full p-5 h-[calc(100%-80px)] transition-all">
       <div className="md:hidden flex w-full ">
         {(sub === "free" || !sub) && (
@@ -80,8 +88,9 @@ export default function Aside({ selectedPage, setSelectedPage }: Props) {
               ? "bg-muted-background border-border"
               : ""
           } `}
-          onClick={(e) => {
-            setSelectedPage(e.currentTarget.name);
+          onClick={() => {
+            setSelectedPage("all-videos");
+            handleFetch({ all: true });
           }}
         >
           <NavLinkIcon
@@ -144,8 +153,9 @@ export default function Aside({ selectedPage, setSelectedPage }: Props) {
               ? "bg-muted-background border-border"
               : ""
           } `}
-          onClick={(e) => {
-            setSelectedPage(e.currentTarget.name);
+          onClick={() => {
+            setSelectedPage("free-videos");
+            handleFetch({ free: true });
           }}
         >
           <NavLinkIcon
@@ -211,8 +221,9 @@ export default function Aside({ selectedPage, setSelectedPage }: Props) {
             className={`w-full cursor-pointer rounded-xl border-[1px] border-background hover:bg-muted-background hover:border-border ${
               selectedPage === c ? "bg-muted-background border-border" : ""
             } `}
-            onClick={(e) => {
-              setSelectedPage(e.currentTarget.name);
+            onClick={() => {
+              setSelectedPage(c);
+              handleFetch({ category: c });
             }}
           >
             <NavLinkIcon

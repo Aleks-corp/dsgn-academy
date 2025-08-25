@@ -1,0 +1,23 @@
+.scrollbar-x::-webkit-scrollbar {
+  height: 8px;
+}
+.scrollbar-x::-webkit-scrollbar-track {
+  background: transparent;
+}
+.scrollbar-x::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.3);
+  border-radius: 4px;
+}
+.scrollbar-x::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+/* Псевдоелементи як у .scroll: лівий/правий відступи по 64px */
+.scrollbar-x::before,
+.scrollbar-x::after {
+  content: "";
+  flex-shrink: 0;
+  width: 64px;
+  height: 1px; /* просто фіктивна висота, щоб елемент існував */
+  display: block;
+}

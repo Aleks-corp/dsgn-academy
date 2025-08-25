@@ -83,36 +83,6 @@ export const patchCheckSub = createAsyncThunk(
   }
 );
 
-export const getUnpublishedPosts = createAsyncThunk(
-  "admin/getunpublposts",
-  async ({ page = 1, limit = 12 }: Query, thunkAPI) => {
-    try {
-      const response = await instance.get(
-        `/admin/posts?page=${page}&limit=${limit}`
-      );
-      return response.data;
-    } catch (e) {
-      if (e instanceof Error) {
-        return thunkAPI.rejectWithValue(e.message);
-      }
-    }
-  }
-);
-
-export const getUnpublishedPostById = createAsyncThunk(
-  "admin/getunpublpost",
-  async (postId: string, thunkAPI) => {
-    try {
-      const response = await instance.get(`/admin/post/${postId}`);
-      return response.data;
-    } catch (e) {
-      if (e instanceof Error) {
-        return thunkAPI.rejectWithValue(e.message);
-      }
-    }
-  }
-);
-
 export const sendMessageSpt = createAsyncThunk(
   "admin/sendmessagespt",
   async (userData: { message: string }, thunkAPI) => {

@@ -15,7 +15,7 @@ import toast from "react-hot-toast";
 import { handleWayForPay } from "@/lib/paymentWFP";
 // import Button from "@/components/buttons/Button";
 
-export default function AllSubscriptionPage() {
+function AllSubscriptionPage() {
   const profile = useAppSelector(selectUser);
   const router = useRouter();
   const [duration, setDuration] = useState<"monthly" | "yearly">("monthly");
@@ -122,3 +122,4 @@ export default function AllSubscriptionPage() {
     </div>
   );
 }
+export default AllSubscriptionPage;

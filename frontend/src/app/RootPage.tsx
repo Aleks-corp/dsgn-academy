@@ -8,7 +8,6 @@ import { Toaster } from "react-hot-toast";
 
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { refreshUser } from "@/redux/auth/auth.thunk";
-import { isAlpha } from "@/redux/test/test.thunk";
 import {
   selectIsAdmin,
   selectIsLoggedIn,
@@ -26,7 +25,7 @@ import Loader from "../components/loaders/LoaderCircle";
 import useIsLg from "../hooks/useScreenWidth";
 // import LenisProvider from "./LenisProvider";
 
-export default function RootPage({ children }: { children: React.ReactNode }) {
+function RootPage({ children }: { children: React.ReactNode }) {
   const dispatch = useAppDispatch();
   const isRefreshing = useAppSelector(selectIsRefreshing);
   const isLoggedIn = useAppSelector(selectIsLoggedIn);
@@ -62,7 +61,6 @@ export default function RootPage({ children }: { children: React.ReactNode }) {
   }, [isLg, computeShouldOpen]);
 
   useEffect(() => {
-    dispatch(isAlpha());
     dispatch(refreshUser());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -151,3 +149,4 @@ export default function RootPage({ children }: { children: React.ReactNode }) {
     </div>
   );
 }
+export default RootPage;

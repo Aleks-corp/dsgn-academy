@@ -12,6 +12,7 @@ export interface IUser {
   _id: string;
   name: string;
   email: string;
+  phone?: string;
   avatar?: string;
   ip: string;
   isBlocked: boolean;

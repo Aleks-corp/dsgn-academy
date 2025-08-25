@@ -23,4 +23,3 @@ function AdminPage() {
   );
 }
 export default withAdminGuard(AdminPage);
-// export default AdminPage;

@@ -2,8 +2,9 @@
 
 import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
+import { withAdminGuard } from "@/guards/WithAdminGuard";
 
-export default function PaymentSuccessPage() {
+function PaymentSuccessPage() {
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const router = useRouter();
 
@@ -34,3 +35,4 @@ export default function PaymentSuccessPage() {
     </div>
   );
 }
+export default withAdminGuard(PaymentSuccessPage);

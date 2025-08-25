@@ -1,6 +1,5 @@
 "use client";
 
-// import { Youtube, ChevronRight } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { useSearchParams } from "next/navigation";
@@ -13,9 +12,9 @@ import {
 import { useWindowWidth } from "@/hooks/useWindowWidth";
 
 import CoursesSection from "@/components/courses/CoursesSection";
-// import NotFoundComponent from "@/components/notFound/NotFound";
+import NotFoundComponent from "@/components/notFound/NotFound";
 import { VideoCardsSkeleton } from "@/components/skeleton/VideoCardSkeleton";
-import { withAlphaGuard } from "@/guards/WithAlphaGuard";
+import { selectVideosError } from "@/redux/selectors/videos.selectors";
 
 interface FetchCourseResponse {
   total: number;
@@ -27,7 +26,7 @@ function CoursesPage() {
   const searchParams = useSearchParams();
   const courses = useAppSelector(selectCourses);
   const isLoadingVideo = useAppSelector(selectIsLoadingCourses);
-
+  const error = useAppSelector(selectVideosError);
   const width = useWindowWidth();
   const [total, setTotal] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -88,7 +87,7 @@ function CoursesPage() {
     };
   }, [dispatch, total, makeQuery, loadMoreCount, isLoading, courses.length]);
 
-  if (isLoadingVideo && pageRef.current === 1) {
+  if (isLoadingVideo && !pageRef.current) {
     return (
       <div className="flex justify-center flex-wrap gap-5">
         <VideoCardsSkeleton />
@@ -98,17 +97,16 @@ function CoursesPage() {
       </div>
     );
   }
-  // if (courses.length === 0) {
-  //   return <NotFoundComponent />;
-  // }
+  if (error) {
+    return <NotFoundComponent />;
+  }
 
   return (
     <div className="flex flex-col gap-8 w-full mx-auto">
       {/* <FilterSection /> */}
       <CoursesSection courses={courses} />
-      <div ref={loaderRef} className="h-10" />
+      <div ref={loaderRef} className="h-20" />
     </div>
   );
 }
-export default withAlphaGuard(CoursesPage);
-// export default CoursesPage;
+export default CoursesPage;

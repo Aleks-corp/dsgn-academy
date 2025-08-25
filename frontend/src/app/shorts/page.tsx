@@ -15,10 +15,9 @@ export default function ShortsPage() {
   const dispatch = useAppDispatch();
   const isLoading = useAppSelector(selectIsLoadingVideos);
   const shorts = useAppSelector(selectVideo);
-  console.log("🚀 ~ shorts:", shorts);
 
   useEffect(() => {
-    dispatch(fetchVideoById("689f89a4c5cbec743952f1ce"));
+    dispatch(fetchVideoById("shotrs"));
   }, [dispatch]);
 
   if (isLoading) {
@@ -33,14 +32,14 @@ export default function ShortsPage() {
     return (
       <InProgressComponent
         title="Розділ"
-        desc="А пока можна переглянути інші відео."
+        desc="А поки можна переглянути інші відео."
       />
     );
   }
   return (
     <InProgressComponent
       title="Розділ"
-      desc="А пока можна переглянути інші відео."
+      desc="А поки можна переглянути інші відео."
     />
   );
 }

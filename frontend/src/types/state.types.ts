@@ -7,8 +7,8 @@ export interface State {
   videos: VideoState;
   shorts: ShortState;
   auth: AuthState;
-  //     admin: AdminState;
-  test: TestState;
+  admin: AdminState;
+  // test: TestState;
 }
 
 export interface CourseState {
@@ -64,12 +64,6 @@ export interface AuthState {
 export interface AdminState {
   folowers: IUser[];
   totalFolowers: number;
-  totalVideos: number;
-  unpublVideos: IVideo[];
-  unpublVideo: IVideo | null;
-  totalCources: number;
-  unpublCources: IVideo[];
-  unpublCource: IVideo | null;
   isLoading: boolean;
   isLoadingUpdate: boolean;
   isLoadingCheck: boolean;
@@ -77,10 +71,10 @@ export interface AdminState {
   error: string;
 }
 
-export interface TestState {
-  isAlpha: boolean;
-  isTester: boolean;
-  error: string;
-  isLoading: boolean;
-  timer: number | null;
-}
+// export interface TestState {
+//   isAlpha: boolean;
+//   isTester: boolean;
+//   error: string;
+//   isLoading: boolean;
+//   timer: number | null;
+// }

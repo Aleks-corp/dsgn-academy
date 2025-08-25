@@ -5,11 +5,6 @@ import { Menu } from "lucide-react";
 import { useAppSelector } from "@/redux/hooks";
 import { useRouter } from "next/navigation";
 import {
-  selectIsAlpha,
-  selectIsLoadingTest,
-  selectIsTester,
-} from "@/selectors/test.selectors";
-import {
   selectIsAdmin,
   selectIsLoggedIn,
   selectSubscription,
@@ -18,7 +13,6 @@ import {
 import IconInput from "@/components/form&inputs/InputIcon";
 import NavLink from "@/components/links/Link";
 import Logo from "@/components/Logo";
-import HeaderTimer from "@/components/HeaderTimer";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -30,9 +24,6 @@ const SEARCH_INPUT_ID = "app-search";
 
 export default function Header({ isOpenAside, setIsOpenAside }: Props) {
   const [search, setSearch] = useState("");
-  const isLoading = useAppSelector(selectIsLoadingTest);
-  const isAlphaTesting = useAppSelector(selectIsAlpha);
-  const isTester = useAppSelector(selectIsTester);
   const subscription = useAppSelector(selectSubscription);
   const isLoggedIn = useAppSelector(selectIsLoggedIn);
   const isAdmin = useAppSelector(selectIsAdmin);
@@ -51,7 +42,16 @@ export default function Header({ isOpenAside, setIsOpenAside }: Props) {
         el?.focus();
         return;
       }
-      router.push(`/videos?search=${encodeURIComponent(q)}`);
+
+      // беремо існуючі параметри
+      const params = new URLSearchParams(window.location.search);
+
+      // оновлюємо або додаємо пошук
+      params.set("search", q);
+
+      // пушимо новий URL з усіма параметрами
+      router.push(`/videos?${params.toString()}`, { scroll: false });
+
       setSearch("");
       el?.blur();
     },
@@ -74,13 +74,6 @@ export default function Header({ isOpenAside, setIsOpenAside }: Props) {
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [doNavigate]);
-
-  if (isLoading) {
-    return null;
-  }
-  if (isAlphaTesting && !isTester) {
-    return <HeaderTimer />;
-  }
 
   return (
     <header className="relative w-full max-h-[80px] flex items-center lg:justify-between bg-background border-b border-border z-50">

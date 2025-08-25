@@ -1,12 +1,9 @@
 "use client";
 
 import { useState } from "react";
-// import { useAppSelector } from "@/redux/hooks";
 
 import Vimeo from "@u-wave/react-vimeo";
-// import { selectUser } from "@/redux/selectors/auth.selectors";
 import SafeImage from "@/components/SafeImage";
-// import { PlayIcon } from "lucide-react";
 import { ICourseVideo } from "@/types/courses.type";
 import Restricted from "../Restricted";
 
@@ -17,7 +14,6 @@ export default function CoursePlayer({
   selectedVideo: ICourseVideo;
   canWatch: boolean;
 }) {
-  //   const profile = useAppSelector(selectUser);
   const [isReady, setIsReady] = useState(false);
 
   const isBlocked = true;

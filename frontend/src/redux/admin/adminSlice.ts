@@ -5,13 +5,10 @@ import {
   patchUser,
   patchUsers,
   banUsers,
-  getUnpublishedPosts,
-  getUnpublishedPostById,
   patchCheckSub,
   sendMessageSpt,
 } from "./admin.thunk";
 import { AdminState } from "../../types/state.types";
-import { IVideo } from "@/types/videos.type";
 import { IUser } from "@/types/users.type";
 import toast from "react-hot-toast";
 
@@ -27,11 +24,6 @@ const handlePatchUsersPending = (state: AdminState) => {
 
 const handlePatchCheckSubPending = (state: AdminState) => {
   state.isLoadingCheck = true;
-  state.error = "";
-};
-
-const handlePostsPending = (state: AdminState) => {
-  state.isLoading = true;
   state.error = "";
 };
 
@@ -75,23 +67,6 @@ const handlePatchCheckSubFulfilled = (
   state.totalFolowers = action.payload.totalHits;
 };
 
-const handleGetUnpublishedPostsFulfilled = (
-  state: AdminState,
-  action: PayloadAction<{ posts: IVideo[]; totalHits: number }>
-) => {
-  state.isLoading = false;
-  state.unpublVideos = action.payload.posts;
-  state.totalVideos = action.payload.totalHits;
-};
-
-const handleGetUnpublishedPostsByIdFulfilled = (
-  state: AdminState,
-  action: PayloadAction<IVideo>
-) => {
-  state.isLoading = false;
-  state.unpublVideo = action.payload;
-};
-
 const handleSendMessageSptPending = (state: AdminState) => {
   state.error = "";
 };
@@ -131,16 +106,6 @@ const adminSlice = createSlice({
       .addCase(banUsers.fulfilled, handlePatchUsersFulfilled)
       .addCase(patchCheckSub.pending, handlePatchCheckSubPending)
       .addCase(patchCheckSub.fulfilled, handlePatchCheckSubFulfilled)
-      .addCase(getUnpublishedPosts.pending, handlePostsPending)
-      .addCase(
-        getUnpublishedPosts.fulfilled,
-        handleGetUnpublishedPostsFulfilled
-      )
-      .addCase(getUnpublishedPostById.pending, handlePostsPending)
-      .addCase(
-        getUnpublishedPostById.fulfilled,
-        handleGetUnpublishedPostsByIdFulfilled
-      )
       .addCase(sendMessageSpt.pending, handleSendMessageSptPending)
       .addCase(sendMessageSpt.fulfilled, handleSendMessageSptFulfilled)
       .addMatcher(

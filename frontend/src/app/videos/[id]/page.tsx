@@ -7,13 +7,13 @@ import { fetchVideoById } from "@/redux/videos/video.thunk";
 import {
   selectIsLoadingVideos,
   selectVideo,
+  selectVideosError,
 } from "@/redux/selectors/videos.selectors";
 
 import { clearVideo } from "@/redux/videos/videoSlice";
-import { withAlphaGuard } from "@/guards/WithAlphaGuard";
 import VideoPlayer from "@/components/videos/VideoPlayer";
 import RecommendedList from "@/components/Recommended";
-// import NotFoundComponent from "@/components/notFound/NotFound";
+import NotFoundComponent from "@/components/notFound/NotFound";
 import { VideoCardSkeleton } from "@/components/skeleton/VideoCardSkeleton";
 import { useCanWatchVideo } from "@/hooks/useCanWatchVideo";
 
@@ -23,6 +23,7 @@ function VideoPage() {
   const isLoading = useAppSelector(selectIsLoadingVideos);
   const video = useAppSelector(selectVideo);
   const canWatch = useCanWatchVideo();
+  const error = useAppSelector(selectVideosError);
 
   useEffect(() => {
     dispatch(fetchVideoById(id as string));
@@ -35,9 +36,8 @@ function VideoPage() {
     return <VideoCardSkeleton />;
   }
 
-  if (!video) {
-    return null;
-    // return <NotFoundComponent />;
+  if (!error) {
+    return <NotFoundComponent />;
   }
 
   return (
@@ -48,5 +48,4 @@ function VideoPage() {
     </div>
   );
 }
-export default withAlphaGuard(VideoPage);
-// export default VideoPage
+export default VideoPage;

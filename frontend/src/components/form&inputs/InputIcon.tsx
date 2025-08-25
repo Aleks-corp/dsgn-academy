@@ -28,8 +28,6 @@ export default function IconInput({
         ${wrapperClassName}`}
     >
       <div
-        // animate={{ width: isExpanded ? "248px" : "40px" }}
-        // transition={{ duration: 0.5, ease: "easeInOut" }}
         className={`md:absolute top-0 left-0 z-1 lg:relative lg:w-62 ${
           isExpanded ? "w-36 tab:w-52 md:w-50 lg:w-62" : "w-10"
         } ${inputClassName}`}

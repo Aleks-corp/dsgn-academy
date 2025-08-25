@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import SignInForm from "@/components/form&inputs/SignInForm";
-import { withAlphaGuard } from "@/guards/WithAlphaGuard";
 
 function SignInPage() {
   return (
@@ -22,5 +21,4 @@ function SignInPage() {
     </div>
   );
 }
-export default withAlphaGuard(SignInPage);
-// export default SignInPage
+export default SignInPage;
