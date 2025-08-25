@@ -19,6 +19,7 @@ import {
   unsubscribeWebhookService,
   verificationService,
   oauthUpsertService,
+  changeNameService,
 } from "../services/user.service.js";
 
 const { FRONT_SERVER, FRONT_WEB_SERVER } = process.env;
@@ -191,6 +192,16 @@ const resetPassword = async (req: Request, res: Response): Promise<void> => {
   res.json(message);
 };
 
+const changeName = async (req: Request, res: Response): Promise<void> => {
+  const { name } = req.body;
+  const userId = req.user._id as ObjectId;
+  const newName = await changeNameService({
+    name,
+    userId,
+  });
+  res.json({ name: newName });
+};
+
 const changePassword = async (req: Request, res: Response): Promise<void> => {
   const { oldPassword, newPassword } = req.body;
   const userId = req.user._id as ObjectId;
@@ -308,4 +319,5 @@ export default {
   paymentStatus: ctrlWrapper(paymentStatus),
   unsubscribeWebhook: ctrlWrapper(unsubscribeWebhook),
   paymentReturn: ctrlWrapper(paymentReturn),
+  changeName: ctrlWrapper(changeName),
 };

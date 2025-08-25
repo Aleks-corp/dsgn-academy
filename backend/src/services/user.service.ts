@@ -289,6 +289,22 @@ export const forgotPasswordService = async (
   return { message: "Посилання на скидання паролю відправлено на пошту" };
 };
 
+export const changeNameService = async ({
+  name,
+  userId,
+}: {
+  name: string;
+  userId: ObjectId;
+}): Promise<string> => {
+  const updatedUser = await UserModel.findByIdAndUpdate(userId, {
+    name,
+  });
+  if (!updatedUser) {
+    throw HttpError(404, "Користувача не знайдено");
+  }
+  return updatedUser.name;
+};
+
 export const resetPasswordService = async ({
   resetToken,
   newPassword,

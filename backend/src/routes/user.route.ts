@@ -11,6 +11,7 @@ const {
   usersVerifySchema,
   passwordResetSchema,
   changePasswordSchema,
+  userNameSchema,
 } = usersSchemas;
 
 const {
@@ -29,6 +30,7 @@ const {
   unsubscribeWebhook,
   paymentReturn,
   oauthUpsert,
+  changeName,
 } = userController;
 
 const upload = multer();
@@ -52,6 +54,14 @@ usersRouter.post(
   validateBody(passwordResetSchema),
   resetPassword
 );
+
+usersRouter.post(
+  "/change-name",
+  authenticateUser,
+  validateBody(userNameSchema),
+  changeName
+);
+
 usersRouter.post(
   "/change-password",
   authenticateUser,

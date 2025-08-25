@@ -119,10 +119,18 @@ const changePasswordSchema = Joi.object({
     }),
 });
 
+const userNameSchema = Joi.object({
+  name: Joi.string().required().min(3).max(18).messages({
+    "string.empty": `'name' cannot be an empty field`,
+    "any.required": `missing required 'name' field`,
+  }),
+});
+
 export default {
   usersRegSchema,
   usersLoginSchema,
   usersUpdateSubscriptionSchema,
+  userNameSchema,
   usersVerifySchema,
   passwordResetSchema,
   changePasswordSchema,
