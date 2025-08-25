@@ -124,10 +124,11 @@ export default function VideoPlayer({
             height="100%"
             playsInline
             onReady={() => setIsReady(true)}
+            className="aspect-video"
           />
         )}
       </div>
-      <div className="md:w-full lg:max-w-[600px] xl:max-w-[800px] xxl:max-w-[1000px] 2xl:max-w-[1100px] px-4 py-4 flex flex-col bg-white rounded-3xl">
+      <div className="md:w-full lg:max-w-[710px] xl:max-w-[830px] xxl:max-w-[1000px] 2xl:max-w-[1100px] px-4 py-4 flex flex-col bg-white rounded-3xl">
         <div className="flex flex-col gap-4 w-full xl:flex-row xl:justify-between">
           <h1 className=" text-2xl font-bold leading-7 text-start">
             {video.title}

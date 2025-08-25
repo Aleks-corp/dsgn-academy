@@ -82,6 +82,7 @@ const config: Config = {
         card: {
           video: "var(--box-shadow-video-card)",
         },
+        btns: { scroll: "var(--box-shadow-btn-scroll)" },
       },
     },
   },

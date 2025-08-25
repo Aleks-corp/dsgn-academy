@@ -67,3 +67,6 @@ export interface IUserChangePass {
   oldPassword: string;
   newPassword: string;
 }
+export interface IUserName {
+  name: string;
+}

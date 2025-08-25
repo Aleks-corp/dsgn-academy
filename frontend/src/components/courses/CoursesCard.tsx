@@ -10,14 +10,14 @@ import { categoriesConst } from "@/constants/categories.constant";
 export default function CoursesCard({ course }: { course: ICourse }) {
   return (
     <Link key={course._id} href={`/courses/${course._id}`}>
-      <div className="relative flex flex-col max-w-[370px] min-w-[290px] p-2 rounded-3xl bg-white overflow-hidden hover:shadow-card-video transition-all duration-400">
+      <div className="relative flex flex-col xl:w-[350px] w-[300px] p-2 rounded-3xl bg-white overflow-hidden hover:shadow-card-video transition-all duration-400">
         <div className="relative w-full h-full rounded-2xl">
           <SafeImage
             src={course.videos[0].cover}
             alt={course.title}
             width={354}
             height={200}
-            className="relative w-full h-auto object-cover rounded-2xl overflow-hidden z-1"
+            className="relative w-full h-auto backdrop-blur-md object-cover rounded-2xl overflow-hidden z-100"
           />
           <div className="absolute bottom-0 right-0 w-24 h-full flex flex-col justify-center items-center rounded-r-2xl  bg-[#00000030] backdrop-blur-md z-2">
             <p className="flex justify-center items-center text-white font-medium text-2xl leading-8 tracking-tighter">
@@ -45,7 +45,7 @@ export default function CoursesCard({ course }: { course: ICourse }) {
                   alt={c.charAt(0).toUpperCase() + c.slice(1)}
                   width={16}
                   height={16}
-                  className="object-contain w-auto h-4"
+                  className="object-contain w-4 h-4"
                 />
               </div>
             );
@@ -56,14 +56,14 @@ export default function CoursesCard({ course }: { course: ICourse }) {
               alt="Crown"
               width={16}
               height={16}
-              className="object-contain w-auto h-4"
+              className="object-contain w-4 h-4"
             />
           </div>
         </div>
 
         <div className="px-3 pt-6 py-1 flex-1 flex flex-col gap-1">
           <p className="font-medium text-[15px] leading-[18px] tracking-thin line-clamp-2">
-            {course.title.split("_").join(" ")}
+            {course.title}
           </p>
           <p className="font-medium text-[12px] leading-4 tracking-thin line-clamp-1 text-muted">
             {course.category.map((c) => categoriesConst[c] || c).join(", ")}

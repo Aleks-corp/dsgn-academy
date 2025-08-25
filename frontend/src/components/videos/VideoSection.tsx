@@ -35,7 +35,7 @@ export default function VideosSection({
         Останні відео
       </h2>
       <div
-        className={`grid gap-3 mx-auto
+        className={`grid gap-4 mx-auto
           ${cols === 1 ? "grid-cols-1 justify-items-center" : ""}
           ${cols === 2 ? "grid-cols-2 justify-items-stretch" : ""}
           ${cols === 3 ? "grid-cols-3 justify-items-stretch" : ""}

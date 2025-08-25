@@ -6,7 +6,7 @@ import { ReduxProvider } from "@/redux/provider";
 import { GoogleAnalytics } from "@next/third-parties/google";
 
 import RootPage from "@/app/RootPage";
-import AnalyticsTracker from "@/hooks/useAnalyticsTracker";
+import AnalyticsTracker from "@/hooks/useAnaliticTracker";
 
 const sora = Sora({
   weight: ["400", "500", "600", "800"],

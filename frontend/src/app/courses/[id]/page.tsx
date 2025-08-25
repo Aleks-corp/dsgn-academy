@@ -48,11 +48,11 @@ function CoursePage() {
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-6 px-4 lg:px-8 justify-items-center max-w-[1500px]">
+    <div className="mx-auto grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-6 px-4 lg:px-8 justify-items-center max-w-[1500px]">
       {/* Ліва колонка */}
       <div className="flex flex-col w-full max-w-[900px]">
         {/* Відео */}
-        <div className="relative w-full aspect-video ">
+        <div className="relative w-full">
           <CoursePlayer
             canWatch={canWatch || selectedVideoIndex === 0}
             selectedVideo={course.videos[selectedVideoIndex]}
@@ -68,8 +68,8 @@ function CoursePage() {
         </div>
 
         {/* Mobile: горизонтальний плейліст */}
-        <div className="lg:hidden mt-4 overflow-x-auto no-scrollbar">
-          <div className="flex gap-3 cursor-grab">
+        <div className="lg:hidden mt-4">
+          <div className="flex gap-3">
             <CoursePlayList
               course={course}
               selectedVideoIndex={selectedVideoIndex}

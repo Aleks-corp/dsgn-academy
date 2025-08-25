@@ -9,6 +9,7 @@ import {
   IUserNewPass,
   IUserChangePass,
   IUserForgot,
+  IUserName,
 } from "../../types/users.type";
 import { delToken, instance, setToken } from "../../lib/api/axios";
 
@@ -207,6 +208,29 @@ export const changePassword = createAsyncThunk(
   async (userData: IUserChangePass, thunkAPI) => {
     try {
       const response = await instance.post("/auth/change-password", userData);
+      toast.success("Пароль успішно змінено", {
+        duration: 4000,
+      });
+      return response.data;
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        toast.error(
+          `${error.response?.data.message ?? error.message} Спробуйте ще раз.`,
+          {
+            duration: 4000,
+          }
+        );
+        return thunkAPI.rejectWithValue(error.response ?? error.message);
+      }
+    }
+  }
+);
+
+export const changeName = createAsyncThunk(
+  "auth/changename",
+  async (userData: IUserName, thunkAPI) => {
+    try {
+      const response = await instance.post("/auth/change-name", userData);
       toast.success("Пароль успішно змінено", {
         duration: 4000,
       });

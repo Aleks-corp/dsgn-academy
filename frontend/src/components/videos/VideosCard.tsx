@@ -9,7 +9,7 @@ import SafeImage from "../SafeImage";
 export default function VideosCard({ video }: { video: IVideo }) {
   return (
     <Link key={video._id} href={`/videos/${video._id}`}>
-      <div className="relative flex flex-col max-w-[370px] min-w-[250px] p-2 rounded-3xl bg-white overflow-hidden hover:shadow-card-video transition-all duration-400">
+      <div className="relative flex flex-col max-w-[350px] min-w-[290px] p-2 rounded-3xl bg-white overflow-hidden hover:shadow-card-video transition-all duration-400">
         <div className="relative w-full h-full rounded-2xl">
           <SafeImage
             src={video.cover}
@@ -31,7 +31,7 @@ export default function VideosCard({ video }: { video: IVideo }) {
                   alt={c.charAt(0).toUpperCase() + c.slice(1)}
                   width={16}
                   height={16}
-                  className="object-contain w-auto h-4"
+                  className="object-contain w-4 h-4"
                 />
               </div>
             );
@@ -43,7 +43,7 @@ export default function VideosCard({ video }: { video: IVideo }) {
                 alt="Crown"
                 width={16}
                 height={16}
-                className="object-contain w-auto h-4"
+                className="object-contain w-4 h-4"
               />
             </div>
           )}

@@ -24,7 +24,7 @@ export default function SafeImage({
       alt={alt || "no image"}
       width={width}
       height={height}
-      className={className}
+      className={`w-full h-full ${className}`}
       onError={() => setError(true)}
       priority
     />

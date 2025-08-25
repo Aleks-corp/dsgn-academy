@@ -19,6 +19,8 @@ import { categoriesConstant } from "@/constants/categories.constant";
 import { useEffect } from "react";
 import { fetchVideosCount } from "@/redux/videos/video.thunk";
 import { fetchCoursesCount } from "@/redux/courses/course.thunk";
+import Link from "next/link";
+import { selectSubscription } from "@/redux/selectors/auth.selectors";
 
 type Props = {
   selectedPage: string;
@@ -30,6 +32,7 @@ export default function Aside({ selectedPage, setSelectedPage }: Props) {
   const isAlphaTesting = useAppSelector(selectIsAlpha);
   const isTester = useAppSelector(selectIsTester);
   const isLoading = useAppSelector(selectIsLoadingTest);
+  const sub = useAppSelector(selectSubscription);
 
   useEffect(() => {
     dispatch(fetchVideosCount());
@@ -55,6 +58,19 @@ export default function Aside({ selectedPage, setSelectedPage }: Props) {
 
   return isAlphaTesting && !isTester ? null : (
     <aside className="flex flex-col items-center gap-3 w-full p-5 h-[calc(100%-80px)] transition-all">
+      <div className="md:hidden flex w-full ">
+        {(sub === "free" || !sub) && (
+          <Link
+            className={`
+           w-full bg-accent text-text-white hover:bg-accent-hover transition-colors duration-300            
+          flex font-inter font-semibold text-sm leading-5 tracking-thin whitespace-nowrap justify-center
+          items-center gap-1 py-2 px-6 rounded-xl shadow-btn `}
+            href={"/check-subscription"}
+          >
+            <p>Преміум доступ</p>
+          </Link>
+        )}
+      </div>
       <div className="flex flex-col w-full items-center gap-0.5">
         <button
           type="button"
@@ -222,6 +238,13 @@ export default function Aside({ selectedPage, setSelectedPage }: Props) {
           </button>
         ))}
       </div>
+      <Link
+        href="/command"
+        className="md:hidden flex whitespace-nowrap items-center text-[#727272] font-inter font-medium text-[13px] leading-5 tracking-thin hover:text-foreground transition-colors duration-300 mr-4"
+        passHref
+      >
+        Про платформу
+      </Link>
     </aside>
   );
 }

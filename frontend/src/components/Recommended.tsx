@@ -58,11 +58,11 @@ export default function RecommendedList() {
   }
 
   return (
-    <div className="max-h-[660px] w-full min-w-[390px] max-w-[390px] xxl:max-w-[460px] rounded-xl shadow">
+    <div className="max-h-[80vh] w-full min-w-[390px] max-w-[390px] xxl:max-w-[460px] rounded-xl shadow">
       <h2 className="text-xl font-medium leading-7 tracking-thinest px-3 py-3">
         Рекомендовані відео
       </h2>
-      <div className="flex flex-col max-h-[600px] px-3 pb-3 overflow-y-auto no-scrollbar rounded-xl">
+      <div className="flex flex-col max-h-[calc(80vh-65px)] px-3 pb-3 overflow-y-auto no-scrollbar rounded-xl">
         {recommended.map((video, idx) => (
           <VerticalVideoCard key={video._id + idx} video={video} />
         ))}

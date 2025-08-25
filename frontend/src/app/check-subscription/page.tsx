@@ -45,7 +45,7 @@ export default function AllSubscriptionPage() {
   return (
     <div className="w-full">
       <div className="flex flex-col items-center w-fit gap-4 mx-auto mt-11">
-        <h2 className="font-inter text-[40px] text-foreground leading-12 tracking-thinest">
+        <h2 className="font-inter text-4xl md:text-[40px] text-center text-foreground leading-12 tracking-thinest">
           Обери свій план або просто підтримай
         </h2>
         <p className="text-xs leading-4 tracking-thin">
@@ -86,7 +86,7 @@ export default function AllSubscriptionPage() {
         </button>
       </div>
 
-      <div className="flex gap-4 lg:gap-8 w-full justify-center">
+      <div className="flex flex-wrap-reverse gap-4 lg:gap-8 w-full justify-center">
         <SubCard
           title="Безкоштовний"
           subTitle="Базовий доступ для ознайомлення"

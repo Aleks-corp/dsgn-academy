@@ -11,6 +11,7 @@ import {
   forgotPassword,
   changePassword,
   checkPaymentStatus,
+  changeName,
   unsubscribe,
 } from "./auth.thunk";
 import { AuthState } from "../../types/state.types";
@@ -54,6 +55,16 @@ const handleUnsubscribeFulfilled = (
 ) => {
   state.isLogining = false;
   state.profile = action.payload;
+};
+
+const handleNameChangeFulfilled = (
+  state: AuthState,
+  action: PayloadAction<{ name: string }>
+) => {
+  state.isLogining = false;
+  if (state.profile) {
+    state.profile.name = action.payload.name;
+  }
 };
 
 const handleRefreshPending = (state: AuthState) => {
@@ -119,6 +130,7 @@ const authSlice = createSlice({
       .addCase(resendVerifyUser.fulfilled, handleFulfilled)
       .addCase(setNewPassword.fulfilled, handleFulfilled)
       .addCase(forgotPassword.fulfilled, handleFulfilled)
+      .addCase(changeName.fulfilled, handleNameChangeFulfilled)
       .addCase(changePassword.fulfilled, handleFulfilled)
       .addCase(checkPaymentStatus.fulfilled, handleCheckPaymentFulfilled)
       .addCase(refreshUser.fulfilled, handleRefreshFulfilled)

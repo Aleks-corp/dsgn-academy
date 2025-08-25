@@ -1,13 +1,13 @@
 "use client";
 
-import React, { Dispatch, SetStateAction } from "react";
+import React, { Dispatch, SetStateAction, useRef } from "react";
 import Image from "next/image";
 import type { ICourse } from "@/types/courses.type";
 import { durationStringToString } from "@/lib/duration.utils";
 import { useWindowWidth } from "@/hooks/useWindowWidth";
 import SafeImage from "../SafeImage";
-import { Play } from "lucide-react";
-import { useDragScroll } from "@/hooks/useDragScroll";
+import { ChevronLeft, ChevronRight, Play } from "lucide-react";
+// import { useDragScroll } from "@/hooks/useDragScroll";
 
 type Iprops = {
   course: ICourse;
@@ -21,7 +21,14 @@ export default function CoursePlayList({
   setSelectedVideoIndex,
 }: Iprops) {
   const width = useWindowWidth();
-  const scrollBind = useDragScroll();
+  const scrollRef = useRef<HTMLDivElement | null>(null);
+
+  const scrollBy = (offset: number) => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollBy({ left: offset, behavior: "smooth" });
+    }
+  };
+  // const scrollBind = useDragScroll();
   if (width >= 1024) {
     return (
       <div className="w-full lg:min-w-[300px] lg:max-w-[350px] xl:max-w-[400px] xxl:max-w-[460px]">
@@ -78,20 +85,38 @@ export default function CoursePlayList({
     );
   }
   return (
-    <div className="w-full">
+    <div className="relative w-full">
       <h2 className="text-xl font-medium leading-7 tracking-thinest">
         {course.title}
       </h2>
+      <button
+        type="button"
+        onClick={() => scrollBy(-350)}
+        className="absolute top-1/2 -translate-y-1/2 -left-10 border-scroll cursor-pointer w-16 h-52 xl:h-80 z-150 rotate-0 rounded-3xl overflow-hidden"
+      >
+        <div className="absolute right-0.5 top-1/2 -translate-y-1/2 z-110 p-2 w-10 h-10 btn-scroll shadow-btns-scroll rounded-full">
+          <ChevronLeft size={24} />
+        </div>
+      </button>
+
+      <button
+        type="button"
+        onClick={() => scrollBy(350)}
+        className="absolute top-1/2 -translate-y-1/2 -right-10 border-scroll cursor-pointer w-16 h-52 xl:h-80 z-150 rotate-0 rounded-3xl overflow-hidden"
+      >
+        <div
+          className={`absolute left-0.5 top-1/2 -translate-y-1/2 z-110 p-2 w-10 h-10 btn-scroll shadow-btns-scroll rounded-full`}
+        >
+          <ChevronRight size={24} />
+        </div>
+      </button>
       <div
-        {...scrollBind}
-        className=" flex gap-3 overflow-x-auto no-scrollbar p-4"
+        ref={scrollRef}
+        className="flex gap-3 overflow-x-auto no-scrollbar p-4 cursor-grab"
       >
         {course.videos.length !== 0 &&
           course.videos.map((video, idx) => (
-            <div
-              key={idx}
-              className="flex-shrink-0 min-w-[250px] max-w-[350px]"
-            >
+            <div key={idx} className="flex-shrink-0 w-[250px] ">
               <button
                 type="button"
                 onClick={() => {

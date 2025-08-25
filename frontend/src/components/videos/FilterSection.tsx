@@ -4,6 +4,7 @@ import { useAppSelector } from "@/redux/hooks";
 import { selectVideoFilters } from "@/selectors/videos.selectors";
 import { useMemo, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useDragScroll } from "@/hooks/useDragScroll";
 
 const ALL_LABEL = "Всі відео";
 const RECO_LABEL = "Рекомендовано";
@@ -12,6 +13,7 @@ export default function FilterSection() {
   const filters = useAppSelector(selectVideoFilters);
   const router = useRouter();
   const searchParams = useSearchParams();
+  const scrollBind = useDragScroll();
 
   const activeFilter = searchParams.get("filter") || "";
   const isRecommended = searchParams.has("recommended");
@@ -48,7 +50,10 @@ export default function FilterSection() {
 
   return (
     <section className="relative flex flex-col">
-      <div className="flex gap-3 overflow-x-auto no-scrollbar">
+      <div
+        {...scrollBind}
+        className="flex gap-3 overflow-x-auto no-scrollbar cursor-grab py-4"
+      >
         {items.map((label) => {
           const isSelected =
             (label === ALL_LABEL && !activeFilter && !isRecommended) ||
