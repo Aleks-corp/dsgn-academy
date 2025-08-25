@@ -12,10 +12,10 @@ export default function Logo() {
     <button
       type="button"
       onClick={() => permanentRedirect("/")}
-      className="relative w-[175px] flex items-center gap-2 bg-white pl-5 pr-6 py-3 rounded-3xl cursor-pointer"
+      className="relative w-[98px] tabx:w-[175px] flex items-center gap-2 bg-white pl-5 pr-6 py-3 rounded-3xl cursor-pointer"
     >
       <Beta />
-      <div className="absolute -top-3 left-10">
+      <div className="hidden tabx:block absolute -top-3 left-10">
         <MiniTimer />
       </div>
       <Image
@@ -26,7 +26,7 @@ export default function Logo() {
         height={28}
         priority
       />
-      <p className="font-sora text-start text-foreground text-base font-extrabold leading-3.5 tracking-[-0.64px]">
+      <p className="hidden tabx:block font-sora text-start text-foreground text-base font-extrabold leading-3.5 tracking-[-0.64px]">
         dsgn
         <br />
         academy

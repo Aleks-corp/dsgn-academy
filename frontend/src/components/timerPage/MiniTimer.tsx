@@ -39,7 +39,7 @@ export function MiniTimer() {
   }
 
   return (
-    <p className="font-inter font-light text-foreground  tracking-[-1.2px] uppercase select-none">
+    <p className="font-inter font-light text-foreground tracking-[-1.2px] uppercase select-none">
       {pad(days)}:{pad(hours)}:{pad(minutes)}:{pad(seconds)}
     </p>
   );

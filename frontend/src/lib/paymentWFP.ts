@@ -17,8 +17,8 @@ interface FormData {
   regularAmount: string;
   regularBehavior?: string;
   regularOn: number;
+  regularCount: string;
   dateNext: string;
-  dateEnd: string;
 }
 
 interface PaymemtData {
@@ -28,34 +28,33 @@ interface PaymemtData {
   regularMode: string;
   clientAccountId: string;
   clientEmail: string;
+  regularCount: string;
   dateNext: string;
-  dateEnd: string;
 }
 
-const nextDate = (currentDate: Date) => {
-  const datetime = currentDate.getTime();
-  const nextDay =
-    new Date(datetime).getDate() > 28 ? 28 : new Date(datetime).getDate();
-  const currentMonth =
-    new Date(datetime).getMonth() === 11
-      ? 0
-      : new Date(datetime).getMonth() + 1;
-  const nextMonth =
-    new Date(datetime).getMonth() === 11
-      ? 1
-      : new Date(datetime).getMonth() + 2;
-  const nextYear =
-    new Date(datetime).getMonth() === 11
-      ? new Date(datetime).getFullYear() + 1
-      : new Date(datetime).getFullYear();
-  const nextDate = `${nextDay < 10 ? `0` + nextDay : nextDay}.${
-    nextMonth < 10 ? `0` + nextMonth : nextMonth
-  }.${nextYear}`;
-  const dateEnd = `${nextDay < 10 ? `0` + nextDay : nextDay}.${
-    nextMonth < 10 ? `0` + currentMonth : currentMonth
-  }.${nextYear + 5}`;
-  return { nextDate, dateEnd };
-};
+export function getNextPaymentDate(
+  currentDate: Date,
+  duration: "monthly" | "yearly"
+): string {
+  const year = currentDate.getFullYear();
+  const month = currentDate.getMonth();
+  const day = currentDate.getDate();
+  if (duration === "monthly") {
+    const nextDate = new Date(year, month + 1, day);
+
+    const dd = String(nextDate.getDate()).padStart(2, "0");
+    const mm = String(nextDate.getMonth() + 1).padStart(2, "0");
+    const yyyy = nextDate.getFullYear();
+
+    return `${dd}.${mm}.${yyyy}`;
+  } else {
+    const nextDate = new Date(year + 1, month, day);
+    const dd = String(nextDate.getDate()).padStart(2, "0");
+    const mm = String(nextDate.getMonth() + 1).padStart(2, "0");
+    const yyyy = nextDate.getFullYear();
+    return `${dd}.${mm}.${yyyy}`;
+  }
+}
 
 const generatePaymentData = async (data: PaymemtData) => {
   const response = await instance.post("/auth/create-payment", data);
@@ -63,15 +62,14 @@ const generatePaymentData = async (data: PaymemtData) => {
 };
 
 //test amount
-const testMAmount = 0.1;
-const testYAmount = 0.2;
+const testMAmount = 0.11;
+const testYAmount = 0.12;
 
 export const handleWayForPay = async (
   email: string,
   amount: number,
   duration: "monthly" | "yearly"
 ) => {
-  console.info("🚀 ~ amount:", amount);
   const currentDate = new Date();
   const form = document.createElement("form");
   form.action = "https://secure.wayforpay.com/pay";
@@ -85,8 +83,8 @@ export const handleWayForPay = async (
     regularMode: duration,
     clientAccountId: `${email}`,
     clientEmail: `${email}`,
-    dateNext: nextDate(currentDate).nextDate,
-    dateEnd: nextDate(currentDate).dateEnd,
+    dateNext: getNextPaymentDate(currentDate, duration),
+    regularCount: duration === "monthly" ? "60" : "5",
   };
   const paymentData = await generatePaymentData(data);
 

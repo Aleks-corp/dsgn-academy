@@ -21,7 +21,7 @@ export default function NavLink({
         style === "accent"
           ? "bg-accent text-text-white hover:bg-accent-hover transition-colors duration-300"
           : "btn-gradient"
-      } inline-flex font-inter font-semibold text-sm leading-5 tracking-thin justify-center items-center gap-1 py-2 px-6 rounded-xl shadow-btn `}
+      } inline-flex font-inter font-semibold text-sm leading-5 tracking-thin whitespace-nowrap justify-center items-center gap-1 py-2 px-6 rounded-xl shadow-btn `}
       href={rout}
       target={target}
       rel={rel}

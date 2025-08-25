@@ -1,5 +1,4 @@
 // import { motion } from "framer-motion";
-import { useState } from "react";
 
 type IconInputProps = Omit<
   React.InputHTMLAttributes<HTMLInputElement>,
@@ -9,53 +8,80 @@ type IconInputProps = Omit<
   wrapperClassName?: string;
   inputClassName?: string;
   value: string;
+  isExpanded: boolean;
+  setIsExpanded: React.Dispatch<React.SetStateAction<boolean>>;
   onChange: (value: string) => void;
 };
 
 export default function IconInput({
-  icon,
   wrapperClassName = "",
   inputClassName = "",
   value,
   onChange,
+  isExpanded,
+  setIsExpanded,
   ...props
 }: IconInputProps) {
-  const [isExpanded, setIsExpanded] = useState(false);
   return (
     <div
-      // animate={{ width: isExpanded ? "100%" : "40px" }}
-      // transition={{ duration: 0.5, ease: "easeInOut" }}
-      className={`font-inter relative  shadow-input rounded-xl
-        ${isExpanded ? "w-full " : "w-10 overflow-hidden"}  
-        md:w-48 lg:w-64
+      className={`relative rounded-xl font-inter h-10 
         ${wrapperClassName}`}
     >
-      {icon && (
-        <span className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none">
-          {icon}
-        </span>
-      )}
-      <input
-        {...props}
-        className={`${
-          icon ? "pl-10" : ""
-        } font-inter font-medium text-xs leading-4 tracking-[-0.12px] w-full border-1 border-border px-6 py-3 rounded-xl bg-icon focus:border-border-focus focus:outline-0 ${inputClassName}`}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        onBlur={() => {
-          if (window.innerWidth < 768 && !value) {
-            setIsExpanded(false);
-          }
-        }}
-        onClick={() => {
-          if (window.innerWidth < 760) {
-            setIsExpanded(true);
-          }
-        }}
-      />
       <div
-        className={`absolute top-0 translate-y-[50%] right-2.5 p-1.5 bg-muted-background rounded-md shadow-count md:block ${
-          isExpanded ? "block" : "hidden"
+        // animate={{ width: isExpanded ? "248px" : "40px" }}
+        // transition={{ duration: 0.5, ease: "easeInOut" }}
+        className={`md:absolute top-0 left-0 z-1 lg:relative lg:w-62 ${
+          isExpanded ? "w-36 tab:w-52 md:w-50 lg:w-62" : "w-10"
+        } ${inputClassName}`}
+      >
+        <input
+          {...props}
+          className={`relative flex z-2 w-full pr-6 lg:pl-9 font-inter font-medium text-xs leading-4 tracking-[-0.12px] h-full border-1 border-border py-3 rounded-xl bg-icon focus:border-border-focus focus:outline-0 ${
+            isExpanded ? "pl-9" : ""
+          }`}
+          placeholder={
+            isExpanded || window.innerWidth > 1024 ? "Пошук відео..." : ""
+          }
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          autoFocus={isExpanded}
+          onFocus={() => {
+            if (window.innerWidth < 1024) {
+              setIsExpanded(true);
+            }
+          }}
+          onBlur={() => {
+            if (window.innerWidth < 1024 && !value) {
+              setIsExpanded(false);
+            }
+          }}
+          onClick={() => {
+            if (window.innerWidth < 1024) {
+              setIsExpanded(true);
+            }
+          }}
+        />
+      </div>
+      <span className="absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none z-2">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          height="16"
+          viewBox="0 0 16 16"
+          fill="none"
+        >
+          <path
+            d="M14 14L11.1 11.1M12.6667 7.33333C12.6667 10.2789 10.2789 12.6667 7.33333 12.6667C4.38781 12.6667 2 10.2789 2 7.33333C2 4.38781 4.38781 2 7.33333 2C10.2789 2 12.6667 4.38781 12.6667 7.33333Z"
+            stroke="#7b7b7b"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+        </svg>
+      </span>
+      <div
+        className={`absolute top-0 translate-y-[50%] left-52 p-1.5 bg-muted-background rounded-md shadow-count z-2 lg:block ${
+          isExpanded ? "hidden lg:block" : "hidden"
         }`}
       >
         <p className="font-inter font-medium text-xs leading-4 tracking-[10.11px] text-muted">

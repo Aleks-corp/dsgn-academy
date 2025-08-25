@@ -38,6 +38,7 @@ export default function Header({ isOpenAside, setIsOpenAside }: Props) {
   const isAdmin = useAppSelector(selectIsAdmin);
   const router = useRouter();
   const user = useAppSelector(selectUser);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const doNavigate = useCallback(
     (term: string) => {
@@ -82,9 +83,9 @@ export default function Header({ isOpenAside, setIsOpenAside }: Props) {
   }
 
   return (
-    <header className="relative max-h-[80px] flex items-center md:justify-between bg-background border-b border-border w-full z-50">
-      <div className="w-full md:w-auto flex items-center justify-between md:justify-normal">
-        <div className={`flex items-center px-5 pt-4 pb-3 shrink-1`}>
+    <header className="relative w-full max-h-[80px] flex items-center lg:justify-between bg-background border-b border-border z-50">
+      <div className="w-full lg:w-auto flex items-center justify-between md:justify-normal">
+        <div className={`flex items-center px-3 md:px-5 pt-4 pb-3 shrink-1`}>
           <button
             className="hidden w-10 h-10 md:flex items-center justify-center p-2 cursor-pointer"
             onClick={() => setIsOpenAside(!isOpenAside)}
@@ -93,14 +94,13 @@ export default function Header({ isOpenAside, setIsOpenAside }: Props) {
           </button>
           <Logo />
         </div>
-        <div className={`p-5  transition-all duration-300 `}>
+        <div className={`py-5 transition-all duration-300 `}>
           <form
             onSubmit={(e) => {
               e.preventDefault();
               doNavigate(search);
             }}
             role="search"
-            className="w-full"
           >
             <IconInput
               id={SEARCH_INPUT_ID}
@@ -110,7 +110,6 @@ export default function Header({ isOpenAside, setIsOpenAside }: Props) {
               autoComplete="off"
               autoCorrect="off"
               spellCheck={false}
-              placeholder="Пошук відео..."
               aria-label="Пошук відео"
               value={search}
               onChange={setSearch}
@@ -120,76 +119,81 @@ export default function Header({ isOpenAside, setIsOpenAside }: Props) {
                   (e.target as HTMLInputElement).blur();
                 }
               }}
+              isExpanded={isExpanded}
+              setIsExpanded={setIsExpanded}
               wrapperClassName=" "
-              icon={
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="16"
-                  height="16"
-                  viewBox="0 0 16 16"
-                  fill="none"
-                >
-                  <path
-                    d="M14 14L11.1 11.1M12.6667 7.33333C12.6667 10.2789 10.2789 12.6667 7.33333 12.6667C4.38781 12.6667 2 10.2789 2 7.33333C2 4.38781 4.38781 2 7.33333 2C10.2789 2 12.6667 4.38781 12.6667 7.33333Z"
-                    stroke="#7b7b7b"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              }
             />
           </form>
         </div>
       </div>
-      <div className="hidden md:flex md:gap-4 p-5">
-        <Link
-          href="/command"
-          className="hidden lg:flex items-center text-[#727272] font-inter font-medium text-[13px] leading-5 tracking-thin hover:text-foreground transition-colors duration-300 mr-4"
-          passHref
-        >
-          Про проект
-        </Link>
+      <div className="flex md:gap-4 py-5 pr-1 md:pr-5 pl-4">
+        {!isExpanded && (
+          <Link
+            href="/command"
+            className="hidden md:flex whitespace-nowrap items-center text-[#727272] font-inter font-medium text-[13px] leading-5 tracking-thin hover:text-foreground transition-colors duration-300 mr-4"
+            passHref
+          >
+            Про проект
+          </Link>
+        )}
         {(subscription === "free" || !subscription) && (
-          <NavLink rout="/check-subscription" text="Преміум доступ" />
+          <div className="hidden md:flex">
+            <NavLink
+              rout="/check-subscription"
+              text="Преміум доступ"
+              style="accent"
+            />
+          </div>
         )}
         {!isLoggedIn ? (
-          <NavLink rout="/signup" text="Увійти" style="accent" />
+          <NavLink rout="/signup" text="Увійти" />
         ) : isAdmin ? (
           <div className="flex items-center gap-4">
-            <NavLink rout="/da-admin" text="Профіль" style="accent" />
-            <div className="w-8 h-8 rounded-full overflow-hidden">
-              {user?.avatar ? (
-                <Image src={user?.avatar} alt="Avatar" width={32} height={32} />
-              ) : (
-                <Image
-                  src="/images/avatar.png"
-                  alt="Avatar"
-                  width={32}
-                  height={32}
-                />
-              )}
-            </div>
+            <Link href="/da-admin">
+              <div className="w-10 h-10 rounded-full overflow-hidden">
+                {user?.avatar ? (
+                  <Image
+                    src={user?.avatar}
+                    alt="Avatar"
+                    width={40}
+                    height={40}
+                  />
+                ) : (
+                  <Image
+                    src="/images/avatar.png"
+                    alt="Avatar"
+                    width={40}
+                    height={40}
+                  />
+                )}
+              </div>
+            </Link>
           </div>
         ) : (
           <div className="flex items-center gap-4">
-            <NavLink rout="/profile" text="Профіль" style="accent" />
-            <div className="w-8 h-8 rounded-full overflow-hidden">
-              {user?.avatar ? (
-                <Image src={user?.avatar} alt="Avatar" width={32} height={32} />
-              ) : (
-                <Image
-                  src="/images/avatar.png"
-                  alt="Avatar"
-                  width={32}
-                  height={32}
-                />
-              )}
-            </div>
+            <Link href="/profile">
+              <div className="w-10 h-10 rounded-full overflow-hidden">
+                {user?.avatar ? (
+                  <Image
+                    src={user?.avatar}
+                    alt="Avatar"
+                    width={40}
+                    height={10}
+                  />
+                ) : (
+                  <Image
+                    src="/images/avatar.png"
+                    alt="Avatar"
+                    width={40}
+                    height={40}
+                  />
+                )}
+              </div>
+            </Link>
           </div>
         )}
       </div>
-      <div className="md:hidden p-5 flex-1">
+      <div className="md:hidden py-5 pl-1 pr-5 flex-1">
         <button
           className="w-10 h-10 flex items-center justify-center p-2 cursor-pointer"
           onClick={() => setIsOpenAside(!isOpenAside)}
