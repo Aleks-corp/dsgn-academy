@@ -62,11 +62,16 @@ const generatePaymentData = async (data: PaymemtData) => {
   return response.data;
 };
 
+//test amount
+const testMAmount = 0.1;
+const testYAmount = 0.2;
+
 export const handleWayForPay = async (
   email: string,
   amount: number,
   duration: "monthly" | "yearly"
 ) => {
+  console.info("🚀 ~ amount:", amount);
   const currentDate = new Date();
   const form = document.createElement("form");
   form.action = "https://secure.wayforpay.com/pay";
@@ -76,7 +81,7 @@ export const handleWayForPay = async (
   const data = {
     orderReference: `WFPDA-${currentDate.getTime()}`,
     orderDate: currentDate.getTime(),
-    amount,
+    amount: duration === "monthly" ? testMAmount : testYAmount,
     regularMode: duration,
     clientAccountId: `${email}`,
     clientEmail: `${email}`,
