@@ -1,6 +1,6 @@
 "use client";
 
-import { withUserGuard } from "@/guards&providers/WithUserGuard";
+import { withUserGuard } from "@/guards/WithUserGuard";
 import FreeSubProfile from "@/components/subscription/Free";
 import PremiumSubProfile from "@/components/subscription/Premium";
 import RemovedSubProfile from "@/components/subscription/Removed";

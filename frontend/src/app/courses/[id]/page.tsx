@@ -13,14 +13,14 @@ import {
 
 // import NotFoundComponent from "@/components/notFound/NotFound";
 
-import { withAlphaGuard } from "@/guards&providers/WithAlphaGuard";
+import { withAlphaGuard } from "@/guards/WithAlphaGuard";
 import { VideoCardSkeleton } from "@/components/skeleton/VideoCardSkeleton";
 import CoursePlayer from "@/components/courses/CoursePlayer";
 import RecommendedList from "@/components/Recommended";
 import CoursePlayList from "@/components/courses/CoursePlayList";
 
 import CourseDescription from "@/components/courses/CourseDescription";
-import { useCanWatchVideo } from "@/lib/useCanWatchVideo";
+import { useCanWatchVideo } from "@/hooks/useCanWatchVideo";
 
 function CoursePage() {
   const dispatch = useAppDispatch();
@@ -69,7 +69,7 @@ function CoursePage() {
 
         {/* Mobile: горизонтальний плейліст */}
         <div className="lg:hidden mt-4 overflow-x-auto no-scrollbar">
-          <div className="flex gap-3">
+          <div className="flex gap-3 cursor-grab">
             <CoursePlayList
               course={course}
               selectedVideoIndex={selectedVideoIndex}
@@ -79,10 +79,8 @@ function CoursePage() {
         </div>
 
         {/* Mobile: горизонтальні рекомендації */}
-        <div className="lg:hidden mt-4  overflow-x-auto no-scrollbar">
-          <div className="flex gap-3">
-            <RecommendedList />
-          </div>
+        <div className="lg:hidden">
+          <RecommendedList />
         </div>
       </div>
 
@@ -98,9 +96,7 @@ function CoursePage() {
         </div>
 
         {/* Рекомендації */}
-        <div className="flex-1 max-h-[600px] rounded-xl shadow px-5 py-4 overflow-y-auto no-scrollbar">
-          <RecommendedList />
-        </div>
+        <RecommendedList />
       </div>
     </div>
     // <div className="w-full">

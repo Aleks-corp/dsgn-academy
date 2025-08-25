@@ -24,7 +24,7 @@ export default function CoursePlayer({
   console.log("🚀 ~ isBlocked:", isBlocked);
 
   return (
-    <div className="relative aspect-video w-auto px-5 lg:px-0 max-h-[80vh] object-contain rounded-xl overflow-hidden mb-5">
+    <div className="relative w-auto px-5 lg:px-0 max-h-[80vh] bg-black object-contain rounded-xl overflow-hidden mb-5">
       {!isReady && (
         <div className="w-full h-full flex items-center justify-center">
           <SafeImage

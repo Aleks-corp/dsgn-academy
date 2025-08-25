@@ -3,10 +3,14 @@ import { FaTelegramPlane } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
 import toast from "react-hot-toast";
 import { PiThreadsLogoFill } from "react-icons/pi";
-import { ChevronUp } from "lucide-react";
+import { ChevronUp, Edit } from "lucide-react";
 import { useState } from "react";
 import type { ICourse } from "@/types/courses.type";
-import { useWindowWidth } from "@/lib/useWindowWidth";
+import { useWindowWidth } from "@/hooks/useWindowWidth";
+import Link from "next/link";
+import { useAppSelector } from "@/redux/hooks";
+import { selectIsAdmin } from "@/redux/selectors/auth.selectors";
+import { useParams } from "next/navigation";
 
 export default function CourseDescription({
   course,
@@ -20,6 +24,8 @@ export default function CourseDescription({
   const shareText = course.title;
 
   const width = useWindowWidth();
+  const isAdmin = useAppSelector(selectIsAdmin);
+  const { id: courseId } = useParams();
 
   const handleShare = async () => {
     if (navigator.share) {
@@ -60,12 +66,17 @@ export default function CourseDescription({
     )}`,
   };
   return (
-    <div className="max-w-[990px] px-5 pt-5 flex flex-col bg-white rounded-3xl">
+    <div className="max-w-[990px] px-5 py-5 flex flex-col bg-white rounded-3xl">
       <div className="flex flex-col gap-4 w-full xl:flex-row xl:justify-between">
         <h1 className=" text-2xl font-bold leading-7 tracking-thiner text-start">
           {course.title}
         </h1>
         <div className="flex items-center justify-end gap-3">
+          {isAdmin && (
+            <Link href={`/da-admin/edit/course/${courseId}`}>
+              <Edit />
+            </Link>
+          )}
           <a
             href={socialLinks.threads}
             target="_blank"

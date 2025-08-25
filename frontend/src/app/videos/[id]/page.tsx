@@ -10,12 +10,12 @@ import {
 } from "@/redux/selectors/videos.selectors";
 
 import { clearVideo } from "@/redux/videos/videoSlice";
-import { withAlphaGuard } from "@/guards&providers/WithAlphaGuard";
+import { withAlphaGuard } from "@/guards/WithAlphaGuard";
 import VideoPlayer from "@/components/videos/VideoPlayer";
 import RecommendedList from "@/components/Recommended";
 // import NotFoundComponent from "@/components/notFound/NotFound";
 import { VideoCardSkeleton } from "@/components/skeleton/VideoCardSkeleton";
-import { useCanWatchVideo } from "@/lib/useCanWatchVideo";
+import { useCanWatchVideo } from "@/hooks/useCanWatchVideo";
 
 function VideoPage() {
   const dispatch = useAppDispatch();
@@ -43,9 +43,8 @@ function VideoPage() {
   return (
     <div className="flex flex-col lg:flex-row justify-center gap-8 smx-auto">
       {video && <VideoPlayer canWatch={video.free || canWatch} video={video} />}
-      <div className="max-h-[600px] rounded-xl shadow px-5 py-4 overflow-y-auto no-scrollbar">
-        <RecommendedList />
-      </div>
+
+      <RecommendedList />
     </div>
   );
 }

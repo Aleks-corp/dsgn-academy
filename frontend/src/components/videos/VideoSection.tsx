@@ -3,12 +3,30 @@
 "use client";
 
 import VideosCard from "../videos/VideosCard";
-import { useWindowWidth } from "@/lib/useWindowWidth";
+import { useWindowWidth } from "@/hooks/useWindowWidth";
 import { IVideo } from "@/types/videos.type";
+import { VideoCardsSkeleton } from "../skeleton/VideoCardSkeleton";
 
-export default function VideosSection({ videos }: { videos: IVideo[] }) {
+export default function VideosSection({
+  videos,
+  isLoadingVideo,
+  page,
+}: {
+  videos: IVideo[];
+  isLoadingVideo: boolean;
+  page: number;
+}) {
   const width = useWindowWidth();
-
+  if (isLoadingVideo && page === 1) {
+    return (
+      <div className="flex justify-center flex-wrap gap-5">
+        <VideoCardsSkeleton />
+        <VideoCardsSkeleton />
+        <VideoCardsSkeleton />
+        <VideoCardsSkeleton />
+      </div>
+    );
+  }
   const cols = width <= 630 ? 1 : width <= 1200 ? 2 : width <= 1560 ? 3 : 4;
 
   return (

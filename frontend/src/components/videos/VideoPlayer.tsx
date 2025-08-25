@@ -5,16 +5,18 @@ import { useAppSelector } from "@/redux/hooks";
 
 import Image from "next/image";
 import Vimeo from "@u-wave/react-vimeo";
-import { selectUser } from "@/redux/selectors/auth.selectors";
+import { selectIsAdmin, selectUser } from "@/redux/selectors/auth.selectors";
 import Button from "@/components/buttons/Button";
 import { FaTelegramPlane } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
 import toast from "react-hot-toast";
 import { PiThreadsLogoFill } from "react-icons/pi";
-import { ChevronUp } from "lucide-react";
+import { ChevronUp, Edit } from "lucide-react";
 import { IVideo } from "@/types/videos.type";
-import { useWindowWidth } from "@/lib/useWindowWidth";
+import { useWindowWidth } from "@/hooks/useWindowWidth";
 import Restricted from "../Restricted";
+import Link from "next/link";
+import { useParams } from "next/navigation";
 
 export default function VideoPlayer({
   video,
@@ -26,6 +28,8 @@ export default function VideoPlayer({
   const profile = useAppSelector(selectUser);
   const [isReady, setIsReady] = useState(false);
   const [expanded, setExpanded] = useState(false);
+  const isAdmin = useAppSelector(selectIsAdmin);
+  const { id: videoId } = useParams();
 
   const width = useWindowWidth();
 
@@ -81,7 +85,7 @@ export default function VideoPlayer({
 
   return (
     <div className="">
-      <div className="relative aspect-video w-auto max-h-[80vh] object-contain rounded-lg overflow-hidden mb-5">
+      <div className="relative aspect-video w-auto max-w-[1100px] max-h-[90vh] object-contain rounded-lg overflow-hidden mb-5">
         {!isReady && (
           <div className="w-full h-full flex items-center justify-center">
             <Image
@@ -123,12 +127,17 @@ export default function VideoPlayer({
           />
         )}
       </div>
-      <div className="max-w-[990px] px-5 pt-5 flex flex-col bg-white rounded-3xl">
+      <div className="md:w-full lg:max-w-[600px] xl:max-w-[800px] xxl:max-w-[1000px] 2xl:max-w-[1100px] px-4 py-4 flex flex-col bg-white rounded-3xl">
         <div className="flex flex-col gap-4 w-full xl:flex-row xl:justify-between">
           <h1 className=" text-2xl font-bold leading-7 text-start">
             {video.title}
           </h1>
           <div className="flex items-center justify-end gap-3">
+            {isAdmin && (
+              <Link href={`/da-admin/add/video/${videoId}`}>
+                <Edit />
+              </Link>
+            )}
             <a
               href={socialLinks.threads}
               target="_blank"

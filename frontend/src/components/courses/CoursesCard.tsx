@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ICourse } from "@/types/courses.type";
 import { ListVideo } from "lucide-react";
 import SafeImage from "../SafeImage";
+import { categoriesConst } from "@/constants/categories.constant";
 
 export default function CoursesCard({ course }: { course: ICourse }) {
   return (
@@ -65,7 +66,7 @@ export default function CoursesCard({ course }: { course: ICourse }) {
             {course.title.split("_").join(" ")}
           </p>
           <p className="font-medium text-[12px] leading-4 tracking-thin line-clamp-1 text-muted">
-            {course.category.join(", ")}
+            {course.category.map((c) => categoriesConst[c] || c).join(", ")}
           </p>
         </div>
       </div>

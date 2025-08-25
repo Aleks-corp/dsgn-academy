@@ -10,12 +10,12 @@ import {
   selectCourses,
   selectIsLoadingCourses,
 } from "@/selectors/courses.selector";
-import { useWindowWidth } from "@/lib/useWindowWidth";
+import { useWindowWidth } from "@/hooks/useWindowWidth";
 
 import CoursesSection from "@/components/courses/CoursesSection";
 // import NotFoundComponent from "@/components/notFound/NotFound";
 import { VideoCardsSkeleton } from "@/components/skeleton/VideoCardSkeleton";
-import { withAlphaGuard } from "@/guards&providers/WithAlphaGuard";
+import { withAlphaGuard } from "@/guards/WithAlphaGuard";
 
 interface FetchCourseResponse {
   total: number;

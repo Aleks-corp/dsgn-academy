@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import SignInForm from "@/components/form&inputs/SignInForm";
-import { withAlphaGuard } from "@/guards&providers/WithAlphaGuard";
+import { withAlphaGuard } from "@/guards/WithAlphaGuard";
 
 function SignInPage() {
   return (

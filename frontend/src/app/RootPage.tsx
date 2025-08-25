@@ -21,9 +21,9 @@ import ProfileAside from "@/components/aside/ProfileAside";
 import LoaderBlur from "@/components/loaders/LoadingBlur";
 import AdminAside from "@/components/aside/AdminAside";
 
-import { useSelectedPage } from "./useAside";
+import { useSelectedPage } from "../hooks/useAside";
 import Loader from "../components/loaders/LoaderCircle";
-import useIsLg from "./useScreenWidth";
+import useIsLg from "../hooks/useScreenWidth";
 // import LenisProvider from "./LenisProvider";
 
 export default function RootPage({ children }: { children: React.ReactNode }) {
@@ -43,6 +43,7 @@ export default function RootPage({ children }: { children: React.ReactNode }) {
   const computeShouldOpen = useCallback(() => {
     return (
       pathname === "/" ||
+      pathname.endsWith("/command") ||
       pathname.endsWith("/videos") ||
       pathname.endsWith("/shorts") ||
       pathname.endsWith("/courses") ||
@@ -137,7 +138,7 @@ export default function RootPage({ children }: { children: React.ReactNode }) {
           }`}
         >
           {/* <LenisProvider> */}
-          <main className="relative w-full mx-auto px-5 pt-5 mb-5">
+          <main className="relative w-full mx-auto px-3 md:pt-4 lg:px-5 mb-5">
             {children}
           </main>
           {/* </LenisProvider> */}

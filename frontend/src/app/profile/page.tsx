@@ -3,7 +3,7 @@
 import { signOut } from "@/redux/auth/auth.thunk";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 
-import { withUserGuard } from "@/guards&providers/WithUserGuard";
+import { withUserGuard } from "@/guards/WithUserGuard";
 // import Image from "next/image";
 // import Button from "@/components/buttons/Button";
 import { selectUser } from "@/redux/selectors/auth.selectors";
@@ -97,7 +97,7 @@ function ProfilePage() {
       </div>
       <button
         type="button"
-        className="inline-flex mt-8 font-inter text-xs font-medium leading-4 tracking-[-0.12px] text-muted-text hover:text-foreground transition-all duration-300"
+        className="inline-flex mt-8 font-inter text-xs font-medium leading-4 tracking-[-0.12px] text-muted-text hover:text-foreground transition-all duration-300 cursor-pointer"
         onClick={handleLogout}
       >
         Вийти з акаунта

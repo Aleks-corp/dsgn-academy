@@ -154,7 +154,7 @@ export default function Header({ isOpenAside, setIsOpenAside }: Props) {
           <NavLink rout="/check-subscription" text="Преміум доступ" />
         )}
         {!isLoggedIn ? (
-          <NavLink rout="/signin" text="Увійти" style="accent" />
+          <NavLink rout="/signup" text="Увійти" style="accent" />
         ) : isAdmin ? (
           <div className="flex items-center gap-4">
             <NavLink rout="/da-admin" text="Профіль" style="accent" />

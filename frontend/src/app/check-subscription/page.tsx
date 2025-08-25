@@ -6,16 +6,42 @@ import {
   freeDescription,
   premiumDescription,
 } from "@/constants/sub.desc.constants";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-// import { useAppSelector } from "@/redux/hooks";
-// import { selectUser } from "@/redux/selectors/auth.selectors";
+import { useAppSelector } from "@/redux/hooks";
+import { selectUser } from "@/redux/selectors/auth.selectors";
+import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
+import { handleWayForPay } from "@/lib/paymentWFP";
 // import Button from "@/components/buttons/Button";
 
 export default function AllSubscriptionPage() {
-  //   const profile = useAppSelector(selectUser);
-  const [value, setValue] = useState(false);
+  const profile = useAppSelector(selectUser);
+  const router = useRouter();
+  const [duration, setDuration] = useState<"monthly" | "yearly">("monthly");
+  const amount = { monthly: 4.95, yearly: 46.8 };
+  const [loading, setLoading] = useState(false);
 
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
+    };
+  }, []);
+
+  const submitHandler = async () => {
+    setLoading(true);
+    if (!profile) {
+      toast.error("Спочатку зареєструйтесь на платформі", { duration: 7000 });
+      timerRef.current = setTimeout(() => router.push("/signup"), 6000);
+    } else {
+      toast.success(`Pay for ${duration}`);
+      await handleWayForPay(profile.email, amount[duration], duration);
+    }
+  };
   return (
     <div className="w-full">
       <div className="flex flex-col items-center w-fit gap-4 mx-auto mt-11">
@@ -29,27 +55,29 @@ export default function AllSubscriptionPage() {
       <div className="flex flex-col items-center w-fit gap-4 mx-auto mt-8 mb-12">
         <button
           type="button"
-          aria-pressed={value}
-          onClick={() => setValue(!value)}
+          aria-pressed={duration === "yearly"}
+          onClick={() =>
+            setDuration((prev) => (prev === "monthly" ? "yearly" : "monthly"))
+          }
           className={`relative inline-flex h-10 w-[294px] items-center rounded-xl border-1 border-border cursor-pointer transition-colors focus:outline-none bg-muted-background shadow-switch-box`}
         >
           <span
             className={`inline-block h-8 w-[136px] transform rounded-lg bg-text-white shadow-switch-btn transition-all duration-500 ${
-              value
+              duration === "yearly"
                 ? "translate-x-[139px] w-[149px]"
                 : "translate-x-1 w-[136px]"
             }`}
           />
           <span
             className={`absolute left-4 top-3 font-inter font-semibold text-[13px] leading-4 tracking-thin transition-all duration-500  ${
-              value ? "text-muted" : "text-foreground"
+              duration === "yearly" ? "text-muted" : "text-foreground"
             } `}
           >
             Місячна підписка
           </span>
           <span
             className={`absolute right-4 top-3 font-inter font-semibold text-[13px] leading-4 tracking-thin transition-all duration-500  ${
-              value ? "text-foreground" : "text-muted"
+              duration === "yearly" ? "text-foreground" : "text-muted"
             } `}
           >
             Річна (знижка 22%)
@@ -83,10 +111,12 @@ export default function AllSubscriptionPage() {
               text="Оновити до Преміум"
               className="w-full"
               style="accent"
+              onClick={submitHandler}
+              disabled={loading}
             />
           }
           subscription="premium"
-          amount={value ? 3.9 : 4.95}
+          amount={duration === "monthly" ? amount.monthly : amount.yearly}
         />
       </div>
     </div>

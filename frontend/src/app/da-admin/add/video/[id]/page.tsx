@@ -1,12 +1,12 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Vimeo from "@u-wave/react-vimeo";
 import { X } from "lucide-react";
 import toast from "react-hot-toast";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { addVideo } from "@/redux/videos/video.thunk";
+import { editVideo, fetchVideoById } from "@/redux/videos/video.thunk";
 import { fetchVideoData } from "@/lib/api/getVideoData";
 import { AddVideo } from "@/types/videos.type";
 import { categoriesConstant } from "@/constants/categories.constant";
@@ -18,6 +18,8 @@ import Input from "@/components/form&inputs/Input";
 import Button from "@/components/buttons/Button";
 import { selectIsLoadingVideos } from "@/redux/selectors/videos.selectors";
 import Loader from "@/components/loaders/Loader";
+import { useParams } from "next/navigation";
+import { clearVideo } from "@/redux/videos/videoSlice";
 
 export interface IData {
   name: string;
@@ -27,7 +29,7 @@ export interface IData {
   release_time: string;
 }
 
-function AddVideoPage() {
+function EditCoursePage() {
   const dispatch = useAppDispatch();
   const isLoading = useAppSelector(selectIsLoadingVideos);
   const [videoData, setVideoData] = useState<IData | null>(null);
@@ -45,6 +47,33 @@ function AddVideoPage() {
   >(categoriesConstant.map((c) => ({ [c]: false })));
   const [free, setFree] = useState(false);
   const [recommended, setRecommended] = useState(false);
+  const { id } = useParams();
+
+  useEffect(() => {
+    dispatch(fetchVideoById(id as string)).then((res) => {
+      if (res?.payload) {
+        setVideoData(res.payload);
+        setRecommended(res.payload.recommended);
+        setFree(res.payload.free);
+        setVideo(res.payload.video);
+        setCover(res.payload.cover);
+        setTitle(res.payload.title);
+        setDescription(res.payload.description);
+        setDuration(res.payload.duration);
+        setPublishedAt(res.payload.publishedAt);
+        setFilters(res.payload.filter);
+        setCategoryState(
+          categoriesConstant.map((c) => ({
+            [c]: res.payload.category.includes(c),
+          }))
+        );
+      }
+    });
+
+    return () => {
+      dispatch(clearVideo());
+    };
+  }, [dispatch, id]);
 
   const handleAddFilter = () => {
     if (filterInput.trim() && !filters.includes(filterInput.trim())) {
@@ -129,7 +158,7 @@ function AddVideoPage() {
       );
       return;
     }
-    const req: AddVideo = {
+    const body: AddVideo = {
       video,
       title,
       description,
@@ -140,9 +169,11 @@ function AddVideoPage() {
       cover,
       duration,
     };
-    console.log("🚀 ~ payload:", req);
+    console.log("🚀 ~ payload:", body);
     try {
-      const res = await dispatch(addVideo(req));
+      const res = await dispatch(
+        editVideo({ video: body, videoId: id as string })
+      );
 
       if (res?.type === "auth/resetpassword/rejected") {
         toast.error("Сталась помилка при завантаженні, спробуйте ще раз");
@@ -163,7 +194,9 @@ function AddVideoPage() {
 
   return (
     <div className="flex flex-col gap-5 w-full p-5">
-      <h2 className="text-xl font-semibold text-foreground">Додати відео</h2>
+      <h2 className="text-xl font-semibold text-foreground">
+        Редагувати відео
+      </h2>
       <div className="flex gap-5 w-full">
         <form className="flex-1/2" onSubmit={handleSubmit}>
           <div className="flex flex-col gap-4 mb-5">
@@ -176,6 +209,7 @@ function AddVideoPage() {
                 className="font-inter text-base font-semibold text-muted"
                 required
               />
+              <p>{video}</p>
             </label>
             <Button
               text="Витягнути дані з Vimeo"
@@ -245,7 +279,7 @@ function AddVideoPage() {
             </div>
           </div>
           <Button
-            text={!isLoading ? "Завантажити відео" : ""}
+            text={!isLoading ? "Зберегти відео" : ""}
             icon={isLoading && <Loader />}
             type="submit"
             className="mt-5"
@@ -330,4 +364,4 @@ function AddVideoPage() {
     </div>
   );
 }
-export default withAdminGuard(AddVideoPage);
+export default withAdminGuard(EditCoursePage);

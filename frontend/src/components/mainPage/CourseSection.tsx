@@ -3,7 +3,7 @@
 import { useAppSelector } from "@/redux/hooks";
 import { selectCourses } from "@/selectors/courses.selector";
 import CoursesCard from "../courses/CoursesCard";
-import { useWindowWidth } from "@/lib/useWindowWidth";
+import { useWindowWidth } from "@/hooks/useWindowWidth";
 
 export default function CoursesSection() {
   const courses = useAppSelector(selectCourses);

@@ -12,11 +12,9 @@ import {
   selectVideos,
 } from "@/redux/selectors/videos.selectors";
 
-import { withAlphaGuard } from "@/guards&providers/WithAlphaGuard";
-import { useWindowWidth } from "@/lib/useWindowWidth";
+import { withAlphaGuard } from "@/guards/WithAlphaGuard";
+import { useWindowWidth } from "@/hooks/useWindowWidth";
 import NotFoundComponent from "@/components/notFound/NotFound";
-// import Loader from "@/components/loaders/LoaderCircle";
-import { VideoCardsSkeleton } from "@/components/skeleton/VideoCardSkeleton";
 
 interface FetchVideosResponse {
   total: number;
@@ -96,17 +94,6 @@ function VideosPage() {
     };
   }, [dispatch, videos.length, total, makeQuery, loadMoreCount, isLoading]);
 
-  if (isLoadingVideo && pageRef.current === 1) {
-    return (
-      <div className="flex justify-center flex-wrap gap-5">
-        <VideoCardsSkeleton />
-        <VideoCardsSkeleton />
-        <VideoCardsSkeleton />
-        <VideoCardsSkeleton />
-      </div>
-    );
-  }
-
   if (videos.length === 0) {
     return <NotFoundComponent />;
   }
@@ -114,7 +101,11 @@ function VideosPage() {
   return (
     <div className="flex flex-col gap-8 w-full mx-auto">
       <FilterSection />
-      <VideosSection videos={videos} />
+      <VideosSection
+        videos={videos}
+        isLoadingVideo={isLoadingVideo}
+        page={pageRef.current}
+      />
       <div ref={loaderRef} className="h-10" />
     </div>
   );

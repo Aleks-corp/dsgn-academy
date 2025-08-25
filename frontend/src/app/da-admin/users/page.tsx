@@ -1,6 +1,6 @@
 "use client";
 
-import { withAdminGuard } from "@/guards&providers/WithAdminGuard";
+import { withAdminGuard } from "@/guards/WithAdminGuard";
 
 function UsersPage() {
   return <div>UsersPage</div>;

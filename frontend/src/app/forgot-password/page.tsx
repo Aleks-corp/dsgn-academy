@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import ForgotForm from "@/components/form&inputs/ForgotForm";
-import { withAlphaGuard } from "@/guards&providers/WithAlphaGuard";
+import { withAlphaGuard } from "@/guards/WithAlphaGuard";
 
 function ForgotPage() {
   return (

@@ -1,7 +1,7 @@
 "use client";
 
 import ChangePassForm from "@/components/form&inputs/ChangePassForm";
-import { withUserGuard } from "@/guards&providers/WithUserGuard";
+import { withUserGuard } from "@/guards/WithUserGuard";
 import { useAppSelector } from "@/redux/hooks";
 import { selectUser } from "@/redux/selectors/auth.selectors";
 // import Button from "@/components/buttons/Button";

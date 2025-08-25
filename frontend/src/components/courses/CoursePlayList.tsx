@@ -4,9 +4,10 @@ import React, { Dispatch, SetStateAction } from "react";
 import Image from "next/image";
 import type { ICourse } from "@/types/courses.type";
 import { durationStringToString } from "@/lib/duration.utils";
-import { useWindowWidth } from "@/lib/useWindowWidth";
+import { useWindowWidth } from "@/hooks/useWindowWidth";
 import SafeImage from "../SafeImage";
 import { Play } from "lucide-react";
+import { useDragScroll } from "@/hooks/useDragScroll";
 
 type Iprops = {
   course: ICourse;
@@ -20,6 +21,7 @@ export default function CoursePlayList({
   setSelectedVideoIndex,
 }: Iprops) {
   const width = useWindowWidth();
+  const scrollBind = useDragScroll();
   if (width >= 1024) {
     return (
       <div className="w-full lg:min-w-[300px] lg:max-w-[350px] xl:max-w-[400px] xxl:max-w-[460px]">
@@ -77,10 +79,13 @@ export default function CoursePlayList({
   }
   return (
     <div className="w-full">
-      <h2 className="text-xl font-medium leading-7 tracking-thinest mb-3">
+      <h2 className="text-xl font-medium leading-7 tracking-thinest">
         {course.title}
       </h2>
-      <div className=" flex gap-3 overflow-x-auto no-scrollbar pb-3">
+      <div
+        {...scrollBind}
+        className=" flex gap-3 overflow-x-auto no-scrollbar p-4"
+      >
         {course.videos.length !== 0 &&
           course.videos.map((video, idx) => (
             <div

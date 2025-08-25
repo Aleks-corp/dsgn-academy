@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import SignUpForm from "@/components/form&inputs/SignUpForm";
-import { withAlphaGuard } from "@/guards&providers/WithAlphaGuard";
+import { withAlphaGuard } from "@/guards/WithAlphaGuard";
 
 function SignupPage() {
   return (

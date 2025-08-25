@@ -13,8 +13,8 @@ import {
   selectVideos,
 } from "@/redux/selectors/videos.selectors";
 
-import { withAlphaGuard } from "@/guards&providers/WithAlphaGuard";
-import { useWindowWidth } from "@/lib/useWindowWidth";
+import { withAlphaGuard } from "@/guards/WithAlphaGuard";
+import { useWindowWidth } from "@/hooks/useWindowWidth";
 // import NotFoundComponent from "@/components/notFound/NotFound";
 // import Loader from "@/components/loaders/LoaderCircle";
 import { VideoCardsSkeleton } from "@/components/skeleton/VideoCardSkeleton";
@@ -116,42 +116,15 @@ function HomePage() {
       <HeroSection />
       <FilterSection />
       <CoursesSection />
-      {videos && <VideosSection videos={videos} />}
+      {videos && (
+        <VideosSection
+          videos={videos}
+          isLoadingVideo={isLoadingVideo}
+          page={pageRef.current}
+        />
+      )}
       <div ref={loaderRef} className="h-10" />
     </div>
   );
 }
 export default withAlphaGuard(HomePage);
-
-// "use client";
-
-// import { useEffect } from "react";
-// import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-// import { fetchCourses } from "@/redux/courses/course.thunk";
-// import { fetchVideos } from "@/redux/videos/video.thunk";
-// import HeroSection from "@/components/mainPage/HeroSection";
-// import CoursesSection from "@/components/mainPage/CourseSection";
-// import VideosSection from "@/components/videos/VideoSection";
-// import FilterSection from "@/components/videos/FilterSection";
-// import { withAlphaGuard } from "@/guards&providers/WithAlphaGuard";
-// import { selectVideos } from "@/redux/selectors/videos.selectors";
-
-// function HomePage() {
-//   const dispatch = useAppDispatch();
-//   const videos = useAppSelector(selectVideos);
-//   useEffect(() => {
-//     dispatch(fetchCourses({ limit: 4 }));
-//     dispatch(fetchVideos({ limit: 4 }));
-//   }, [dispatch]);
-
-//   return (
-//     <div className="flex flex-col w-full mx-auto">
-//       <HeroSection />
-//       <FilterSection />
-//       <CoursesSection />
-//       {videos && <VideosSection videos={videos} />}
-//     </div>
-//   );
-// }
-// export default withAlphaGuard(HomePage);
-// export default HomePage;

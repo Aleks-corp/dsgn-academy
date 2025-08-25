@@ -1,6 +1,6 @@
 "use client";
 
-import { useWindowWidth } from "@/lib/useWindowWidth";
+import { useWindowWidth } from "@/hooks/useWindowWidth";
 import CoursesCard from "./CoursesCard";
 import { ICourse } from "@/types/courses.type";
 
