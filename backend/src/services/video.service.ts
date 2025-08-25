@@ -56,10 +56,11 @@ export const getVideosCategoriesService = async (): Promise<
   return categories;
 };
 
-export const getVideosFiltersService = async (): Promise<
-  { filter: string; count: number }[]
-> => {
+export const getVideosFiltersService = async (
+  baseFilter: FilterQuery<IVideo> = {}
+): Promise<{ filter: string; count: number }[]> => {
   const filters = await VideoModel.aggregate([
+    { $match: baseFilter }, // 🟢 додаємо умову
     { $unwind: "$filter" },
     {
       $group: {

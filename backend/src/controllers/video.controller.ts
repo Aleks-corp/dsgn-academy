@@ -1,4 +1,6 @@
 import type { Request, Response } from "express";
+import type { FilterQuery } from "mongoose";
+import type { IVideo } from "../types/video.type.js";
 import { videoServices } from "../services/index.js";
 import { ctrlWrapper } from "../decorators/index.js";
 import { HttpError, fetchVideoDataById } from "../utils/index.js";
@@ -49,7 +51,9 @@ export const getVideos = async (req: Request, res: Response): Promise<void> => {
     limit: perPage,
     page: currentPage,
   });
-
+  if (videos.length === 0 || total === 0) {
+    throw HttpError(404, "Відео не знайдено");
+  }
   res.json({
     videos,
     total,
@@ -63,10 +67,20 @@ export const getVideosCounts = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  const categories = await getVideosCategoriesService();
-  const filters = await getVideosFiltersService();
-  const totalFree = await getVideosTotalService({ free: true });
-  const totalVideos = await getVideosTotalService({});
+  const category = req.params.category || "";
+  // фільтр тільки для filters
+  let filterForFilters: FilterQuery<IVideo> = {};
+
+  if (category === "free") {
+    filterForFilters = { free: true };
+  } else if (category && category !== "all") {
+    filterForFilters = { category };
+  }
+
+  const categories = await getVideosCategoriesService(); // як було
+  const filters = await getVideosFiltersService(filterForFilters); // сюди підставляємо
+  const totalFree = await getVideosTotalService({ free: true }); // глобально
+  const totalVideos = await getVideosTotalService({}); // глобально
 
   res.json({
     categories,

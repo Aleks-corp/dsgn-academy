@@ -34,7 +34,9 @@ videosRouter.get("/", getVideos);
 
 videosRouter.get("/categories", getCategoriesVideos);
 
-videosRouter.get("/counts", getVideosCounts);
+videosRouter.get("/counts/category", getVideosCounts);
+
+videosRouter.get("/counts/category/:category", getVideosCounts);
 
 videosRouter.get("/favorites", authenticateUser, getFavoriteVideos);
 

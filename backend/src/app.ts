@@ -13,6 +13,7 @@ import usersRouter from "./routes/user.route.js";
 import coursesRouter from "./routes/course.route.js";
 import videosRouter from "./routes/video.route.js";
 import testRouter from "./routes/test.route.js";
+import adminRouter from "./routes/admin.route.js";
 
 const logPath = path.resolve("logs");
 
@@ -68,6 +69,7 @@ app.use("/auth", usersRouter);
 app.use("/courses", coursesRouter);
 app.use("/videos", videosRouter);
 app.use("/testing", testRouter);
+app.use("/admin", adminRouter);
 
 app.get("/ping", (req, res) => {
   res.send("POST /pong");
