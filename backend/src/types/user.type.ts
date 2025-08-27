@@ -39,6 +39,7 @@ export interface IUser extends Document {
   substart: Date;
   subend: Date;
   orderReference: string;
+  newOrderReference?: string;
   token?: string;
   verify?: boolean;
   verificationToken: string;

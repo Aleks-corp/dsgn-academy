@@ -20,6 +20,8 @@ import {
   verificationService,
   oauthUpsertService,
   changeNameService,
+  callSupportService,
+  reportSupportService,
 } from "../services/user.service.js";
 
 const { FRONT_SERVER, FRONT_WEB_SERVER } = process.env;
@@ -55,7 +57,6 @@ const login = async (req: Request, res: Response): Promise<void> => {
   res.json({
     token,
     user: {
-      _id: updatedUser._id,
       name: updatedUser.name,
       email: updatedUser.email,
       avatar: updatedUser.avatar,
@@ -106,7 +107,6 @@ export const oauthUpsert = async (
   res.json({
     token,
     user: {
-      _id: updatedUser._id,
       name: updatedUser.name,
       email: updatedUser.email,
       avatar: updatedUser.avatar,
@@ -248,8 +248,12 @@ const unsubscribeWebhook = async (
   res: Response
 ): Promise<void> => {
   const user = req.user;
-  const updatedUser = await unsubscribeWebhookService(user);
-  res.json(updatedUser);
+  const { reason } = req.body;
+  const { updatedUser, message } = await unsubscribeWebhookService(
+    user,
+    reason
+  );
+  res.json({ user: updatedUser, message });
 };
 
 const paymentReturn = async (req: Request, res: Response): Promise<void> => {
@@ -303,6 +307,19 @@ const paymentReturn = async (req: Request, res: Response): Promise<void> => {
   `);
 };
 
+const callSupport = async (req: Request, res: Response): Promise<void> => {
+  const user = req.user;
+  await callSupportService(user);
+  res.json("sent");
+};
+
+const reportSupport = async (req: Request, res: Response): Promise<void> => {
+  const user = req.user;
+  const { report } = req.body;
+  await reportSupportService(user, report);
+  res.json("sent");
+};
+
 export default {
   register: ctrlWrapper(register),
   login: ctrlWrapper(login),
@@ -320,4 +337,6 @@ export default {
   unsubscribeWebhook: ctrlWrapper(unsubscribeWebhook),
   paymentReturn: ctrlWrapper(paymentReturn),
   changeName: ctrlWrapper(changeName),
+  callSupport: ctrlWrapper(callSupport),
+  reportSupport: ctrlWrapper(reportSupport),
 };

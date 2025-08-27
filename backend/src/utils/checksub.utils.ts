@@ -90,6 +90,9 @@ const checkSubscriptionStatus = async (user: IUser): Promise<IUser> => {
       });
 
       if (data.status === "Active") {
+        if (data.lastPayedStatus === "Declined") {
+          user.subscription = userSubscriptionConst.FREE;
+        }
         if (data.lastPayedStatus === "Approved") {
           user.subscription = userSubscriptionConst.PREMIUM;
         }

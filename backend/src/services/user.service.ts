@@ -29,7 +29,10 @@ import {
   sendMail,
   checkSubscriptionStatus,
   unsubscribeUser,
+  sendMailSub,
+  sendMailToSprt,
 } from "../utils/index.js";
+import { answerWFPCodes } from "../constants/answerWfpCodes.js";
 
 const {
   JWT_SECRET,
@@ -374,7 +377,7 @@ export const createPaymentService = async ({
     throw HttpError(401, "Будь ласка, увійдіть в систему");
   }
   await UserModel.findByIdAndUpdate(userId, {
-    orderReference: data.orderReference,
+    newOrderReference: data.orderReference,
   });
   const amountPriceData = {
     amount: Number(data.amount).toFixed(2),
@@ -441,19 +444,28 @@ export const paymentWebhookService = async (
   const { transactionStatus, orderReference, phone, regularDateEnd } = data;
   const arr = orderReference.split("-");
   if (transactionStatus === "Approved") {
-    await UserModel.findOneAndUpdate(
-      { orderReference },
+    const updatedUser = await UserModel.findOneAndUpdate(
+      { newOrderReference: orderReference },
       {
         subscription: userSubscriptionConst.PREMIUM,
+        orderReference,
+        newOrderReference: "",
         phone,
         status: "Active",
         regularDateEnd: regularDateEnd
           ? new Date(regularDateEnd.split(".").reverse().join("-"))
           : null,
         substart: new Date(parseInt(arr[1])),
-      }
+      },
+      { new: true }
     );
     console.info("✅ Оплата підтверджена для", orderReference); //Log
+    if (updatedUser) {
+      await sendMailSub({
+        email: updatedUser.email,
+        mode: updatedUser.mode,
+      });
+    }
   }
   return responseData;
 };
@@ -470,10 +482,17 @@ export const paymentStatusService = async (
 };
 
 export const unsubscribeWebhookService = async (
-  user: IUser
-): Promise<IUser | undefined | null> => {
+  user: IUser,
+  reason: string
+): Promise<{ updatedUser?: IUser | null; message: string }> => {
+  console.log("🚀 ~ user:", user);
   const data = await unsubscribeUser(user);
-  if (data.reasonCode === 4100) {
+  // console.log("🚀 ~ data:", data);
+
+  if (
+    data.reasonCode === answerWFPCodes.ok.code ||
+    data.reasonCode === answerWFPCodes.closed.code
+  ) {
     const updatedUser = await UserModel.findByIdAndUpdate(
       user._id,
       {
@@ -482,8 +501,23 @@ export const unsubscribeWebhookService = async (
       },
       { new: true }
     );
-    return updatedUser;
+    await sendMailSub({
+      email: user.email,
+      reason,
+    });
+    const message =
+      Object.values(answerWFPCodes).find(
+        (item) => String(item.code) === String(data.reasonCode)
+      )?.message ?? "Unknown error";
+    console.log("Webhook unsubscribe message:", message);
+    return { updatedUser, message };
   }
+  const answer = Object.values(answerWFPCodes).find(
+    (item) => String(item.code) === String(data.reasonCode)
+  );
+  const message = answer?.message ?? "Unknown error";
+  console.log("Webhook unsubscribe message:", message);
+  return { message };
 };
 
 export const undateFaforitesVideosService = async (
@@ -512,4 +546,15 @@ export const undateWatchedCoursesService = async (
   _id: string | ObjectId
 ): Promise<void> => {
   await UserModel.findByIdAndUpdate(_id, { watchedCourses: cleanIds });
+};
+
+export const callSupportService = async (user: IUser): Promise<void> => {
+  await sendMailToSprt({ user });
+};
+
+export const reportSupportService = async (
+  user: IUser,
+  report: string
+): Promise<void> => {
+  await sendMailToSprt({ user, report });
 };

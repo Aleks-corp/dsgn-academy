@@ -7,7 +7,6 @@ import {
   checkSubscriptionStatus,
   setSubDate,
   HttpError,
-  sendMailToSprt,
 } from "../utils/index.js";
 
 const getAllUser = async (req: Request, res: Response): Promise<void> => {
@@ -225,21 +224,10 @@ const updateUserBlockStatus = async (
   res.json({ totalHits, users: updatedUsers });
 };
 
-const getMessageToSprt = async (req: Request, res: Response): Promise<void> => {
-  const { message } = req.body;
-  const { email } = req.user;
-  if (!email || !message) {
-    throw HttpError(404);
-  }
-  await sendMailToSprt({ email, message });
-  res.json("Message sent");
-};
-
 export default {
   getAllUser: ctrlWrapper(getAllUser),
   updateUserSubscription: ctrlWrapper(updateUserSubscription),
   updateUsersSubscription: ctrlWrapper(updateUsersSubscription),
   checkUsersSubscription: ctrlWrapper(checkUsersSubscription),
   updateUserBlockStatus: ctrlWrapper(updateUserBlockStatus),
-  getMessageToSprt: ctrlWrapper(getMessageToSprt),
 };

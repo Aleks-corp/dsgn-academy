@@ -11,7 +11,6 @@ const {
   getAllUser,
   updateUsersSubscription,
   updateUserSubscription,
-  getMessageToSprt,
   updateUserBlockStatus,
   checkUsersSubscription,
 } = adminController;
@@ -45,5 +44,5 @@ adminRouter.patch(
   authenticateToken,
   checkUsersSubscription
 );
-adminRouter.post("/message", authenticateToken, getMessageToSprt);
+
 export default adminRouter;

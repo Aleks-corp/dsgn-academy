@@ -92,6 +92,10 @@ const userSchema = new Schema<IUser, IUserModelType>(
       type: String,
       default: "",
     },
+    newOrderReference: {
+      type: String,
+      default: "",
+    },
     token: {
       type: String,
     },

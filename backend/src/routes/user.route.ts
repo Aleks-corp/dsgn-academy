@@ -31,6 +31,8 @@ const {
   paymentReturn,
   oauthUpsert,
   changeName,
+  callSupport,
+  reportSupport,
 } = userController;
 
 const upload = multer();
@@ -69,10 +71,13 @@ usersRouter.post(
   changePassword
 );
 
+usersRouter.get("/callsupport", authenticateUser, callSupport);
+usersRouter.post("/callsupport", authenticateUser, reportSupport);
+
 usersRouter.post("/create-payment", authenticateUser, createPayment);
 usersRouter.post("/payment-webhook", paymentWebhook);
 usersRouter.post("/payment-return", upload.none(), paymentReturn);
 usersRouter.get("/payment-status", authenticateUser, paymentStatus);
-usersRouter.get("/unsubscribe", authenticateUser, unsubscribeWebhook);
+usersRouter.post("/unsubscribe", authenticateUser, unsubscribeWebhook);
 
 export default usersRouter;

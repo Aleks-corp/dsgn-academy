@@ -1,4 +1,5 @@
 import nodemailer from "nodemailer";
+import type { SentMessageInfo } from "nodemailer";
 import "dotenv/config";
 import { SMTP } from "../constants/mail.constant.js";
 import { HttpError } from "./index.js";
@@ -23,7 +24,7 @@ const sendMail = async ({
   verificationToken,
   path,
   text,
-}: Mail): Promise<void> => {
+}: Mail): Promise<SentMessageInfo> => {
   if (!FRONT_SERVER || !EMAIL_PASS || !EMAIL_SEND_FROM || !EMAIL_REPORT_SEND) {
     throw HttpError(500, "Mail Server Error");
   }
@@ -75,7 +76,7 @@ const sendMail = async ({
   `;
 
   return await transporter.sendMail({
-    from: EMAIL_SEND_FROM,
+    from: `"DSGN Academy" <${EMAIL_SEND_FROM}>`,
     to: email,
     subject: "Підтвердження електронної пошти",
     text: "Ваше посилання для підтвердження електронної адреси в Dsgn Academy",
