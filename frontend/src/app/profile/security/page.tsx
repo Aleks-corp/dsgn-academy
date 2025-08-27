@@ -4,12 +4,15 @@ import ChangePassForm from "@/components/form&inputs/ChangePassForm";
 import { withUserGuard } from "@/guards/WithUserGuard";
 import { useAppSelector } from "@/redux/hooks";
 import { selectUser } from "@/redux/selectors/auth.selectors";
+import toast from "react-hot-toast";
 // import Button from "@/components/buttons/Button";
 
 function ProfilePage() {
   const profile = useAppSelector(selectUser);
 
-  const handleDelAcc = () => {};
+  const handleDelAcc = () => {
+    toast.error("Наразі сервіс знаходиться у стані розробки.");
+  };
 
   if (!profile) {
     return null;
@@ -18,7 +21,7 @@ function ProfilePage() {
   return (
     <div className="w-full flex flex-col">
       <div className="flex flex-col gap-8 w-full max-w-96 mx-auto lg:mx-0">
-        <h2 className="font-inter text-xl text-foreground font-medium leading-5 tracking-thinest ">
+        <h2 className="font-inter text-xl text-foreground font-medium leading-7 tracking-thinest ">
           Безпека
         </h2>
         <p className="font-inter text-xs font-medium leading-4 tracking-thin">

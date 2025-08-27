@@ -10,12 +10,12 @@ export function useCanWatchVideo() {
   if (profile.subscription === "free") return false;
 
   // 🚫 Free + Declined оплата
-  if (
-    profile.subscription === "premium" &&
-    profile.lastPayedStatus === "Declined"
-  ) {
-    return false;
-  }
+  // if (
+  //   profile.subscription === "premium" &&
+  //   profile.lastPayedStatus === "Declined"
+  // ) {
+  //   return false;
+  // }
 
   // TODO: додати інші умови
   // приклади:

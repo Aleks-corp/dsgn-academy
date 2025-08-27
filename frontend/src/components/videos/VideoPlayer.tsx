@@ -81,7 +81,7 @@ export default function VideoPlayer({
 
   return (
     <div className="">
-      <div className="relative aspect-video w-auto max-w-[1100px] max-h-[90vh] object-contain rounded-lg overflow-hidden mb-5">
+      <div className="relative aspect-video w-auto max-w-[990px] max-h-[90vh] object-contain rounded-lg overflow-hidden mb-5">
         {!isReady && (
           <div className="w-full h-full flex items-center justify-center">
             <Image
@@ -124,7 +124,7 @@ export default function VideoPlayer({
           />
         )}
       </div>
-      <div className="md:w-full lg:max-w-[710px] xl:max-w-[830px] xxl:max-w-[1000px] 2xl:max-w-[1100px] px-4 py-4 flex flex-col bg-white rounded-3xl">
+      <div className="md:w-full lg:max-w-[710px] xl:max-w-[820px] xxl:max-w-[990px] 2xl:max-w-[990px] px-4 py-4 flex flex-col bg-white rounded-3xl">
         <div className="flex flex-col gap-4 w-full xl:flex-row xl:justify-between">
           <h1 className=" text-2xl font-bold leading-7 text-start">
             {video.title}

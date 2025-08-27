@@ -11,7 +11,6 @@ import {
   forgotPassword,
   changePassword,
   checkPaymentStatus,
-  changeName,
   unsubscribe,
 } from "./auth.thunk";
 import { AuthState } from "../../types/state.types";
@@ -51,19 +50,12 @@ const handleCheckPaymentFulfilled = (
 
 const handleUnsubscribeFulfilled = (
   state: AuthState,
-  action: PayloadAction<IUser>
+  action: PayloadAction<{ user: IUser | null; message: string }>
 ) => {
   state.isLogining = false;
-  state.profile = action.payload;
-};
-
-const handleNameChangeFulfilled = (
-  state: AuthState,
-  action: PayloadAction<{ name: string }>
-) => {
-  state.isLogining = false;
-  if (state.profile) {
-    state.profile.name = action.payload.name;
+  if (state.profile && action.payload.user) {
+    state.profile.status = action.payload.user.status;
+    state.profile.regularDateEnd = action.payload.user.regularDateEnd;
   }
 };
 
@@ -120,6 +112,9 @@ const authSlice = createSlice({
       state.profile = action.payload.user;
       state.isLogining = false;
     },
+    setNewName(state: AuthState, action: PayloadAction<{ name: string }>) {
+      if (state.profile) state.profile.name = action.payload.name;
+    },
   },
   extraReducers: (builder) =>
     builder
@@ -130,7 +125,6 @@ const authSlice = createSlice({
       .addCase(resendVerifyUser.fulfilled, handleFulfilled)
       .addCase(setNewPassword.fulfilled, handleFulfilled)
       .addCase(forgotPassword.fulfilled, handleFulfilled)
-      .addCase(changeName.fulfilled, handleNameChangeFulfilled)
       .addCase(changePassword.fulfilled, handleFulfilled)
       .addCase(checkPaymentStatus.fulfilled, handleCheckPaymentFulfilled)
       .addCase(refreshUser.fulfilled, handleRefreshFulfilled)
@@ -148,5 +142,5 @@ const authSlice = createSlice({
       ),
 });
 
-export const { localLogOut, localLogIn } = authSlice.actions;
+export const { localLogOut, localLogIn, setNewName } = authSlice.actions;
 export const authReducer = authSlice.reducer;

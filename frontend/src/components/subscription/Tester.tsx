@@ -19,7 +19,7 @@ export default function TestSubProfile({ profile }: { profile: IUser }) {
         description={testerDescription}
         submitComponent={
           <NavLink
-            rout="https://web.telegram.org/k/#-400000000"
+            rout="https://web.telegram.org/k/#-2700107263"
             text="Перейти в групу"
             style="accent"
             target="_blank"

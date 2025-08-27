@@ -17,33 +17,36 @@ import { useState } from "react";
 import Input from "@/components/form&inputs/Input";
 import Button from "@/components/buttons/Button";
 import toast from "react-hot-toast";
-import { unwrapResult } from "@reduxjs/toolkit";
-import { useRouter } from "next/navigation";
+import { setNewName } from "@/redux/auth/authSlice";
 
 function ProfilePage() {
   const dispatch = useAppDispatch();
   const profile = useAppSelector(selectUser);
   const [name, setName] = useState(profile?.name);
   const [visibleEdit, setVisibleEdit] = useState(false);
-  const router = useRouter();
   const handleLogout = () => {
     dispatch(signOut());
   };
 
-  const handleEdit = () => {
-    if (name && name.length >= 3 && name.length <= 18) {
-      dispatch(changeName({ name }))
-        .then(unwrapResult)
-        .then((payload: { name: string }) => {
-          if (payload.name) setName(payload.name);
-        });
-      toast.success("Ваше ім'я успішно змінено");
-      setVisibleEdit(!visibleEdit);
-      router.push("/profile/security");
-    } else {
-      toast.error(
-        "І'мя має складатись з не менше ніж 3 символів і не більше 18 символів"
-      );
+  const handleEdit = async () => {
+    try {
+      if (name && name.length >= 3 && name.length <= 18) {
+        const res = await dispatch(changeName({ name }));
+        if (res.meta && res.meta.requestStatus === "fulfilled") {
+          if (res.payload.name) {
+            setNewName(res.payload.name);
+          }
+        }
+
+        toast.success("Ваше ім'я успішно змінено");
+        setVisibleEdit(!visibleEdit);
+      } else {
+        toast.error(
+          "І'мя має складатись з не менше ніж 3 символів і не більше 18 символів"
+        );
+      }
+    } catch (error) {
+      console.log("🚀 ~ error:", error);
     }
   };
 
@@ -53,8 +56,8 @@ function ProfilePage() {
 
   return (
     <div className="w-full flex flex-col">
-      <div className="flex flex-col gap-8 w-full max-w-96 mx-auto lg:mx-0">
-        <h2 className="font-inter text-xl text-foreground font-medium leading-5 tracking-[-0.6px] ">
+      <div className="flex flex-col gap-8 w-full max-w-md mx-auto lg:mx-0">
+        <h2 className="font-inter text-xl text-foreground font-medium leading-7 tracking-[-0.6px] ">
           Профіль
         </h2>
         {/* <div className="flex justify-between items-center">
@@ -108,7 +111,12 @@ function ProfilePage() {
                       onClick={() => setVisibleEdit(false)}
                       className="w-10 h-10 flex justify-center items-center cursor-pointer"
                     >
-                      <X />
+                      <X
+                        size={20}
+                        strokeWidth={1.5}
+                        absoluteStrokeWidth
+                        color="#7b7b7b"
+                      />
                     </button>
                   </div>
                 </motion.div>
@@ -122,9 +130,13 @@ function ProfilePage() {
                   className="flex gap-2 items-center"
                 >
                   <p className="font-inter text-xs font-medium leading-4 tracking-[-0.12px]">
-                    {name || profile?.name}
+                    {name}
                   </p>
-                  <button type="button" onClick={() => setVisibleEdit(true)}>
+                  <button
+                    type="button"
+                    onClick={() => setVisibleEdit(true)}
+                    className="w-10 h-10 flex justify-center items-center cursor-pointer"
+                  >
                     <Pencil
                       size={14}
                       strokeWidth={1.5}
@@ -161,7 +173,7 @@ function ProfilePage() {
         </div>
         <button
           type="button"
-          className="inline-flex mt-8 font-inter text-xs font-medium leading-4 tracking-[-0.12px] text-muted-text hover:text-foreground transition-all duration-300 cursor-pointer"
+          className="inline-flex font-inter text-xs font-medium leading-4 tracking-[-0.12px] text-muted-text hover:text-foreground transition-all duration-300 cursor-pointer"
           onClick={handleLogout}
         >
           Вийти з акаунта

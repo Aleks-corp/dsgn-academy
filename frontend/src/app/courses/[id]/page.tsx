@@ -51,7 +51,7 @@ function CoursePage() {
 
   return (
     <div className="mx-auto grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-6 px-4 lg:px-8 justify-items-center max-w-[1500px]">
-      <div className="flex flex-col w-full max-w-[900px]">
+      <div className="flex flex-col w-full max-w-[990px]">
         <div className="relative w-full">
           <CoursePlayer
             canWatch={canWatch || selectedVideoIndex === 0}

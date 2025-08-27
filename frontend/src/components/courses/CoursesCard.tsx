@@ -17,7 +17,7 @@ export default function CoursesCard({ course }: { course: ICourse }) {
             alt={course.title}
             width={354}
             height={200}
-            className="relative w-full h-auto backdrop-blur-md object-cover rounded-2xl overflow-hidden z-100"
+            className="relative w-full h-auto backdrop-blur-md object-cover rounded-2xl overflow-hidden z-1"
           />
           <div className="absolute bottom-0 right-0 w-24 h-full flex flex-col justify-center items-center rounded-r-2xl  bg-[#00000030] backdrop-blur-md z-2">
             <p className="flex justify-center items-center text-white font-medium text-2xl leading-8 tracking-tighter">

@@ -137,8 +137,6 @@ export const fetchVideoById = createAsyncThunk(
 export const fetchVideosCount = createAsyncThunk(
   "videos/fetchVideosCount",
   async (category: string | undefined, thunkAPI) => {
-    console.log("🚀 ~ category:", category);
-    console.log(`/videos/counts/category/${category ? category : ""}`);
     try {
       const response = await instance.get(
         `/videos/counts/category/${category ? category : ""}`

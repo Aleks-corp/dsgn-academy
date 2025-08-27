@@ -28,10 +28,17 @@ export default function FilterSection() {
     []
   );
 
-  const items = useMemo(
-    () => [ALL_LABEL, RECO_LABEL, ...(filters?.map((f) => f.filter) ?? [])],
-    [filters]
-  );
+  const isDisplayReco =
+    searchParams.get("category") === "framer" ||
+    searchParams.get("category") === "webflow"; //тимчасова заглушка поки не буде хоча б одного
+
+  const items = useMemo(() => {
+    const base = [ALL_LABEL];
+    if (!isDisplayReco) {
+      base.push(RECO_LABEL);
+    }
+    return [...base, ...(filters?.map((f) => f.filter) ?? [])];
+  }, [filters, isDisplayReco]);
 
   const handleSelect = (label: string) => {
     const params = new URLSearchParams(window.location.search);
@@ -40,14 +47,17 @@ export default function FilterSection() {
       // прибираємо ВСІ фільтри
       params.delete("filter");
       params.delete("recommended");
+      params.delete("search");
     } else if (label === RECO_LABEL) {
       // лишаємо всі інші параметри, додаємо recommended
       params.delete("filter");
-      params.set("recommended", "");
+      params.delete("search");
+      params.set("recommended", "true");
     } else {
       // конкретний фільтр
       params.set("filter", label);
       params.delete("recommended");
+      params.delete("search");
     }
 
     router.push(`/videos?${params.toString()}`, { scroll: false });

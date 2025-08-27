@@ -46,7 +46,7 @@ function VideosPage() {
       category: searchParams.get("category") || "",
       filter: searchParams.get("filter") || "",
       free: searchParams.get("free") === "" ? true : false,
-      recommended: searchParams.get("recommended") === "" ? true : false,
+      recommended: searchParams.get("recommended") === "true" ? true : false,
       page,
       limit,
     }),
@@ -96,8 +96,11 @@ function VideosPage() {
   }, [dispatch, videos.length, total, makeQuery, loadMoreCount, isLoading]);
 
   if (error && !isLoadingVideo && videos.length === 0) {
-    if (searchParams) {
-      const category = searchParams.get("category") || "";
+    const category = searchParams.get("category");
+    const filter = searchParams.get("filter");
+    const search = searchParams.get("search");
+    const recommended = searchParams.get("recommended");
+    if (category && !filter && !search && !recommended) {
       return (
         <InProgressComponent
           title={`Розділ про ${
@@ -106,8 +109,9 @@ function VideosPage() {
           desc="Буде просто, зрозуміло, зручно й українською. Скоро!"
         />
       );
+    } else {
+      return <NotFoundComponent />;
     }
-    return <NotFoundComponent />;
   }
 
   return (

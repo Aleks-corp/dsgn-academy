@@ -227,13 +227,10 @@ export const changePassword = createAsyncThunk(
 );
 
 export const changeName = createAsyncThunk(
-  "auth/changename",
+  "user/changename",
   async (userData: IUserName, thunkAPI) => {
     try {
       const response = await instance.post("/auth/change-name", userData);
-      toast.success("Пароль успішно змінено", {
-        duration: 4000,
-      });
       return response.data;
     } catch (error) {
       if (error instanceof AxiosError) {
@@ -266,10 +263,42 @@ export const checkPaymentStatus = createAsyncThunk(
 );
 
 export const unsubscribe = createAsyncThunk(
-  "auth/unsubscribe",
+  "user/unsubscribe",
+  async (reason: string, thunkAPI) => {
+    try {
+      const response = await instance.post(`/auth/unsubscribe`, { reason });
+      return response.data;
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        return thunkAPI.rejectWithValue(
+          error.response?.data.message ?? error.message
+        );
+      }
+    }
+  }
+);
+
+export const callSupport = createAsyncThunk(
+  "user/callsupport",
   async (_, thunkAPI) => {
     try {
-      const response = await instance.get(`/auth/unsubscribe`);
+      const response = await instance.get(`/auth/callsupport`);
+      return response.data;
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        return thunkAPI.rejectWithValue(
+          error.response?.data.message ?? error.message
+        );
+      }
+    }
+  }
+);
+
+export const reportSupport = createAsyncThunk(
+  "user/reportsupport",
+  async (report: string, thunkAPI) => {
+    try {
+      const response = await instance.post(`/auth/callsupport`, { report });
       return response.data;
     } catch (error) {
       if (error instanceof AxiosError) {

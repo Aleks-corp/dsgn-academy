@@ -20,8 +20,13 @@ function ProfileSubPage() {
         </h2>
         <div className="flex gap-4 flex-wrap">
           {profile && profile.subscription === userSubscriptionConst.FREE && (
-            <FreeSubProfile />
+            <FreeSubProfile profile={profile} />
           )}
+          {profile &&
+            profile.subscription === userSubscriptionConst.FREE &&
+            profile.lastPayedStatus === "Declined" && (
+              <FreeSubProfile profile={profile} />
+            )}
           {profile &&
             profile.subscription === userSubscriptionConst.PREMIUM &&
             profile.status === "Active" &&
@@ -30,8 +35,7 @@ function ProfileSubPage() {
             )}
           {profile &&
             profile.subscription === userSubscriptionConst.PREMIUM &&
-            (profile.status === "Removed" ||
-              profile.lastPayedStatus === "Declined") && (
+            profile.status === "Removed" && (
               <RemovedSubProfile profile={profile} />
             )}
           {profile && profile.subscription === userSubscriptionConst.TESTER && (
