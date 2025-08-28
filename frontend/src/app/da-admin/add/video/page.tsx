@@ -5,6 +5,8 @@ import Image from "next/image";
 import Vimeo from "@u-wave/react-vimeo";
 import { X } from "lucide-react";
 import toast from "react-hot-toast";
+import Datetime from "react-datetime";
+import "react-datetime/css/react-datetime.css";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { addVideo } from "@/redux/videos/video.thunk";
 import { fetchVideoData } from "@/lib/api/getVideoData";
@@ -18,6 +20,8 @@ import Input from "@/components/form&inputs/Input";
 import Button from "@/components/buttons/Button";
 import { selectIsLoadingVideos } from "@/redux/selectors/videos.selectors";
 import Loader from "@/components/loaders/Loader";
+import moment from "moment";
+import { durationStringToString } from "@/lib/duration.utils";
 
 export interface IData {
   name: string;
@@ -32,6 +36,7 @@ function AddVideoPage() {
   const isLoading = useAppSelector(selectIsLoadingVideos);
   const [videoData, setVideoData] = useState<IData | null>(null);
   const [video, setVideo] = useState("");
+  const [originalVideo, setOriginalVideo] = useState("");
   const [cover, setCover] = useState("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -56,7 +61,7 @@ function AddVideoPage() {
   const handlefetchVideoData = async () => {
     const vimeoId = video.replace("https://vimeo.com/", "");
     if (!vimeoId) {
-      toast.error("Додайте правльну лінку для відео");
+      toast.error("Додайте правильну лінку для відео");
       return;
     }
     try {
@@ -65,7 +70,6 @@ function AddVideoPage() {
       const cover = res.pictures?.sizes?.find(
         (s) => parseInt(s.width) >= 768
       )?.link;
-      console.info("🚀 ~ res:", res);
       setVideoData(res);
       setTitle(res.name);
       setDescription(res.description);
@@ -90,6 +94,7 @@ function AddVideoPage() {
     setFilters([]);
     setFree(false);
     setRecommended(false);
+    setOriginalVideo("");
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -129,6 +134,14 @@ function AddVideoPage() {
       );
       return;
     }
+    if (!publishedAt) {
+      toast.error("Проблема з датою публікації");
+      return;
+    }
+    if (!originalVideo) {
+      toast.error("Проблема з оригінальним лінком");
+      return;
+    }
     const req: AddVideo = {
       video,
       title,
@@ -139,18 +152,26 @@ function AddVideoPage() {
       recommended,
       cover,
       duration,
+      publishedAt,
+      originalVideo,
     };
-    console.log("🚀 ~ payload:", req);
     try {
       const res = await dispatch(addVideo(req));
 
-      if (res?.type === "auth/resetpassword/rejected") {
-        toast.error("Сталась помилка при завантаженні, спробуйте ще раз");
+      if (res?.type === "videos/addVideo/rejected") {
+        toast.error(
+          `Сталась помилка при завантаженні, спробуйте ще раз ${res.payload}`,
+          {
+            duration: 5000,
+          }
+        );
         return;
       }
 
       reset();
-      toast.success("Відео завантажено, можна переходити до наступного");
+      toast.success("Відео завантажено, можна переходити до наступного", {
+        duration: 5000,
+      });
     } catch (err) {
       if (err instanceof Error) {
         // setError(err.message || "Помилка помилка завантаження. Спробуйте ще раз.");
@@ -183,6 +204,16 @@ function AddVideoPage() {
               className="w-fit"
               onClick={handlefetchVideoData}
             />
+            <label className="text-xl font-semibold text-muted">
+              Оригінальне Відео (Youtube URL)
+              <Input
+                value={originalVideo}
+                onChange={(e) => setOriginalVideo(e.target.value)}
+                placeholder="https://youtube.com/1110000000"
+                className="font-inter text-base font-semibold text-muted"
+                required
+              />
+            </label>
             <div className="flex gap-2 items-center">
               <Switch value={free} setValue={setFree} />
               <p>Безкоштовне</p>
@@ -244,6 +275,17 @@ function AddVideoPage() {
               />
             </div>
           </div>
+          <Datetime
+            inputProps={{
+              placeholder: `дата публікації`,
+              className:
+                "my-4 min-w-56 font-inter leading-4 tracking-[-0.13px] border-0 px-6 py-4 rounded-xl bg-icon shadow-input focus:shadow-input-hover focus:outline-0 text-base font-semibold text-muted",
+              required: true,
+              value: publishedAt ? publishedAt : "",
+            }}
+            onChange={(e) => setPublishedAt(e.toString())}
+            value={publishedAt !== "" ? new Date(publishedAt) : ""}
+          />
           <Button
             text={!isLoading ? "Завантажити відео" : ""}
             icon={isLoading && <Loader />}
@@ -272,7 +314,9 @@ function AddVideoPage() {
               <p className="text-base font-medium text-foreground mt-4">
                 Опис відео:
               </p>
-              {description && <p>{description}</p>}
+              {description && (
+                <p className=" whitespace-pre-line">{description}</p>
+              )}
               <textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
@@ -293,7 +337,20 @@ function AddVideoPage() {
                     Cover
                   </p>
                   {cover && (
-                    <Image src={cover} alt="ff" width={576} height={430} />
+                    <div className="relative">
+                      <Image
+                        src={cover}
+                        alt="ff"
+                        width={576}
+                        height={430}
+                        className="relative"
+                      />
+                      {duration && (
+                        <p className="absolute font-inter bottom-[30px] left-[5px] px-2 py-1 bg-muted rounded-lg">
+                          {durationStringToString(duration)}
+                        </p>
+                      )}
+                    </div>
                   )}
                 </>
               ) : (
@@ -313,16 +370,16 @@ function AddVideoPage() {
                         width="100%"
                         height="100%"
                       />
-                      {duration && (
-                        <p className="absolute font-inter bottom-[30px] right-[5px] px-2 py-1 bg-muted rounded-lg">
-                          {duration}
-                        </p>
-                      )}
                     </div>
                   )}
                 </>
               )}
-              {publishedAt && <p className="mt-4">Date - {publishedAt}</p>}
+              {publishedAt && (
+                <p className="mt-4">
+                  Date -{" "}
+                  {moment(new Date(publishedAt)).format("DD-MM-YYYY_HH:mm")}
+                </p>
+              )}
             </>
           )}
         </div>

@@ -11,6 +11,7 @@ import Link from "next/link";
 import { useAppSelector } from "@/redux/hooks";
 import { selectIsAdmin } from "@/redux/selectors/auth.selectors";
 import { useParams } from "next/navigation";
+import moment from "moment";
 
 export default function CourseDescription({
   course,
@@ -73,7 +74,7 @@ export default function CourseDescription({
         </h1>
         <div className="flex items-center justify-end gap-3">
           {isAdmin && (
-            <Link href={`/da-admin/edit/course/${courseId}`}>
+            <Link href={`/da-admin/add/course/${courseId}`}>
               <Edit />
             </Link>
           )}
@@ -105,6 +106,12 @@ export default function CourseDescription({
           <Button type="button" text="Поділитись" onClick={handleShare} />
         </div>
       </div>
+      {isAdmin && course.publishedAt && (
+        <p className="my-4 font-bold">
+          Date -{" "}
+          {moment(new Date(course.publishedAt)).format("DD-MM-YYYY_HH:mm")}
+        </p>
+      )}
       {selectedVideoIndex === 0 && (
         <div className="mt-5 text-sm text-muted-foreground leading-5 mb-5">
           <p className={`whitespace-pre-line transition-all duration-300 `}>
@@ -112,7 +119,6 @@ export default function CourseDescription({
           </p>
         </div>
       )}
-
       <div className="flex flex-col gap-4 w-full xl:flex-row xl:justify-between mb-4">
         <h1 className=" text-xl font-medium leading-7 tracking-thinest text-start">
           {course.videos[selectedVideoIndex].title}
@@ -125,6 +131,19 @@ export default function CourseDescription({
           }`}
         >
           {course.videos[selectedVideoIndex].description}
+          {course.videos[selectedVideoIndex].originalUrl && (
+            <span className="flex mt-4">
+              Оригінальне посилання:
+              <Link
+                href={course.videos[selectedVideoIndex].originalUrl}
+                className="ml-1 text-accent hover:text-accent-hover"
+                rel="noopener noreferrer nofollow"
+                target="_blank"
+              >
+                {course.videos[selectedVideoIndex].originalUrl}
+              </Link>
+            </span>
+          )}
         </p>
 
         {course.videos[selectedVideoIndex].description &&

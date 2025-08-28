@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import Vimeo from "@u-wave/react-vimeo";
 import { X, Pencil, Save } from "lucide-react";
@@ -8,7 +8,7 @@ import toast from "react-hot-toast";
 import Datetime from "react-datetime";
 import "react-datetime/css/react-datetime.css";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { addCourse } from "@/redux/courses/course.thunk";
+import { editCourse, fetchCourseById } from "@/redux/courses/course.thunk";
 import { fetchVideoData } from "@/lib/api/getVideoData";
 import { AddCourse, ICourseVideo } from "@/types/courses.type";
 import { categoriesConstant } from "@/constants/categories.constant";
@@ -20,6 +20,8 @@ import Button from "@/components/buttons/Button";
 import { selectIsLoadingCourses } from "@/redux/selectors/courses.selector";
 import Loader from "@/components/loaders/Loader";
 import { durationStringToString } from "@/lib/duration.utils";
+import { useParams } from "next/navigation";
+import { clearCourse } from "@/redux/courses/courseSlice";
 
 export interface IData {
   name: string;
@@ -31,6 +33,8 @@ export interface IData {
 
 function AddCourseVideoForm() {
   const dispatch = useAppDispatch();
+  const { id } = useParams();
+
   const isLoading = useAppSelector(selectIsLoadingCourses);
   const [videoInput, setVideoInput] = useState("");
   const [courseVideos, setCourseVideos] = useState<ICourseVideo[]>([]);
@@ -48,6 +52,27 @@ function AddCourseVideoForm() {
   const [categoryState, setCategoryState] = useState<
     { [key: string]: boolean }[]
   >(categoriesConstant.map((c) => ({ [c]: false })));
+
+  useEffect(() => {
+    dispatch(fetchCourseById(id as string)).then((res) => {
+      if (res?.payload) {
+        setCourseVideos(res.payload.videos);
+        setTitle(res.payload.title);
+        setDescription(res.payload.description);
+        setPublishedAt(res.payload.publishedAt);
+        setCategoryState(
+          categoriesConstant.map((c) => ({
+            [c]: res.payload.category.includes(c),
+          }))
+        );
+      }
+      setSelectedCourse(0);
+    });
+
+    return () => {
+      dispatch(clearCourse());
+    };
+  }, [dispatch, id]);
 
   const handleAddVideo = async () => {
     if (!videoInput.trim()) return;
@@ -162,14 +187,17 @@ function AddCourseVideoForm() {
     const invalidVideo = courseVideos.find((v) => !isVideoValid(v));
     if (invalidVideo) {
       toast.error(
-        "Усі відео повинні містити назву, опис, обкладинку, тривалість і оригінальне посилання"
+        "Усі відео повинні містити назву, опис, обкладинку і тривалість"
       );
       return;
     }
     try {
-      const res = await dispatch(addCourse(req));
+      const res = await dispatch(
+        editCourse({ course: req, courseId: id as string })
+      );
+      console.log("🚀 ~ res:", res);
 
-      if (res?.type === "courses/addCourse/rejected") {
+      if (res?.type === "courses/editCourse/rejected") {
         toast.error(
           `Сталась помилка при завантаженні, спробуйте ще раз ${res.payload}`,
           {
@@ -180,7 +208,7 @@ function AddCourseVideoForm() {
       }
 
       reset();
-      toast.success("Курс завантажено, можна переходити до наступного");
+      toast.success("Курс відредаговано", { duration: 5000 });
     } catch (err) {
       if (err instanceof Error) {
         // setError(err.message || "Помилка помилка завантаження. Спробуйте ще раз.");
@@ -302,9 +330,7 @@ function AddCourseVideoForm() {
               </div>
             ) : (
               <div className="flex gap-2 items-start w-full">
-                <div className="w-full min-h-40 bg-white whitespace-pre-line">
-                  {description}
-                </div>
+                <div className="w-full min-h-40 bg-white">{description}</div>
                 <button
                   onClick={() => setIsEditingDescription(true)}
                   className="cursor-pointer"
@@ -385,7 +411,7 @@ function AddCourseVideoForm() {
             <div className="mt-4">
               <p>Оригінальне Відео (Youtube URL)</p>
               <Input
-                value={courseVideos[selectedCourse].originalUrl}
+                value={courseVideos[selectedCourse].originalUrl || ""}
                 onChange={(e) =>
                   updateCourseVideo(selectedCourse, {
                     originalUrl: e.target.value,
@@ -434,7 +460,7 @@ function AddCourseVideoForm() {
               </div>
             ) : (
               <div className="flex gap-2 items-start w-full mt-10">
-                <p className="w-full min-h-10 bg-white whitespace-pre-line">
+                <p className="min-h-10 bg-white whitespace-pre-line">
                   {courseVideos[selectedCourse].description}
                 </p>
                 <button onClick={() => setIsEditingSelectedDescription(true)}>
@@ -448,7 +474,7 @@ function AddCourseVideoForm() {
         </div>
       )}
       <Button
-        text={!isLoading ? "Завантажити Курс" : ""}
+        text={!isLoading ? "Зберегти Курс" : ""}
         icon={isLoading && <Loader />}
         type="button"
         className="mt-5 w-fit disabled:pointer-events-none"

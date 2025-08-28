@@ -2,6 +2,7 @@ export interface ICourseVideo {
   title: string;
   description: string;
   url: string;
+  originalUrl?: string;
   cover: string;
   duration: string;
 }

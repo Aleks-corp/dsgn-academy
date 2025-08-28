@@ -5,6 +5,7 @@ export interface IVideo {
   filter: string[];
   category: string[];
   video: string;
+  originalVideo?: string;
   cover: string;
   duration: string;
   free: boolean;
@@ -22,9 +23,10 @@ export interface AddVideo {
   filter: string[];
   category: string[];
   video: string;
+  originalVideo?: string;
   cover: string;
   duration: string;
   free: boolean;
   recommended: boolean;
-  publishedAt?: Date;
+  publishedAt?: string;
 }

@@ -17,6 +17,7 @@ import { useWindowWidth } from "@/hooks/useWindowWidth";
 import Restricted from "../Restricted";
 import Link from "next/link";
 import { useParams } from "next/navigation";
+import moment from "moment";
 
 export default function VideoPlayer({
   video,
@@ -164,14 +165,32 @@ export default function VideoPlayer({
           </div>
         </div>
         <div className="mt-5 text-sm text-[#131313] leading-5">
+          {isAdmin && video.publishedAt && (
+            <p className="my-4 font-bold">
+              Date -{" "}
+              {moment(new Date(video.publishedAt)).format("DD-MM-YYYY_HH:mm")}
+            </p>
+          )}
           <p
             className={`whitespace-pre-line transition-all duration-300 ${
               expanded || width >= 1024 ? "line-clamp-none" : "line-clamp-3"
             }`}
           >
             {video.description}
+            {video.originalVideo && (
+              <span className="flex mt-4">
+                Оригінальне посилання:
+                <Link
+                  href={video.originalVideo}
+                  className="ml-1 text-accent hover:text-accent-hover"
+                  rel="noopener noreferrer nofollow"
+                  target="_blank"
+                >
+                  {video.originalVideo}
+                </Link>
+              </span>
+            )}
           </p>
-
           {video.description &&
             video.description.length > 120 &&
             width < 1024 && (

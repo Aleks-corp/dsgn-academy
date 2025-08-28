@@ -5,6 +5,8 @@ import Image from "next/image";
 import Vimeo from "@u-wave/react-vimeo";
 import { X } from "lucide-react";
 import toast from "react-hot-toast";
+import Datetime from "react-datetime";
+import "react-datetime/css/react-datetime.css";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { editVideo, fetchVideoById } from "@/redux/videos/video.thunk";
 import { fetchVideoData } from "@/lib/api/getVideoData";
@@ -20,6 +22,7 @@ import { selectIsLoadingVideos } from "@/redux/selectors/videos.selectors";
 import Loader from "@/components/loaders/Loader";
 import { useParams } from "next/navigation";
 import { clearVideo } from "@/redux/videos/videoSlice";
+import { durationStringToString } from "@/lib/duration.utils";
 
 export interface IData {
   name: string;
@@ -34,6 +37,7 @@ function EditCoursePage() {
   const isLoading = useAppSelector(selectIsLoadingVideos);
   const [videoData, setVideoData] = useState<IData | null>(null);
   const [video, setVideo] = useState("");
+  const [originalVideo, setOriginalVideo] = useState("");
   const [cover, setCover] = useState("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -56,6 +60,7 @@ function EditCoursePage() {
         setRecommended(res.payload.recommended);
         setFree(res.payload.free);
         setVideo(res.payload.video);
+        setOriginalVideo(res.payload.originalVideo);
         setCover(res.payload.cover);
         setTitle(res.payload.title);
         setDescription(res.payload.description);
@@ -94,7 +99,6 @@ function EditCoursePage() {
       const cover = res.pictures?.sizes?.find(
         (s) => parseInt(s.width) >= 768
       )?.link;
-      console.info("🚀 ~ res:", res);
       setVideoData(res);
       setTitle(res.name);
       setDescription(res.description);
@@ -119,6 +123,7 @@ function EditCoursePage() {
     setFilters([]);
     setFree(false);
     setRecommended(false);
+    setOriginalVideo("");
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -158,6 +163,14 @@ function EditCoursePage() {
       );
       return;
     }
+    if (!publishedAt) {
+      toast.error("Проблема з датою публікації");
+      return;
+    }
+    if (!originalVideo) {
+      toast.error("Проблема з оригінальним лінком");
+      return;
+    }
     const body: AddVideo = {
       video,
       title,
@@ -168,20 +181,26 @@ function EditCoursePage() {
       recommended,
       cover,
       duration,
+      publishedAt,
+      originalVideo,
     };
-    console.log("🚀 ~ payload:", body);
     try {
       const res = await dispatch(
         editVideo({ video: body, videoId: id as string })
       );
 
-      if (res?.type === "auth/resetpassword/rejected") {
-        toast.error("Сталась помилка при завантаженні, спробуйте ще раз");
+      if (res?.type === "videos/editVideo/rejected") {
+        toast.error(
+          `Сталась помилка при завантаженні, спробуйте ще раз ${res.payload}`,
+          {
+            duration: 5000,
+          }
+        );
         return;
       }
 
       reset();
-      toast.success("Відео завантажено, можна переходити до наступного");
+      toast.success("Відео відредаговано", { duration: 5000 });
     } catch (err) {
       if (err instanceof Error) {
         // setError(err.message || "Помилка помилка завантаження. Спробуйте ще раз.");
@@ -209,14 +228,24 @@ function EditCoursePage() {
                 className="font-inter text-base font-semibold text-muted"
                 required
               />
-              <p>{video}</p>
             </label>
+
             <Button
               text="Витягнути дані з Vimeo"
               type="button"
               className="w-fit"
               onClick={handlefetchVideoData}
             />
+            <label className="text-xl font-semibold text-muted">
+              Оригінальне Відео (Youtube URL)
+              <Input
+                value={originalVideo}
+                onChange={(e) => setOriginalVideo(e.target.value)}
+                placeholder="https://youtube.com/1110000000"
+                className="font-inter text-base font-semibold text-muted"
+                required
+              />
+            </label>
             <div className="flex gap-2 items-center">
               <Switch value={free} setValue={setFree} />
               <p>Безкоштовне</p>
@@ -278,6 +307,17 @@ function EditCoursePage() {
               />
             </div>
           </div>
+          <Datetime
+            inputProps={{
+              placeholder: `дата публікації`,
+              className:
+                "my-4 min-w-56 font-inter leading-4 tracking-[-0.13px] border-0 px-6 py-4 rounded-xl bg-icon shadow-input focus:shadow-input-hover focus:outline-0 text-base font-semibold text-muted",
+              required: true,
+              value: publishedAt ? publishedAt : "",
+            }}
+            onChange={(e) => setPublishedAt(e.toString())}
+            value={publishedAt !== "" ? new Date(publishedAt) : ""}
+          />
           <Button
             text={!isLoading ? "Зберегти відео" : ""}
             icon={isLoading && <Loader />}
@@ -306,7 +346,9 @@ function EditCoursePage() {
               <p className="text-base font-medium text-foreground mt-4">
                 Опис відео:
               </p>
-              {description && <p>{description}</p>}
+              {description && (
+                <p className=" whitespace-pre-line">{description}</p>
+              )}
               <textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
@@ -327,7 +369,20 @@ function EditCoursePage() {
                     Cover
                   </p>
                   {cover && (
-                    <Image src={cover} alt="ff" width={576} height={430} />
+                    <div className="relative">
+                      <Image
+                        src={cover}
+                        alt="ff"
+                        width={576}
+                        height={430}
+                        className="relative"
+                      />
+                      {duration && (
+                        <p className="absolute font-inter bottom-[30px] left-[5px] px-2 py-1 bg-muted rounded-lg">
+                          {durationStringToString(duration)}
+                        </p>
+                      )}
+                    </div>
                   )}
                 </>
               ) : (
@@ -347,11 +402,6 @@ function EditCoursePage() {
                         width="100%"
                         height="100%"
                       />
-                      {duration && (
-                        <p className="absolute font-inter bottom-[30px] right-[5px] px-2 py-1 bg-muted rounded-lg">
-                          {duration}
-                        </p>
-                      )}
                     </div>
                   )}
                 </>

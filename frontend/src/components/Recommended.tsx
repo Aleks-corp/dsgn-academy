@@ -66,8 +66,8 @@ export default function RecommendedList() {
         {recommended.map((video, idx) => (
           <VerticalVideoCard key={video._id + idx} video={video} />
         ))}
+        <div ref={loaderRef} className="h-10" />
       </div>
-      <div ref={loaderRef} className="h-10" />
     </div>
   );
 }
