@@ -21,6 +21,10 @@ const videoAddSchema = Joi.object({
     "string.empty": `'video' cannot be an empty field`,
     "any.required": `missing required 'video' field`,
   }),
+  originalVideo: Joi.string().required().messages({
+    "string.empty": `'originalVideo' cannot be an empty field`,
+    "any.required": `missing required 'originalVideo' field`,
+  }),
   cover: Joi.string().required().messages({
     "string.empty": `'cover' cannot be an empty field`,
     "any.required": `missing required 'cover' field`,
@@ -60,6 +64,10 @@ const videoUpdateSchema = Joi.object({
   video: Joi.string().required().messages({
     "string.empty": `'video' cannot be an empty field`,
     "any.required": `missing required 'video' field`,
+  }),
+  originalVideo: Joi.string().required().messages({
+    "string.empty": `'originalVideo' cannot be an empty field`,
+    "any.required": `missing required 'originalVideo' field`,
   }),
   cover: Joi.string().required().messages({
     "string.empty": `'cover' cannot be an empty field`,

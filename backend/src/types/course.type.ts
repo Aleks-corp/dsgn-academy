@@ -3,6 +3,7 @@ import type { Document } from "mongoose";
 export interface ICourseVideo {
   title: string;
   url: string;
+  originalUrl: string;
   description: string;
   duration: string;
   cover: string;

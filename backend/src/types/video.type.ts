@@ -7,6 +7,7 @@ export interface IVideo extends Document {
   filter: string[];
   category: string[];
   video: string;
+  originalVideo?: string;
   cover: string;
   duration: string;
   free: boolean;

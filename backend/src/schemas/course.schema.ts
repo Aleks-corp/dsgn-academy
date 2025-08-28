@@ -25,6 +25,11 @@ const courseAddSchema = Joi.object({
           "any.required": `missing required 'url' field`,
           "string.uri": `'url' must be a valid URI`,
         }),
+        originalUrl: Joi.string().uri().messages({
+          "string.empty": `'originalVideo' cannot be an empty field`,
+          "any.required": `missing required 'originalVideo' field`,
+          "string.uri": `'url' must be a valid URI`,
+        }),
         description: Joi.string().required().messages({
           "string.empty": `'description' cannot be an empty field`,
           "any.required": `missing required 'url' field`,
@@ -64,9 +69,18 @@ const courseUpdateSchema = Joi.object({
   videos: Joi.array()
     .items(
       Joi.object({
+        title: Joi.string().required().messages({
+          "string.empty": `'description' cannot be an empty field`,
+          "any.required": `missing required 'url' field`,
+        }),
         url: Joi.string().uri().required().messages({
           "string.empty": `'url' cannot be an empty field`,
           "any.required": `missing required 'url' field`,
+          "string.uri": `'url' must be a valid URI`,
+        }),
+        originalUrl: Joi.string().uri().messages({
+          "string.empty": `'originalVideo' cannot be an empty field`,
+          "any.required": `missing required 'originalVideo' field`,
           "string.uri": `'url' must be a valid URI`,
         }),
         description: Joi.string().required().messages({

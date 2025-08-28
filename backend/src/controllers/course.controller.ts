@@ -23,8 +23,9 @@ export const getCourses = async (
   res: Response
 ): Promise<void> => {
   const { q, category, limit = 3, page = 1 } = req.query;
-
+  const currentTime = new Date();
   const filter: Record<string, unknown> = {};
+  filter.publishedAt = { $lte: currentTime };
   if (typeof category === "string" && category.trim() !== "") {
     filter.category = category.trim();
   }

@@ -8,6 +8,7 @@ const videoSchema = new Schema<IVideo>(
     category: { type: [String], required: true },
     filter: { type: [String], required: true },
     video: { type: String, required: true },
+    originalVideo: { type: String },
     cover: { type: String, required: true },
     duration: { type: String, required: true },
     free: { type: Boolean, required: true },

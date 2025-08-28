@@ -31,7 +31,10 @@ export const getVideos = async (req: Request, res: Response): Promise<void> => {
   const { q, category, filter, limit = 3, page = 1 } = req.query;
   const free = req.query.free === "true";
   const recommended = req.query.recommended === "true";
+  const currentTime = new Date();
+
   const filtersQuery: Record<string, unknown> = {};
+  filtersQuery.publishedAt = { $lte: currentTime };
   if (typeof category === "string" && category.trim() !== "") {
     filtersQuery.category = { $in: [category.trim()] };
   }
