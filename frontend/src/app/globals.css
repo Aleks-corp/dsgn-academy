@@ -68,8 +68,8 @@
     0 6px 3px 0 rgba(0, 0, 0, 0.01), 0 3px 3px 0 rgba(0, 0, 0, 0.02),
     0 1px 1px 0 rgba(0, 0, 0, 0.02);
 
-  --box-shadow-video-card: 0 38px 38px 0 rgba(0, 0, 0, 0.06);
-
+  --box-shadow-video-card: 0 32px 32px 0 rgba(0, 0, 0, 0.06);
+  --box-shadow-course-card: 0 8px 12px 0 rgba(0, 0, 0, 0.06);
   --box-shadow-btn-scroll: 0 3.75px 5px -1.25px rgba(0, 0, 0, 0.15),
     0 1.25px 0 0 rgba(255, 255, 255, 0.33) inset, 0 0 0 1.25px #d4d4d4;
   --box-shadow-select: 0 0 0 1px rgba(0, 0, 0, 0.08), 0 0.75px 0 0 #fcfcfc inset,
@@ -84,6 +84,7 @@
 
 html {
   box-sizing: border-box;
+  /* font-size: calc(100vw / 1920); */
 }
 *,
 *:before,

@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useAppSelector } from "@/redux/hooks";
 
 import Image from "next/image";
-import Vimeo from "@u-wave/react-vimeo";
 import { selectIsAdmin } from "@/redux/selectors/auth.selectors";
 import Button from "@/components/buttons/Button";
 import { FaTelegramPlane } from "react-icons/fa";
@@ -18,6 +17,8 @@ import Restricted from "../Restricted";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import moment from "moment";
+import VidstackPlayer from "../VideoVidstack";
+import VidstackPlayerYoutube from "../VideoVidstackYoutube";
 
 export default function VideoPlayer({
   video,
@@ -26,12 +27,12 @@ export default function VideoPlayer({
   video: IVideo;
   canWatch: boolean;
 }) {
-  const [isReady, setIsReady] = useState(false);
   const [expanded, setExpanded] = useState(false);
   const isAdmin = useAppSelector(selectIsAdmin);
   const { id: videoId } = useParams();
+  const [original, setOriginal] = useState(false);
 
-  const width = useWindowWidth();
+  const { width } = useWindowWidth();
 
   if (!video) {
     return null;
@@ -53,18 +54,7 @@ export default function VideoPlayer({
       }
     } else {
       await navigator.clipboard.writeText(shareUrl);
-      toast.success("Посилання скопійовано!", {
-        style: {
-          boxShadow: "0 0 0 1.5px  #3582ff inset",
-
-          padding: "16px",
-          color: "#0170fd",
-        },
-        iconTheme: {
-          primary: "#3582ff",
-          secondary: "#FFFAEE",
-        },
-      });
+      toast.success("Посилання скопійовано!");
     }
   };
 
@@ -81,51 +71,44 @@ export default function VideoPlayer({
   };
 
   return (
-    <div className="">
-      <div className="relative aspect-video w-auto max-w-[990px] max-h-[90vh] object-contain rounded-lg overflow-hidden mb-5">
-        {!isReady && (
-          <div className="w-full h-full flex items-center justify-center">
-            <Image
-              src={video.cover}
-              alt={video.title}
-              width={752}
-              height={423}
-              priority
-              className="w-full h-full object-cover "
+    <div className="flex flex-col max-w-[calc((100vh-116px)/9*16)]">
+      <div className="relative aspect-[16/9] w-auto max-h-[calc(100vh-116px)] rounded-xl overflow-hidden bg-background mb-5">
+        {!original ? (
+          !canWatch ? (
+            <>
+              <Image
+                src={video.cover}
+                alt={video.title}
+                width={752}
+                height={423}
+                priority
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute top-0 botom-0 right-0 left-0 w-full backdrop-blur-[48px] h-full">
+                <Restricted
+                  originalUrl={video.originalVideo}
+                  original={original}
+                  setOriginal={setOriginal}
+                />
+              </div>
+            </>
+          ) : (
+            <VidstackPlayer
+              title={video.title}
+              cover={video.cover}
+              video={video.video as string}
             />
-          </div>
-        )}
-        {!canWatch ? (
-          <>
-            <Image
-              src={video.cover}
-              alt={video.title}
-              width={752}
-              height={423}
-              priority
-              className="w-full h-full object-cover "
-            />
-            <div className="absolute top-0 botom-0 right-0 left-0 w-full backdrop-blur-[48px] h-full">
-              <Restricted />
-            </div>
-          </>
+          )
         ) : (
-          <Vimeo
-            key={video.video}
-            video={video.video}
-            responsive
-            pip
-            speed
-            autoplay={false}
-            width="100%"
-            height="100%"
-            playsInline
-            onReady={() => setIsReady(true)}
-            className="aspect-video"
+          <VidstackPlayerYoutube
+            title={video.title}
+            cover={video.cover}
+            originalUrl={video.originalVideo as string}
+            className="absolute top-0 left-0 w-3xs aspect-video"
           />
         )}
       </div>
-      <div className="md:w-full lg:max-w-[710px] xl:max-w-[820px] xxl:max-w-[990px] 2xl:max-w-[990px] px-4 py-4 flex flex-col bg-white rounded-3xl">
+      <div className="w-auto px-4 py-4 flex flex-col bg-white rounded-3xl">
         <div className="flex flex-col gap-4 w-full xl:flex-row xl:justify-between">
           <h1 className=" text-2xl font-bold leading-7 text-start">
             {video.title}

@@ -2,9 +2,15 @@ import { ShortState } from "../../types/state.types";
 
 export const initialState: ShortState = {
   shorts: [],
-  totalShorts: undefined,
-  selectedShort: null,
+  totalShorts: 0,
+  nextCursor: null,
   isLoading: false,
-  error: "",
-  shortToEdit: null,
+  error: null,
+  selected: null,
+  sequence: [],
+  seqCursor: null,
+  topTags: [],
+  activeTags: [],
+  tagsMode: "any",
+  limit: 18,
 };

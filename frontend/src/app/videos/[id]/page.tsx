@@ -36,12 +36,12 @@ function VideoPage() {
     return <VideoCardSkeleton />;
   }
 
-  if (!video) {
-    return null;
-  }
-
   if (error && !isLoading && !video) {
     return <NotFoundComponent />;
+  }
+
+  if (!video) {
+    return null;
   }
 
   return (

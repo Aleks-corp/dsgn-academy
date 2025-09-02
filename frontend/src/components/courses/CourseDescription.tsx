@@ -24,7 +24,7 @@ export default function CourseDescription({
   const shareUrl = typeof window !== "undefined" ? window.location.href : "";
   const shareText = course.title;
 
-  const width = useWindowWidth();
+  const { width } = useWindowWidth();
   const isAdmin = useAppSelector(selectIsAdmin);
   const { id: courseId } = useParams();
 

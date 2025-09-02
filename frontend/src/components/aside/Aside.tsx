@@ -16,6 +16,7 @@ import { fetchVideosCount } from "@/redux/videos/video.thunk";
 import { fetchCoursesCount } from "@/redux/courses/course.thunk";
 import Link from "next/link";
 import { selectSubscription } from "@/redux/selectors/auth.selectors";
+import { fetchShortsCount } from "@/redux/shorts/shorts.thunk";
 
 type Props = {
   selectedPage: string;
@@ -29,7 +30,7 @@ export default function Aside({ selectedPage, setSelectedPage }: Props) {
   useEffect(() => {
     dispatch(fetchVideosCount());
     dispatch(fetchCoursesCount());
-    // dispatch(fetchShortsCount());
+    dispatch(fetchShortsCount());
   }, [dispatch]);
 
   const handleFetch = (options: {

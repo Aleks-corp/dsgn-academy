@@ -1,43 +1,34 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { instance } from "../../lib/api/axios";
+import { instance } from "@/lib/api/axios";
 import { AxiosError } from "axios";
+import type { AddShort, TagsMode } from "@/types/shorts.type";
 // import { AddPost, EditPost } from "../../types/posts.types";
 
 interface Query {
-  page?: number;
   limit?: number;
-  category?: string;
-  filter?: string;
-  free?: boolean;
-  recommended?: boolean;
-  search?: string;
-  favorites?: boolean;
-  watched?: boolean;
+  tag?: string;
+  cursor?: string;
+  tagsMode?: string;
 }
+
+type ShortsSliceShape = {
+  nextCursor: string | null;
+  limit: number;
+  activeTags: string[];
+  tagsMode: TagsMode;
+};
 
 export const fetchShorts = createAsyncThunk(
   "shorts/fetchShorts",
   async (
-    {
-      page = 1,
-      limit = 9,
-      category = "",
-      filter = "",
-      free = false,
-      recommended = false,
-      search = "",
-    }: Query,
+    { limit = 9, tag = "", cursor = "", tagsMode = "" }: Query,
     thunkAPI
   ) => {
-    const params = new URLSearchParams({
-      page: String(page),
-      limit: String(limit),
-    });
-    if (category) params.append("category", category);
-    if (filter) params.append("filter", filter);
-    if (free) params.append("free", "true");
-    if (recommended) params.append("recommended", "true");
-    if (search) params.append("q", search);
+    const params = new URLSearchParams();
+    if (limit) params.set("limit", String(limit));
+    if (cursor) params.set("cursor", cursor);
+    if (tag) params.set("tags", tag);
+    if (tagsMode) params.set("tagsMode", tagsMode);
     try {
       const response = await instance.get(`/shorts?${params.toString()}`);
       return response.data;
@@ -51,16 +42,11 @@ export const fetchShorts = createAsyncThunk(
   }
 );
 
-export const fetchRecommended = createAsyncThunk(
-  "shorts/fetchRecommendedShorts",
-  async ({ page = 1, limit = 5, recommended = false }: Query, thunkAPI) => {
-    const params = new URLSearchParams({
-      page: String(page),
-      limit: String(limit),
-    });
-    if (recommended) params.append("recommended", "true");
+export const fetchShortsCount = createAsyncThunk(
+  "shorts/fetchCount",
+  async (_, thunkAPI) => {
     try {
-      const response = await instance.get(`/shorts?${params.toString()}`);
+      const response = await instance.get("/shorts/count");
       return response.data;
     } catch (error) {
       if (error instanceof AxiosError) {
@@ -72,35 +58,18 @@ export const fetchRecommended = createAsyncThunk(
   }
 );
 
-export const fetchFavoritesShorts = createAsyncThunk(
-  "shorts/fetchFavoritesShorts",
-  async ({ page = 1, limit = 9, favorites = false }: Query, thunkAPI) => {
-    const params = new URLSearchParams({
-      page: String(page),
-      limit: String(limit),
-    });
-    if (favorites) params.append("favorites", "true");
-    try {
-      const response = await instance.get(`/shorts?${params.toString()}`);
-      return response.data;
-    } catch (error) {
-      if (error instanceof AxiosError) {
-        return thunkAPI.rejectWithValue(
-          error.response?.data.message ?? error.message
-        );
-      }
-    }
-  }
-);
-
-export const fetchWatchedShorts = createAsyncThunk(
-  "shorts/fetchWatchedShorts",
-  async ({ page = 1, limit = 9, watched = false }: Query, thunkAPI) => {
-    const params = new URLSearchParams({
-      page: String(page),
-      limit: String(limit),
-    });
-    if (watched) params.append("watched", "true");
+export const fetchShortsNext = createAsyncThunk(
+  "shorts/fetchShortsNext",
+  async (_, thunkAPI) => {
+    const { shorts: state } = thunkAPI.getState() as {
+      shorts: ShortsSliceShape;
+    };
+    if (!state.nextCursor) return { shorts: [], nextCursor: null };
+    const params = new URLSearchParams();
+    params.set("limit", String(state.limit));
+    params.set("cursor", state.nextCursor);
+    if (state.activeTags.length) params.set("tags", state.activeTags.join(","));
+    params.set("tagsMode", state.tagsMode);
     try {
       const response = await instance.get(`/shorts?${params.toString()}`);
       return response.data;
@@ -115,7 +84,7 @@ export const fetchWatchedShorts = createAsyncThunk(
 );
 
 export const fetchShortById = createAsyncThunk(
-  "shorts/fetchShortById",
+  "shorts/fetchById",
   async (id: string, thunkAPI) => {
     try {
       const response = await instance.get(`/shorts/${id}`);
@@ -130,13 +99,21 @@ export const fetchShortById = createAsyncThunk(
   }
 );
 
-export const checkDownloadPermission = createAsyncThunk(
-  "posts/checkDownloadPermission",
-  async (shortId: string, thunkAPI) => {
+export const fetchSequence = createAsyncThunk(
+  "shorts/fetchSequence",
+  async (
+    { limit = 200, tag = "", cursor = "", tagsMode = "" }: Query,
+    thunkAPI
+  ) => {
+    const params = new URLSearchParams();
+    params.set("limit", String(limit));
+    if (cursor) params.set("cursor", cursor);
+    if (tag) params.set("tags", tag);
+    if (tagsMode) params.set("tagsMode", tagsMode);
     try {
-      const response: {
-        data: { downloadUrl: string; dailyDownloadCount?: number };
-      } = await instance.get(`/shorts/check-download/${shortId}`);
+      const response = await instance.get(
+        `/shorts/sequence?${params.toString()}`
+      );
       return response.data;
     } catch (error) {
       if (error instanceof AxiosError) {
@@ -148,46 +125,44 @@ export const checkDownloadPermission = createAsyncThunk(
   }
 );
 
-// export const addShort = createAsyncThunk(
-//   "shorts/addShort",
-//   async (data: AddShort, thunkAPI) => {
-//     try {
-//       const response = await instance.post("/shorts", data);
-//       return response.data;
-//     } catch (error) {
-//       if (error instanceof AxiosError) {
-//         return thunkAPI.rejectWithValue(
-//           error.response?.data.message ?? error.message
-//         );
-//       }
-//     }
-//   }
-// );
-
-// export const editShort = createAsyncThunk(
-//   "shorts/editShort",
-//   async ({ short, shortId }: { short: EditShort; shortId: string }, thunkAPI) => {
-//     try {
-//       const response = await instance.patch(`/shorts/${shortId}`, short);
-//       return response.data;
-//     } catch (error) {
-//       if (error instanceof AxiosError) {
-//         return thunkAPI.rejectWithValue(
-//           error.response?.data.message ?? error.message
-//         );
-//       }
-//     }
-//   }
-// );
-
-export const addRemoveFavoritesShort = createAsyncThunk(
-  "shorts/favorites",
-  async (shortId: string, thunkAPI) => {
+export const fetchTopShortTags = createAsyncThunk(
+  "shorts/fetchTopTags",
+  async ({ limit = 20 }: { limit: number }, thunkAPI) => {
     try {
-      const response = await instance.patch(`/shorts`, {
-        shortId,
-      });
+      const response = await instance.get(`/shorts/tags/top?limit=${limit}`);
+      return response.data;
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        return thunkAPI.rejectWithValue(
+          error.response?.data.message ?? error.message
+        );
+      }
+    }
+  }
+);
 
+// Admin CRUD (під ваші middlewares)
+export const addShort = createAsyncThunk(
+  "shorts/addShort",
+  async (payload: AddShort, thunkAPI) => {
+    try {
+      const response = await instance.post(`/shorts`, payload);
+      return response.data;
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        return thunkAPI.rejectWithValue(
+          error.response?.data.message ?? error.message
+        );
+      }
+    }
+  }
+);
+
+export const editShort = createAsyncThunk(
+  "shorts/editShort",
+  async ({ id, patch }: { id: string; patch: AddShort }, thunkAPI) => {
+    try {
+      const response = await instance.patch(`/shorts/${id}`, patch);
       return response.data;
     } catch (error) {
       if (error instanceof AxiosError) {
@@ -203,8 +178,8 @@ export const deleteShort = createAsyncThunk(
   "shorts/deleteShort",
   async (id: string, thunkAPI) => {
     try {
-      await instance.delete(`/shorts/${id}`);
-      return id;
+      const response = await instance.delete(`/shorts/${id}`);
+      return response.data;
     } catch (error) {
       if (error instanceof AxiosError) {
         return thunkAPI.rejectWithValue(

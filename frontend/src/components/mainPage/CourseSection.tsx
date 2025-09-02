@@ -23,7 +23,7 @@ export default function CoursesSection() {
   const [total, setTotal] = useState<number | null>(null);
   const pageRef = useRef(1);
 
-  const width = useWindowWidth();
+  const { width } = useWindowWidth();
 
   useEffect(() => {
     setIsLoading(true);
@@ -66,12 +66,12 @@ export default function CoursesSection() {
   };
 
   return (
-    <section className="w-full mt-4 relative">
+    <section className="w-full mt-4">
       <h2 className="font-medium text-xl leading-7 tracking-thinest mb-4">
         Курси
       </h2>
 
-      <div className="relative -z-0">
+      <div className="relative">
         {width >= 740 && (
           <>
             <button
@@ -104,11 +104,11 @@ export default function CoursesSection() {
 
         <div
           ref={scrollRef}
-          className="flex gap-3 overflow-x-auto no-scrollbar scroll-smooth"
+          className="flex gap-3 overflow-x-auto no-scrollbar scroll-smooth p-4"
           onScroll={(e) => handleScroll(e.currentTarget)}
         >
           {courses.map((course) => (
-            <CoursesCard course={course} key={course._id} />
+            <CoursesCard course={course} path="main" key={course._id} />
           ))}
         </div>
       </div>

@@ -7,7 +7,7 @@ import { useWindowWidth } from "@/hooks/useWindowWidth";
 
 export default function VideosSection() {
   const videos = useAppSelector(selectVideos);
-  const width = useWindowWidth();
+  const { width } = useWindowWidth();
 
   let visibleCount = 4;
   if (width <= 1560) visibleCount = 3;

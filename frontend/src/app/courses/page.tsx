@@ -27,7 +27,7 @@ function CoursesPage() {
   const courses = useAppSelector(selectCourses);
   const isLoadingVideo = useAppSelector(selectIsLoadingCourses);
   const error = useAppSelector(selectVideosError);
-  const width = useWindowWidth();
+  const { width } = useWindowWidth();
   const [total, setTotal] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const loaderRef = useRef<HTMLDivElement | null>(null);

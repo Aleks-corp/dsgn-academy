@@ -25,7 +25,7 @@ export default function NavLinkIcon({
           {text}
         </p>
       </div>
-      {count && count !== 0 && (
+      {count !== undefined && Number(count) > 0 && (
         <div className="flex justify-center items-center px-1.5 py-0.5 rounded-md bg-muted-background shadow-count">
           <p className="font-inter text-muted text-[11px] font-medium leading-4 tracking-thin">
             {count}

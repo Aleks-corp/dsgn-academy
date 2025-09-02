@@ -2,41 +2,23 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { IVideo } from "@/types/videos.type";
 import { durationStringToString } from "@/lib/duration.utils";
 import SafeImage from "../SafeImage";
+import { IShort } from "@/types/shorts.type";
 
-export default function VideosCard({ video }: { video: IVideo }) {
+export default function ShortsCard({ short }: { short: IShort }) {
   return (
-    <Link key={video._id} href={`/videos/${video._id}`}>
+    <Link key={short._id} href={`/shorts/${short._id}`}>
       <div className="relative flex flex-col max-w-[560px] min-w-[290px] p-2 rounded-3xl bg-white overflow-hidden hover:shadow-card-video transition-all duration-400">
         <div className="relative w-full h-full rounded-2xl">
           <SafeImage
-            src={video.cover}
-            alt={video.title}
+            src={short.cover}
+            alt={short.title}
             width={354}
             height={200}
             className="relative w-full h-auto object-cover rounded-2xl"
           />
-          {video.category.map((c, idx) => {
-            return (
-              <div
-                key={idx}
-                className={`absolute top-2 right-${
-                  (idx * 8 + 8) / 4
-                } flex justify-center items-center w-6 h-6 p-1 bg-[#00000060] rounded-md backdrop-blur-sm`}
-              >
-                <Image
-                  src={`/icons/${c}.svg`}
-                  alt={c.charAt(0).toUpperCase() + c.slice(1)}
-                  width={16}
-                  height={16}
-                  className="object-contain w-4 h-4"
-                />
-              </div>
-            );
-          })}
-          {!video.free && (
+          {!short.free && (
             <div className="absolute top-9 right-2 flex justify-center items-center w-6 h-6 p-1 bg-[#00000060] rounded-md backdrop-blur-sm">
               <Image
                 src={`/icons/crown.svg`}
@@ -47,17 +29,19 @@ export default function VideosCard({ video }: { video: IVideo }) {
               />
             </div>
           )}
-          <div className="absolute bottom-2 right-2 px-1 py-[1px] bg-[#00000080] rounded-md backdrop-blur-sm text-white font-inter text-xs leading-5 tracking-tighter">
-            {durationStringToString(video.duration)}
-          </div>
+          {short.duration && (
+            <div className="absolute bottom-2 right-2 px-1 py-[1px] bg-[#00000080] rounded-md backdrop-blur-sm text-white font-inter text-xs leading-5 tracking-tighter">
+              {durationStringToString(short.duration)}
+            </div>
+          )}
         </div>
 
         <div className="px-3 pt-3 py-1 flex-1 flex flex-col gap-1">
           <p className="font-medium text-[15px] leading-[18px] tracking-thin line-clamp-2">
-            {video.title.split("_").join(" ")}
+            {short.title.split("_").join(" ")}
           </p>
           <p className="font-medium text-[12px] leading-4 tracking-thin line-clamp-1 text-muted">
-            {video.filter.slice(0, 2).join(", ")}
+            {short.tags.slice(0, 2).join(", ")}
           </p>
         </div>
       </div>

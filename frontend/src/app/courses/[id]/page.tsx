@@ -41,12 +41,13 @@ function CoursePage() {
   if (isLoading) {
     return <VideoCardSkeleton />;
   }
-  if (!course) {
-    return null;
-  }
 
   if (error && !isLoading && !course) {
     return <NotFoundComponent />;
+  }
+
+  if (!course) {
+    return null;
   }
 
   return (

@@ -1,0 +1,9 @@
+/* (опційно) гарантовано даємо події нашому UI поверх */
+
+/* .yt-fix .vds-youtube {
+  background-color: #121212;
+} */
+.yt-fix[data-media-player][data-layout="video"] {
+  background-color: #f7f7f7;
+  border-radius: 0;
+}

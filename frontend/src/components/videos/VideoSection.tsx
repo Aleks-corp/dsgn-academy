@@ -1,7 +1,5 @@
 "use client";
 
-"use client";
-
 import VideosCard from "../videos/VideosCard";
 import { useWindowWidth } from "@/hooks/useWindowWidth";
 import { IVideo } from "@/types/videos.type";
@@ -14,7 +12,7 @@ export default function VideosSection({
   videos: IVideo[];
   isLoadingVideo: boolean;
 }) {
-  const width = useWindowWidth();
+  const { width } = useWindowWidth();
 
   const cols = width <= 630 ? 1 : width <= 1200 ? 2 : width <= 1560 ? 3 : 4;
   const arr = [];
@@ -22,7 +20,7 @@ export default function VideosSection({
     arr.push(index);
   }
   return (
-    <section className="w-full mt-4">
+    <section className="w-full">
       <h2 className="font-medium text-xl leading-7 tracking-thinest mb-4">
         Останні відео
       </h2>

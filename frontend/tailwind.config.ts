@@ -80,6 +80,7 @@ const config: Config = {
           btn: "var(--box-shadow-switch-btn)",
         },
         card: {
+          course: "var(--box-shadow-course-card)",
           video: "var(--box-shadow-video-card)",
         },
         btns: { scroll: "var(--box-shadow-btn-scroll)" },

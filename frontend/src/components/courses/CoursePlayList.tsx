@@ -20,7 +20,7 @@ export default function CoursePlayList({
   selectedVideoIndex,
   setSelectedVideoIndex,
 }: Iprops) {
-  const width = useWindowWidth();
+  const { width } = useWindowWidth();
   const scrollRef = useRef<HTMLDivElement | null>(null);
 
   const scrollBy = (offset: number) => {

@@ -7,10 +7,22 @@ import { ListVideo } from "lucide-react";
 import SafeImage from "../SafeImage";
 import { categoriesConst } from "@/constants/categories.constant";
 
-export default function CoursesCard({ course }: { course: ICourse }) {
+export default function CoursesCard({
+  course,
+  path,
+}: {
+  course: ICourse;
+  path?: string;
+}) {
   return (
     <Link key={course._id} href={`/courses/${course._id}`}>
-      <div className="relative flex flex-col xl:w-[350px] w-[300px] p-2 rounded-3xl bg-white overflow-hidden hover:shadow-card-video transition-all duration-400">
+      <div
+        className={`relative flex flex-col ${
+          path === "main"
+            ? "xl:w-[350px] w-[300px] hover:shadow-card-course"
+            : "max-w-[560px] min-w-[290px] hover:shadow-card-video"
+        }  p-2 rounded-3xl bg-white overflow-hidden transition-all duration-400`}
+      >
         <div className="relative w-full h-full rounded-2xl">
           <SafeImage
             src={course.videos[0].cover}

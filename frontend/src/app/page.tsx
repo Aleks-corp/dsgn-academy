@@ -29,7 +29,7 @@ function HomePage() {
   const videos = useAppSelector(selectVideos);
   const isLoadingVideo = useAppSelector(selectIsLoadingVideos);
   const error = useAppSelector(selectVideosError);
-  const width = useWindowWidth();
+  const { width } = useWindowWidth();
   const [total, setTotal] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const loaderRef = useRef<HTMLDivElement | null>(null);

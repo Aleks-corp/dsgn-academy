@@ -76,6 +76,37 @@ export default function AdminAside({ selectedPage, setSelectedPage }: Props) {
         </button>
         <button
           type="button"
+          name="add-short"
+          className={`w-full cursor-pointer rounded-xl border-[1px] border-background hover:bg-muted-background hover:border-border ${
+            selectedPage === "add-short"
+              ? "bg-muted-background border-border"
+              : ""
+          } `}
+          onClick={(e) => {
+            setSelectedPage(e.currentTarget.name);
+          }}
+        >
+          <NavLinkIcon
+            text="Додати коротке відео"
+            rout="/da-admin/add/short"
+            icon={
+              <div
+                className={`flex items-center justify-center w-8 h-8 p-1.5 rounded-lg ${
+                  selectedPage === "add-short" ? "bg-icon shadow-icon" : ""
+                }`}
+              >
+                <Image
+                  src="/icons/menu-icons/layer.svg"
+                  alt="Grid"
+                  width={20}
+                  height={20}
+                />
+              </div>
+            }
+          />
+        </button>
+        <button
+          type="button"
           name="edit-video"
           className={`w-full cursor-pointer rounded-xl border-[1px] border-background hover:bg-muted-background hover:border-border ${
             selectedPage === "edit-video"
@@ -128,6 +159,37 @@ export default function AdminAside({ selectedPage, setSelectedPage }: Props) {
               >
                 <Image
                   src="/icons/menu-icons/layer.svg"
+                  alt="Grid"
+                  width={20}
+                  height={20}
+                />
+              </div>
+            }
+          />
+        </button>
+        <button
+          type="button"
+          name="edit-short"
+          className={`w-full cursor-pointer rounded-xl border-[1px] border-background hover:bg-muted-background hover:border-border ${
+            selectedPage === "edit-short"
+              ? "bg-muted-background border-border"
+              : ""
+          } `}
+          onClick={(e) => {
+            setSelectedPage(e.currentTarget.name);
+          }}
+        >
+          <NavLinkIcon
+            text="Редагувати коротке відео"
+            rout="/da-admin/edit/short"
+            icon={
+              <div
+                className={`flex items-center justify-center w-8 h-8 p-1.5 rounded-lg ${
+                  selectedPage === "edit-short" ? "bg-icon shadow-icon" : ""
+                }`}
+              >
+                <Image
+                  src="/icons/menu-icons/grid.svg"
                   alt="Grid"
                   width={20}
                   height={20}

@@ -1,7 +1,16 @@
 import Image from "next/image";
 import NavLink from "./links/Link";
+import { SetStateAction } from "react";
 
-export default function Restricted() {
+export default function Restricted({
+  originalUrl,
+  original,
+  setOriginal,
+}: {
+  originalUrl?: string;
+  original: boolean;
+  setOriginal: React.Dispatch<SetStateAction<boolean>>;
+}) {
   return (
     <>
       <div className="absolute top-0 botom-0 right-0 left-0 w-full h-full flex flex-col justify-center items-center text-center z-5">
@@ -16,15 +25,24 @@ export default function Restricted() {
         </div>
         <p className="font-medium text-base leading-5 md:text-xl md:leading-7 tracking-thinest text-white mt-1 mb-2 md:mt-7 md:mb-3 select-none">
           Це відео доступне тільки <br className="block md:hidden" /> з
-          преміум-доступом.
+          преміум-доступом
         </p>
         <p className="text-xs leading-4 md:leading-5 text-white mb-4 md:mb-7 select-none">
           Преміум-доступ — це не тільки відео без обмежень,
           <br /> а ще й внесок у розвиток українського контенту.
         </p>
         <NavLink rout="/check-subscription" text="Придбати преміум" />
+        {originalUrl ? (
+          <button
+            type="button"
+            onClick={() => setOriginal(!original)}
+            className="mt-4 cursor-pointer text-background text-xs leading-4 md:leading-5 hover:text-muted duration-300 underline"
+          >
+            Дивитись оригінал англійською
+          </button>
+        ) : null}
       </div>
-      <div className="absolute top-0 botom-0 right-0 left-0 w-full h-full bg-black opacity-70 z-4"></div>
+      <div className="absolute top-0 botom-0 right-0 left-0 w-full h-full bg-black opacity-70 z-4 "></div>
     </>
   );
 }

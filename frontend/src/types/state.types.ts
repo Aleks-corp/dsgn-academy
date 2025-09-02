@@ -1,6 +1,7 @@
-import { IUser } from "./users.type";
-import { ICourse } from "./courses.type";
-import { IVideo } from "./videos.type";
+import { IUser } from "@/types/users.type";
+import { ICourse } from "@/types/courses.type";
+import { IVideo } from "@/types/videos.type";
+import { IShort, TagsMode, TopTagItem } from "@/types/shorts.type";
 
 export interface State {
   courses: CourseState;
@@ -44,12 +45,19 @@ export interface VideoState {
 }
 
 export interface ShortState {
-  shorts: IVideo[];
+  shorts: IShort[];
   totalShorts: number | undefined;
-  selectedShort: IVideo | null;
+  nextCursor: string | null;
   isLoading: boolean;
-  error: string;
-  shortToEdit: IVideo | null;
+  error: string | null;
+  selected: IShort | null;
+  sequence: string[];
+  seqCursor: string | null;
+  topTags: TopTagItem[];
+  // filters
+  activeTags: string[];
+  tagsMode: TagsMode;
+  limit: number;
 }
 
 export interface AuthState {

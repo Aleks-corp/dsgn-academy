@@ -1,158 +1,184 @@
-import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { ShortState } from "../../types/state.types";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { initialState } from "./initialState";
+import type {
+  IShort,
+  TopTagItem,
+  ShortsListResponse,
+  ShortsSequenceResponse,
+} from "../../types/shorts.type";
+import type { ShortState } from "../../types/state.types";
 import {
   fetchShorts,
+  fetchShortsCount,
+  fetchShortsNext,
   fetchShortById,
-  // addShort,
-  addRemoveFavoritesShort,
+  fetchSequence,
+  fetchTopShortTags,
+  addShort,
+  editShort,
   deleteShort,
 } from "./shorts.thunk";
-import { IShort } from "../../types/shorts.type";
-import { initialState } from "./initialState";
 
 const handlePending = (state: ShortState) => {
   state.isLoading = true;
+  state.error = null;
 };
-const handleRejected = (state: ShortState, action: PayloadAction<string>) => {
-  state.isLoading = false;
-  state.error = action.payload;
-};
-
-const handleFulfilled = (state: ShortState) => {
-  state.error = "";
-  state.isLoading = false;
-};
-
-export const handleFulfilledShorts = (
-  state: ShortState,
-  action: PayloadAction<{
-    shorts: IShort[];
-    total: number;
-    page: number;
-    categories: {
-      category: string;
-      count: number;
-    }[];
-    filters: {
-      filter: string;
-      count: number;
-    }[];
-  }>
-): void => {
-  if (action.payload.page === 1) {
-    state.shorts = action.payload.shorts;
-  } else {
-    const newShorts = action.payload.shorts.filter(
-      (newShort) =>
-        !state.shorts.some(
-          (existingShort) => existingShort._id === newShort._id
-        )
-    );
-    state.shorts = [...state.shorts, ...newShorts];
-  }
-  state.totalShorts = action.payload.total;
-  // state.categories = action.payload.categories;
-  // state.filters = action.payload.filters;
-};
-
-export const handleFulfilledShortById = (
-  state: ShortState,
-  action: PayloadAction<IShort>
-): void => {
-  state.selectedShort = action.payload;
-};
-
-export const handleFulfilledAddShort = (
-  state: ShortState,
-  action: PayloadAction<IShort>
-): void => {
-  state.shorts.push({ ...action.payload });
-  state.selectedShort = { ...action.payload };
-};
-
-export const handleFulfilledAddFavorites = (
-  state: ShortState,
-  action: PayloadAction<IShort>
-): void => {
-  const updatedShort = action.payload;
-  const index = state.shorts.findIndex((i) => i._id === updatedShort._id);
-  if (index !== -1) {
-    state.shorts[index].favoritedBy = updatedShort.favoritedBy;
-  }
-  if (state.selectedShort) {
-    state.selectedShort.favoritedBy = updatedShort.favoritedBy;
-  }
-};
-
-export const handleFulfilledDeleteShort = (
+const handleRejected = (
   state: ShortState,
   action: PayloadAction<string | undefined>
-): void => {
-  const postIndex = state.shorts.findIndex(
-    (item) => item._id === action.payload
-  );
-  if (postIndex !== -1) {
-    state.shorts.splice(postIndex, 1);
-  }
-  state.selectedShort = null;
+) => {
+  state.isLoading = false;
+  state.error = action.payload ?? "Unknown error";
 };
 
-const shortSlice = createSlice({
+const handleFetchShortsFulfilled = (
+  state: ShortState,
+  action: PayloadAction<ShortsListResponse>
+): void => {
+  state.isLoading = false;
+  state.error = null;
+  // state.shorts = action.payload.shorts;
+  state.nextCursor = action.payload.nextCursor;
+};
+
+const handlefetchShortsCountFulfilled = (
+  state: ShortState,
+  action: PayloadAction<{ totalShorts: number }>
+): void => {
+  state.totalShorts = action.payload.totalShorts - action.payload.totalShorts; // clear
+};
+
+const handleFetchShortsNextFulfilled = (
+  state: ShortState,
+  action: PayloadAction<ShortsListResponse>
+): void => {
+  state.isLoading = false;
+  state.error = null;
+  if (action.payload.shorts.length) {
+    const existingIds = new Set(state.shorts.map((v: IShort) => v._id));
+    const merged = state.shorts.concat(
+      action.payload.shorts.filter((v: IShort) => !existingIds.has(v._id))
+    );
+    state.shorts = merged;
+  }
+  state.nextCursor = action.payload.nextCursor;
+};
+const handleFetchShortByIdFulfilled = (
+  state: ShortState,
+  action: PayloadAction<IShort>
+): void => {
+  state.isLoading = false;
+  state.error = null;
+  state.selected = action.payload;
+
+  const idx = state.shorts.findIndex(
+    (i: IShort) => i._id === action.payload._id
+  );
+  if (idx !== -1) state.shorts[idx] = action.payload;
+};
+const handleFetchSequenceFulfilled = (
+  state: ShortState,
+  action: PayloadAction<ShortsSequenceResponse>
+): void => {
+  state.isLoading = false;
+  state.error = null;
+  state.sequence = action.payload.ids;
+  state.seqCursor = action.payload.nextCursor;
+};
+const handleFetchTopShortTagsFulfilled = (
+  state: ShortState,
+  action: PayloadAction<{ tags: TopTagItem[] }>
+): void => {
+  state.isLoading = false;
+  state.topTags = action.payload.tags;
+  state.error = null;
+};
+const handleAddShortFulfilled = (
+  state: ShortState,
+  action: PayloadAction<IShort>
+): void => {
+  state.isLoading = false;
+  state.shorts.unshift(action.payload);
+};
+const handleEditShortFulfilled = (
+  state: ShortState,
+  action: PayloadAction<IShort>
+): void => {
+  state.isLoading = false;
+  const idx = state.shorts.findIndex(
+    (i: IShort) => i._id === action.payload._id
+  );
+  if (idx !== -1) state.shorts[idx] = action.payload;
+  if (state.selected && state.selected._id === action.payload._id)
+    state.selected = action.payload;
+};
+const handleDeleteShortFulfilled = (
+  state: ShortState,
+  action: PayloadAction<string>
+): void => {
+  state.isLoading = false;
+  state.shorts = state.shorts.filter((i: IShort) => i._id !== action.payload);
+  if (state.selected && state.selected._id === action.payload)
+    state.selected = null;
+};
+
+export const shortSlice = createSlice({
   name: "shorts",
-  initialState: initialState,
+  initialState,
   reducers: {
-    clearShorts(state: ShortState) {
+    resetFeed(state: ShortState) {
       state.shorts = [];
-      state.totalShorts = 0;
+      state.nextCursor = null;
+      state.isLoading = false;
+      state.error = null;
+      state.selected = null;
+      state.sequence = [];
+      state.seqCursor = null;
+      state.topTags = [];
+      state.activeTags = [];
+      state.tagsMode = "any";
+      state.limit = 18;
     },
-    // setFilter(state: ShortState, action: PayloadAction<string>) {
-    //   state.selectedCategory = action.payload;
-    // },
-    clearShort(state: ShortState) {
-      state.selectedShort = null;
+    setActiveTags(state: ShortState, action: PayloadAction<string[]>) {
+      state.activeTags = action.payload;
     },
-    deleteShortFavorites(state: ShortState, action: PayloadAction<string>) {
-      const index = state.shorts.findIndex((i) => i._id === action.payload);
-      if (index !== -1) {
-        state.shorts.splice(index, 1);
-        if (state.totalShorts) {
-          state.totalShorts = state.totalShorts - 1;
-        }
-      }
+    setTagsMode(state: ShortState, action: PayloadAction<"any" | "all">) {
+      state.tagsMode = action.payload;
     },
-    setShortToEdit: (state, action) => {
-      state.shortToEdit = action.payload;
+    setLimit(state: ShortState, action: PayloadAction<number>) {
+      state.limit = action.payload;
+    },
+    clearSelected(state: ShortState) {
+      state.selected = null;
     },
   },
   extraReducers: (builder) => {
     builder
-      .addCase(fetchShorts.pending, handlePending)
-      .addCase(fetchShorts.fulfilled, handleFulfilledShorts)
-      .addCase(fetchShortById.pending, handlePending)
-      .addCase(fetchShortById.fulfilled, handleFulfilledShortById)
-      // .addCase(addShort.pending, handlePending)
-      // .addCase(addShort.fulfilled, handleFulfilledAddShort)
-      .addCase(addRemoveFavoritesShort.fulfilled, handleFulfilledAddFavorites)
-      .addCase(deleteShort.pending, handlePending)
-      .addCase(deleteShort.fulfilled, handleFulfilledDeleteShort)
+      .addCase(fetchShorts.fulfilled, handleFetchShortsFulfilled)
+      .addCase(fetchShortsCount.fulfilled, handlefetchShortsCountFulfilled)
+      .addCase(fetchShortsNext.fulfilled, handleFetchShortsNextFulfilled)
+      .addCase(fetchShortById.fulfilled, handleFetchShortByIdFulfilled)
+      .addCase(fetchSequence.fulfilled, handleFetchSequenceFulfilled)
+      .addCase(fetchTopShortTags.fulfilled, handleFetchTopShortTagsFulfilled)
+      .addCase(addShort.fulfilled, handleAddShortFulfilled)
+      .addCase(editShort.fulfilled, handleEditShortFulfilled)
+      .addCase(deleteShort.fulfilled, handleDeleteShortFulfilled)
+      .addMatcher(
+        ({ type }) => type.endsWith("/pending") && type.startsWith("shorts"),
+        handlePending
+      )
       .addMatcher(
         ({ type }) => type.endsWith("/rejected") && type.startsWith("shorts"),
         handleRejected
-      )
-      .addMatcher(
-        (action) =>
-          action.type.endsWith("/fulfilled") &&
-          action.type.startsWith("shorts"),
-        handleFulfilled
       );
   },
 });
 
 export const {
-  clearShorts,
-  // setFilter,
-  clearShort,
-  deleteShortFavorites,
-  setShortToEdit,
+  resetFeed,
+  setActiveTags,
+  setTagsMode,
+  setLimit,
+  clearSelected,
 } = shortSlice.actions;
 export const shortReducer = shortSlice.reducer;

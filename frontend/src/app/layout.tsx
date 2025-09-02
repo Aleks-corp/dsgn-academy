@@ -36,9 +36,9 @@ export default function RootLayout({
       </head>
       <body className={`${sora.variable} ${inter.variable} antialiased`}>
         <ReduxProvider>
-          <RootPage>{children}</RootPage>
-          <AnalyticsTracker />
+          <RootPage>{children}</RootPage>{" "}
           <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID!} />
+          <AnalyticsTracker />
         </ReduxProvider>
       </body>
     </html>
