@@ -12,8 +12,9 @@ import type { Err } from "./types/error.type.js";
 import usersRouter from "./routes/user.route.js";
 import coursesRouter from "./routes/course.route.js";
 import videosRouter from "./routes/video.route.js";
-import testRouter from "./routes/test.route.js";
+// import testRouter from "./routes/test.route.js";
 import adminRouter from "./routes/admin.route.js";
+import shortsRouter from "./routes/short.route.js";
 
 const logPath = path.resolve("logs");
 
@@ -68,7 +69,8 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 app.use("/auth", usersRouter);
 app.use("/courses", coursesRouter);
 app.use("/videos", videosRouter);
-app.use("/testing", testRouter);
+app.use("/shorts", shortsRouter);
+// app.use("/testing", testRouter);
 app.use("/admin", adminRouter);
 
 app.get("/ping", (req, res) => {
