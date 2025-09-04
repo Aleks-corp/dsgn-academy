@@ -21,4 +21,5 @@ export interface RequestData {
   transactionStatus: string;
   phone: string;
   regularDateEnd: string;
+  amount: number;
 }

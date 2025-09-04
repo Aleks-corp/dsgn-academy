@@ -86,7 +86,7 @@ const updateUsersSubscription = async (
     "-password -token -verificationToken -verify -resetPasswordToken -resetPasswordExpires -createdAt -updatedAt",
     {
       skip: 0,
-      limit: 100,
+      limit: 500,
     }
   );
   const totalHits = await User.countDocuments({});
@@ -186,7 +186,7 @@ const checkUsersSubscription = async (
     "-password -token -verificationToken -verify -resetPasswordToken -resetPasswordExpires -createdAt -updatedAt",
     {
       skip: 0,
-      limit: 100,
+      limit: 500,
     }
   );
   const totalHits = await User.countDocuments({});
@@ -217,7 +217,7 @@ const updateUserBlockStatus = async (
     "-password -token -verificationToken -verify -resetPasswordToken -resetPasswordExpires -createdAt -updatedAt",
     {
       skip: 0,
-      limit: 100,
+      limit: 500,
     }
   );
   const totalHits = await User.countDocuments({});

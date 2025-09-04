@@ -31,9 +31,7 @@ const checkSubscriptionStatus = async (user: IUser): Promise<IUser> => {
         headers: { "Content-Type": "application/json" },
       });
       if (data.status === "Active") {
-        if (data.lastPayedStatus === "Approved") {
-          user.subscription = userSubscriptionConst.PREMIUM;
-        }
+        user.subscription = userSubscriptionConst.PREMIUM;
         user.lastPayedStatus = data.lastPayedStatus;
         user.lastPayedDate = new Date(parseInt(data.lastPayedDate + "000"));
         user.status = data.status;

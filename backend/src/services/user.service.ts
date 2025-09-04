@@ -463,7 +463,11 @@ export const paymentWebhookService = async (
     if (updatedUser) {
       await sendMailSub({
         email: updatedUser.email,
-        mode: updatedUser.mode,
+        mode: updatedUser.mode
+          ? updatedUser.mode
+          : data.amount === 4.95
+          ? "monthly"
+          : "yearly",
       });
     }
   }
@@ -485,9 +489,7 @@ export const unsubscribeWebhookService = async (
   user: IUser,
   reason: string
 ): Promise<{ updatedUser?: IUser | null; message: string }> => {
-  console.log("🚀 ~ user:", user);
   const data = await unsubscribeUser(user);
-  // console.log("🚀 ~ data:", data);
 
   if (
     data.reasonCode === answerWFPCodes.ok.code ||
