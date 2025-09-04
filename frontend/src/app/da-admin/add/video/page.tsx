@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import Vimeo from "@u-wave/react-vimeo";
-import { Pencil, RefreshCcw, Save } from "lucide-react";
+import { Eye, Pencil, RefreshCcw } from "lucide-react";
 import toast from "react-hot-toast";
 import Datetime from "react-datetime";
 import "react-datetime/css/react-datetime.css";
@@ -34,8 +34,8 @@ export interface IData {
 function AddVideoPage() {
   const dispatch = useAppDispatch();
   const isLoading = useAppSelector(selectIsLoadingVideos);
-  const [switchEditTitle, setSwitchEditTitle] = useState<boolean>(false);
-  const [switchEditDesc, setSwitchEditDesc] = useState<boolean>(false);
+  const [switchEditTitle, setSwitchEditTitle] = useState<boolean>(true);
+  const [switchEditDesc, setSwitchEditDesc] = useState<boolean>(true);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
   const [videoData, setVideoData] = useState<IData | null>(null);
@@ -242,7 +242,7 @@ function AddVideoPage() {
                 onClick={() => setSwitchEditTitle(false)}
                 className="cursor-pointer"
               >
-                <Save size={18} />
+                <Eye size={18} />
               </button>
             ) : (
               <button
@@ -324,7 +324,7 @@ function AddVideoPage() {
                 onClick={() => setSwitchEditDesc(false)}
                 className="cursor-pointer"
               >
-                <Save size={18} />
+                <Eye size={18} />
               </button>
             ) : (
               <button
@@ -341,7 +341,7 @@ function AddVideoPage() {
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Введіть Опис"
-                className="min-h-40 border-0 px-3 py-2 w-full bg-white rounded-xl shadow-input focus:shadow-input-hover focus:outline-0 font-inter text-xs font-medium leading-4 tracking-thin text-muted"
+                className="min-h-60 border-0 px-3 py-2 w-full bg-white rounded-xl shadow-input focus:shadow-input-hover focus:outline-0 font-inter text-xs font-medium leading-4 tracking-thin text-muted"
                 required
               />
             </div>

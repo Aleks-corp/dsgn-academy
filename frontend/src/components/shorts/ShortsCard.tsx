@@ -9,14 +9,14 @@ import { IShort } from "@/types/shorts.type";
 export default function ShortsCard({ short }: { short: IShort }) {
   return (
     <Link key={short._id} href={`/shorts/${short._id}`}>
-      <div className="relative flex flex-col max-w-[560px] min-w-[290px] p-2 rounded-3xl bg-white overflow-hidden hover:shadow-card-video transition-all duration-400">
-        <div className="relative w-full h-full rounded-2xl">
+      <div className="relative flex flex-col w-[190px] min-w-[180px] p-2 rounded-3xl bg-white overflow-hidden hover:shadow-card-video transition-all duration-400">
+        <div className="relative w-full h-full aspect-9/16 rounded-2xl">
           <SafeImage
             src={short.cover}
             alt={short.title}
-            width={354}
-            height={200}
-            className="relative w-full h-auto object-cover rounded-2xl"
+            width={190}
+            height={260}
+            className="relative w-auto h-full object-cover rounded-2xl"
           />
           {!short.free && (
             <div className="absolute top-9 right-2 flex justify-center items-center w-6 h-6 p-1 bg-[#00000060] rounded-md backdrop-blur-sm">

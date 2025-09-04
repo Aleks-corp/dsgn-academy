@@ -8,6 +8,7 @@
     0 2px 4px -1px rgba(13, 13, 13, 0.5), 0 -1px 1.2px 0.35px #121212 inset,
     0 0 0 1px #333;
   transition: all 0.3s ease-in-out;
+  outline: none;
 }
 
 .btn-black:hover {

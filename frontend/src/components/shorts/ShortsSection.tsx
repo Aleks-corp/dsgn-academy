@@ -21,16 +21,17 @@ export default function ShortsSection({
   }
   return (
     <section className="w-full">
-      <h2 className="font-medium text-xl leading-7 tracking-thinest mb-4">
+      {/* <h2 className="font-medium text-xl leading-7 tracking-thinest mb-4">
         Останні відео
-      </h2>
+      </h2> */}
       <div
-        className={`grid gap-4 mx-auto
-          ${cols === 1 ? "grid-cols-1 justify-items-center" : ""}
-          ${cols === 2 ? "grid-cols-2 justify-items-stretch" : ""}
-          ${cols === 3 ? "grid-cols-3 justify-items-stretch" : ""}
-          ${cols === 4 ? "grid-cols-4 justify-items-stretch" : ""}
-        `}
+        // className={`grid gap-4 mx-auto
+        //   ${cols === 1 ? "grid-cols-1 justify-items-center" : ""}
+        //   ${cols === 2 ? "grid-cols-2 justify-items-stretch" : ""}
+        //   ${cols === 3 ? "grid-cols-3 justify-items-stretch" : ""}
+        //   ${cols === 4 ? "grid-cols-4 justify-items-stretch" : ""}
+        // `}
+        className="flex flex-wrap gap-4"
       >
         {shorts.length !== 0 &&
           shorts.map((short) => <ShortsCard short={short} key={short._id} />)}

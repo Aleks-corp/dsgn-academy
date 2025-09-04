@@ -21,7 +21,7 @@ export default function Button({
       type={type}
       className={`${
         style === "accent"
-          ? "bg-accent text-text-white hover:bg-accent-hover transition-colors duration-300 disabled:opacity-40"
+          ? "bg-accent text-text-white hover:bg-accent-hover transition-all duration-300 disabled:opacity-40"
           : "btn-gradient"
       } ${
         icon ? "px-5" : "px-6"
@@ -31,7 +31,7 @@ export default function Button({
     >
       {icon}
       {text && (
-        <p className="font-inter font-semibold text-sm leading-5 tracking-thiner ">
+        <p className="font-inter font-semibold text-sm leading-5 tracking-thiner btn-label">
           {text}
         </p>
       )}

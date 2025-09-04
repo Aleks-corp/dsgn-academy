@@ -19,7 +19,7 @@ export default function ShortPage() {
   }, []);
 
   return (
-    <div className="relative h-[calc(100vh-56px)] w-full">
+    <div className="relative h-[calc(100vh-80px)] w-full">
       {/* account for header height if any */}
       <ShortsViewer shortId={id} tag={activeTag} />
     </div>

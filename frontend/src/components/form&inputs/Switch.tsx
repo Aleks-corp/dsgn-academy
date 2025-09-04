@@ -10,11 +10,11 @@ const Switch: React.FC<{
     aria-pressed={value}
     onClick={() => setValue(!value)}
     className={`relative inline-flex w-10 items-center  cursor-pointer transition-colors focus:outline-none ${
-      value ? "bg-blue-600" : "bg-gray-300"
+      value ? "bg-blue-600" : "bg-muted-background"
     } ${name ? "h-10 p-0.5 rounded-lg" : "h-6 rounded-full"}`}
   >
     {name ? (
-      <div className="flex justify-center items-center w-9 h-9 rounded-md p-1.5 bg-gray-300">
+      <div className="flex justify-center items-center w-9 h-9 rounded-md p-1.5 bg-muted-background">
         <Image
           src={`/icons/${name}.svg`}
           alt="logo"

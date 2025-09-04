@@ -113,9 +113,11 @@ export default function SignInForm() {
             width={24}
             height={24}
           />
-          {loading === "google"
-            ? "Вхід через Google..."
-            : "Увійти через Google"}
+          <p className="btn-label">
+            {loading === "google"
+              ? "Вхід через Google..."
+              : "Увійти через Google"}
+          </p>
         </button>
         <button
           type="button"
@@ -132,9 +134,11 @@ export default function SignInForm() {
             width={24}
             height={24}
           />
-          {loading === "linkedin"
-            ? "Вхід через LinkedIn..."
-            : "Увійти через LinkedIn"}
+          <p className="btn-label">
+            {loading === "linkedin"
+              ? "Вхід через LinkedIn..."
+              : "Увійти через LinkedIn"}
+          </p>
         </button>
         {error && (
           <div

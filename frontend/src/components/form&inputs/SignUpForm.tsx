@@ -101,9 +101,11 @@ export default function SignUpForm() {
             width={24}
             height={24}
           />
-          {loading === "google"
-            ? "Реєстрація через Google..."
-            : "Зареєструватися через Google"}
+          <p className="btn-label">
+            {loading === "google"
+              ? "Реєстрація через Google..."
+              : "Зареєструватися через Google"}
+          </p>
         </button>
         <button
           type="button"
@@ -120,9 +122,11 @@ export default function SignUpForm() {
             width={24}
             height={24}
           />
-          {loading === "linkedin"
-            ? "Реєстрація через LinkedIn..."
-            : "Зареєструватися через LinkedIn"}
+          <p className="btn-label">
+            {loading === "linkedin"
+              ? "Реєстрація через LinkedIn..."
+              : "Зареєструватися через LinkedIn"}
+          </p>
         </button>
         {error && (
           <div

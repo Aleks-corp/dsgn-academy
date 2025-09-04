@@ -1,11 +1,11 @@
 "use client";
 
-import { MediaPlayer, MediaProvider, Poster } from "@vidstack/react";
-import {
-  DefaultVideoLayout,
-  defaultLayoutIcons,
-} from "@vidstack/react/player/layouts/default";
-import { useEffect } from "react";
+import { MediaPlayer, MediaProvider } from "@vidstack/react";
+// import {
+//   DefaultVideoLayout,
+//   defaultLayoutIcons,
+// } from "@vidstack/react/player/layouts/default";
+import { useEffect, useState } from "react";
 import "@vidstack/react/player/styles/default/theme.css";
 import "@vidstack/react/player/styles/default/layouts/video.css";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
@@ -23,6 +23,7 @@ export default function ShortSlide({
   void preloadNext;
   const dispatch = useAppDispatch();
   const short = useAppSelector((s) => selectShortByIdFromCache(s, id));
+  const [muted, setMuted] = useState(true);
 
   useEffect(() => {
     if (!short) dispatch(fetchShortById(id));
@@ -47,15 +48,15 @@ export default function ShortSlide({
         <MediaPlayer
           src={src}
           autoplay
-          muted
+          muted={muted}
+          onClick={() => {
+            setMuted(!muted);
+          }}
           loop
-          playsInline
           className="h-full w-full"
           poster={poster}
         >
           <MediaProvider />
-          <Poster className="vds-poster" />
-          <DefaultVideoLayout icons={defaultLayoutIcons} />
         </MediaPlayer>
       </div>
 

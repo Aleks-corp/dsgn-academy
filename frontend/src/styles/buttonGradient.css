@@ -1,46 +1,70 @@
 .btn-gradient {
+  position: relative;
   background: linear-gradient(180deg, #e5e5e5 0%, #e2e2e2 100%);
   box-shadow: 0 3px 4px -1px rgba(0, 0, 0, 0.15),
     0 1px 0 0 rgba(255, 255, 255, 0.33) inset, 0 0 0 1px #d4d4d4;
-  transition: all 0.3s ease-in-out;
+  /* анімуємо тільки те, що справді змінюється */
+  transition: box-shadow 0.3s ease-in-out;
+  outline: none;
+
+  overflow: hidden; /* щоб накладка не вилазила */
 }
 
-.btn-gradient:hover {
-  background: linear-gradient(
-      0deg,
-      rgba(255, 255, 255, 0.4) 0%,
-      rgba(255, 255, 255, 0.4) 100%
-    ),
-    linear-gradient(180deg, rgba(229, 229, 229, 0.8) 0%, #e2e2e2 100%);
-  box-shadow: 0 3px 8px -2px rgba(0, 0, 0, 0.3),
-    0 1px 0 0 rgba(255, 255, 255, 0.7) inset, 0 0 0 1px #e6e6e6;
+.btn-gradient .btn-label {
+  position: relative;
+  z-index: 1; /* ← підняли текст */
 }
 
-.btn-gradient:focus {
+.btn-gradient > * {
+  position: relative;
+  z-index: 1;
+}
+
+.btn-gradient::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
   background: linear-gradient(
       0deg,
       rgba(255, 255, 255, 0.4) 0%,
       rgba(255, 255, 255, 0.4) 100%
     ),
     linear-gradient(180deg, #e5e5e5 0%, #e2e2e2 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.btn-gradient:hover {
+  box-shadow: 0 3px 8px -2px rgba(0, 0, 0, 0.3),
+    0 1px 0 0 rgba(255, 255, 255, 0.7) inset, 0 0 0 1px #e6e6e6;
+}
+.btn-gradient:hover::before {
+  opacity: 1;
+}
+
+.btn-gradient:focus {
   box-shadow: 0 0 0 1.5px var(--Colors-Blue-Blue-100, #3582ff) inset,
     0 3px 4px -1px rgba(0, 0, 0, 0.15),
     0 1px 0 0 rgba(255, 255, 255, 0.33) inset, 0 0 0 1px #d4d4d4;
 }
+.btn-gradient:focus::before {
+  opacity: 1;
+}
 
 .btn-gradient:disabled {
   opacity: 0.3;
-  background: linear-gradient(180deg, #e5e5e5 0%, #e2e2e2 100%);
-  box-shadow: 0 3px 4px -1px rgba(0, 0, 0, 0.15),
-    0 1px 0 0 rgba(255, 255, 255, 0.33) inset, 0 0 0 1px #d4d4d4;
+}
+
+.btn-gradient:disabled::before {
+  opacity: 0;
 }
 
 .btn-gradient:active {
-  background: linear-gradient(
-    180deg,
-    #e2e2e2 0%,
-    rgba(229, 229, 229, 0.8) 100%
-  );
   box-shadow: 0 3px 4px -2px rgba(0, 0, 0, 0.3),
     0 1px 0 0 rgba(255, 255, 255, 0.7) inset, 0 0 0 1px #e6e6e6;
+}
+.btn-gradient:active::before {
+  opacity: 0.6;
 }

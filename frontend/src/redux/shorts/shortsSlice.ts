@@ -45,6 +45,8 @@ const handlefetchShortsCountFulfilled = (
   state: ShortState,
   action: PayloadAction<{ totalShorts: number }>
 ): void => {
+  state.isLoading = false;
+  state.error = null;
   state.totalShorts = action.payload.totalShorts - action.payload.totalShorts; // clear
 };
 

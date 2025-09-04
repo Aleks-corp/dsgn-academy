@@ -1,7 +1,7 @@
 "use client";
 
-import Image from "next/image";
-import NavLinkIcon from "../links/LinkWithIcon";
+import NavLinkIcon from "@/components/links/LinkWithIcon";
+import MaskIcon from "@/components/MaskIcon";
 
 type Props = {
   selectedPage: string;
@@ -33,11 +33,13 @@ export default function ProfileAside({ selectedPage, setSelectedPage }: Props) {
                   selectedPage === "profile" ? "bg-icon shadow-icon" : ""
                 }`}
               >
-                <Image
+                <MaskIcon
                   src="/icons/menu-icons/user.svg"
-                  alt="Grid"
-                  width={20}
-                  height={20}
+                  className={
+                    selectedPage === "profile"
+                      ? "text-foreground"
+                      : "text-muted"
+                  }
                 />
               </div>
             }
@@ -64,11 +66,13 @@ export default function ProfileAside({ selectedPage, setSelectedPage }: Props) {
                   selectedPage === "security" ? "bg-icon shadow-icon" : ""
                 }`}
               >
-                <Image
+                <MaskIcon
                   src="/icons/menu-icons/sec.svg"
-                  alt="Grid"
-                  width={20}
-                  height={20}
+                  className={
+                    selectedPage === "security"
+                      ? "text-foreground"
+                      : "text-muted"
+                  }
                 />
               </div>
             }
@@ -97,42 +101,18 @@ export default function ProfileAside({ selectedPage, setSelectedPage }: Props) {
                     : ""
                 }`}
               >
-                <Image
+                <MaskIcon
                   src="/icons/menu-icons/pay.svg"
-                  alt="Grid"
-                  width={20}
-                  height={20}
+                  className={
+                    selectedPage === "subscription"
+                      ? "text-foreground"
+                      : "text-muted"
+                  }
                 />
               </div>
             }
           />
         </button>
-        {/* <button
-          type="button"
-          name="shorts"
-          className={`w-full cursor-pointer rounded-xl border-[1px] border-background hover:bg-muted-background hover:border-border ${
-            selectedPage === "shorts" ? "bg-muted-background border-border" : ""
-          } `}
-          onClick={(e) => {
-            setSelectedPage(e.currentTarget.name);
-          }}
-        >
-          <NavLinkIcon
-            text="Короткі відео"
-            rout="/shorts"
-            icon={
-              <div className="flex items-center justify-center w-8 h-8 p-1.5 bg-icon shadow-icon rounded-lg">
-                <Image
-                  src="/icons/menu-icons/zap.svg"
-                  alt="Grid"
-                  width={20}
-                  height={20}
-                />
-              </div>
-            }
-            count={videosCount}
-          />
-        </button> */}
       </div>
     </aside>
   );

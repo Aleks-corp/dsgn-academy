@@ -1,7 +1,9 @@
 "use client";
 
-import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { useEffect } from "react";
 import Image from "next/image";
+import Link from "next/link";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import {
   selectTotalFree,
   selectTotalVideos,
@@ -9,14 +11,13 @@ import {
 } from "@/selectors/videos.selectors";
 import { selectTotalCourses } from "@/selectors/courses.selector";
 import { selectTotalShorts } from "@/selectors/shorts.selector";
-import NavLinkIcon from "@/components/links/LinkWithIcon";
-import { categoriesConstant } from "@/constants/categories.constant";
-import { useEffect } from "react";
 import { fetchVideosCount } from "@/redux/videos/video.thunk";
 import { fetchCoursesCount } from "@/redux/courses/course.thunk";
-import Link from "next/link";
 import { selectSubscription } from "@/redux/selectors/auth.selectors";
 import { fetchShortsCount } from "@/redux/shorts/shorts.thunk";
+import { categoriesConstant } from "@/constants/categories.constant";
+import NavLinkIcon from "@/components/links/LinkWithIcon";
+import MaskIcon from "@/components/MaskIcon";
 
 type Props = {
   selectedPage: string;
@@ -103,11 +104,13 @@ export default function Aside({ selectedPage, setSelectedPage }: Props) {
                   selectedPage === "all-videos" ? "bg-icon shadow-icon" : ""
                 }`}
               >
-                <Image
+                <MaskIcon
                   src="/icons/menu-icons/grid.svg"
-                  alt="Grid"
-                  width={20}
-                  height={20}
+                  className={
+                    selectedPage === "all-videos"
+                      ? "text-foreground"
+                      : "text-muted"
+                  }
                 />
               </div>
             }
@@ -135,11 +138,13 @@ export default function Aside({ selectedPage, setSelectedPage }: Props) {
                   selectedPage === "courses" ? "bg-icon shadow-icon" : ""
                 }`}
               >
-                <Image
+                <MaskIcon
                   src="/icons/menu-icons/layer.svg"
-                  alt="Grid"
-                  width={20}
-                  height={20}
+                  className={
+                    selectedPage === "courses"
+                      ? "text-foreground"
+                      : "text-muted"
+                  }
                 />
               </div>
             }
@@ -168,11 +173,13 @@ export default function Aside({ selectedPage, setSelectedPage }: Props) {
                   selectedPage === "free-videos" ? "bg-icon shadow-icon" : ""
                 }`}
               >
-                <Image
+                <MaskIcon
                   src="/icons/menu-icons/settings.svg"
-                  alt="Grid"
-                  width={20}
-                  height={20}
+                  className={
+                    selectedPage === "free-videos"
+                      ? "text-foreground"
+                      : "text-muted"
+                  }
                 />
               </div>
             }
@@ -198,11 +205,11 @@ export default function Aside({ selectedPage, setSelectedPage }: Props) {
                   selectedPage === "shorts" ? "bg-icon shadow-icon" : ""
                 }`}
               >
-                <Image
+                <MaskIcon
                   src="/icons/menu-icons/zap.svg"
-                  alt="Grid"
-                  width={20}
-                  height={20}
+                  className={
+                    selectedPage === "shorts" ? "text-foreground" : "text-muted"
+                  }
                 />
               </div>
             }
