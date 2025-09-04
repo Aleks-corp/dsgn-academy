@@ -14,6 +14,37 @@ export default function AdminAside({ selectedPage, setSelectedPage }: Props) {
       <div className="flex flex-col w-full items-center gap-0.5">
         <button
           type="button"
+          name="analitics"
+          className={`w-full cursor-pointer rounded-xl border-[1px] border-background hover:bg-muted-background hover:border-border ${
+            selectedPage === "analitics"
+              ? "bg-muted-background border-border"
+              : ""
+          } `}
+          onClick={(e) => {
+            setSelectedPage(e.currentTarget.name);
+          }}
+        >
+          <NavLinkIcon
+            text="Аналітика"
+            rout="/da-admin"
+            icon={
+              <div
+                className={`flex items-center justify-center w-8 h-8 p-1.5 rounded-lg ${
+                  selectedPage === "analitics" ? "bg-icon shadow-icon" : ""
+                }`}
+              >
+                <Image
+                  src="/icons/menu-icons/analitic.svg"
+                  alt="Grid"
+                  width={20}
+                  height={20}
+                />
+              </div>
+            }
+          />
+        </button>
+        <button
+          type="button"
           name="add-video"
           className={`w-full cursor-pointer rounded-xl border-[1px] border-background hover:bg-muted-background hover:border-border ${
             selectedPage === "add-video"
@@ -34,7 +65,7 @@ export default function AdminAside({ selectedPage, setSelectedPage }: Props) {
                 }`}
               >
                 <Image
-                  src="/icons/menu-icons/grid.svg"
+                  src="/icons/menu-icons/media-video.svg"
                   alt="Grid"
                   width={20}
                   height={20}
@@ -65,7 +96,7 @@ export default function AdminAside({ selectedPage, setSelectedPage }: Props) {
                 }`}
               >
                 <Image
-                  src="/icons/menu-icons/layer.svg"
+                  src="/icons/menu-icons/media-course.svg"
                   alt="Grid"
                   width={20}
                   height={20}
@@ -87,7 +118,7 @@ export default function AdminAside({ selectedPage, setSelectedPage }: Props) {
           }}
         >
           <NavLinkIcon
-            text="Додати коротке відео"
+            text="Додати Shorts"
             rout="/da-admin/add/short"
             icon={
               <div
@@ -96,7 +127,7 @@ export default function AdminAside({ selectedPage, setSelectedPage }: Props) {
                 }`}
               >
                 <Image
-                  src="/icons/menu-icons/layer.svg"
+                  src="/icons/menu-icons/media-short.svg"
                   alt="Grid"
                   width={20}
                   height={20}
@@ -105,7 +136,7 @@ export default function AdminAside({ selectedPage, setSelectedPage }: Props) {
             }
           />
         </button>
-        <button
+        {/* <button
           type="button"
           name="edit-video"
           className={`w-full cursor-pointer rounded-xl border-[1px] border-background hover:bg-muted-background hover:border-border ${
@@ -127,7 +158,7 @@ export default function AdminAside({ selectedPage, setSelectedPage }: Props) {
                 }`}
               >
                 <Image
-                  src="/icons/menu-icons/grid.svg"
+                  src="/icons/menu-icons/media-video.svg"
                   alt="Grid"
                   width={20}
                   height={20}
@@ -158,7 +189,7 @@ export default function AdminAside({ selectedPage, setSelectedPage }: Props) {
                 }`}
               >
                 <Image
-                  src="/icons/menu-icons/layer.svg"
+                  src="/icons/menu-icons/media-course.svg"
                   alt="Grid"
                   width={20}
                   height={20}
@@ -180,7 +211,7 @@ export default function AdminAside({ selectedPage, setSelectedPage }: Props) {
           }}
         >
           <NavLinkIcon
-            text="Редагувати коротке відео"
+            text="Редагувати Shorts"
             rout="/da-admin/edit/short"
             icon={
               <div
@@ -189,7 +220,7 @@ export default function AdminAside({ selectedPage, setSelectedPage }: Props) {
                 }`}
               >
                 <Image
-                  src="/icons/menu-icons/grid.svg"
+                  src="/icons/menu-icons/media-short.svg"
                   alt="Grid"
                   width={20}
                   height={20}
@@ -197,7 +228,7 @@ export default function AdminAside({ selectedPage, setSelectedPage }: Props) {
               </div>
             }
           />
-        </button>
+        </button> */}
         <button
           type="button"
           name="users"
@@ -209,7 +240,7 @@ export default function AdminAside({ selectedPage, setSelectedPage }: Props) {
           }}
         >
           <NavLinkIcon
-            text="Юзери"
+            text="Управління користувачами"
             rout="/da-admin/users"
             icon={
               <div
@@ -218,38 +249,7 @@ export default function AdminAside({ selectedPage, setSelectedPage }: Props) {
                 }`}
               >
                 <Image
-                  src="/icons/menu-icons/settings.svg"
-                  alt="Grid"
-                  width={20}
-                  height={20}
-                />
-              </div>
-            }
-          />
-        </button>
-        <button
-          type="button"
-          name="analitics"
-          className={`w-full cursor-pointer rounded-xl border-[1px] border-background hover:bg-muted-background hover:border-border ${
-            selectedPage === "analitics"
-              ? "bg-muted-background border-border"
-              : ""
-          } `}
-          onClick={(e) => {
-            setSelectedPage(e.currentTarget.name);
-          }}
-        >
-          <NavLinkIcon
-            text="Аналітика"
-            rout="/da-admin/analitics"
-            icon={
-              <div
-                className={`flex items-center justify-center w-8 h-8 p-1.5 rounded-lg ${
-                  selectedPage === "analitics" ? "bg-icon shadow-icon" : ""
-                }`}
-              >
-                <Image
-                  src="/icons/menu-icons/zap.svg"
+                  src="/icons/menu-icons/group.svg"
                   alt="Grid"
                   width={20}
                   height={20}

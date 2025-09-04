@@ -10,7 +10,7 @@ interface Query {
 
 export const getAllUsers = createAsyncThunk(
   "admin/getallusers",
-  async ({ page = 1, limit = 100 }: Query, thunkAPI) => {
+  async ({ page = 1, limit = 500 }: Query, thunkAPI) => {
     try {
       const response = await instance.get(
         `/admin/users/?page=${page}&limit=${limit}`

@@ -47,48 +47,48 @@ const UsersTable = ({
 
   const USERS_PER_PAGE = 50;
 
-  useEffect(() => {
-    const el = scrollRef.current;
-    if (!el) return;
+  // useEffect(() => {
+  //   const el = scrollRef.current;
+  //   if (!el) return;
 
-    let isDown = false;
-    let startX = 0;
-    let scrollLeft = 0;
+  //   let isDown = false;
+  //   let startX = 0;
+  //   let scrollLeft = 0;
 
-    const onDown = (e: MouseEvent) => {
-      isDown = true;
-      el.classList.add("cursor-grabbing");
-      startX = e.pageX - el.offsetLeft;
-      scrollLeft = el.scrollLeft;
-    };
-    const onLeave = () => {
-      isDown = false;
-      el.classList.remove("cursor-grabbing");
-    };
-    const onUp = () => {
-      isDown = false;
-      el.classList.remove("cursor-grabbing");
-    };
-    const onMove = (e: MouseEvent) => {
-      if (!isDown) return;
-      e.preventDefault();
-      const x = e.pageX - el.offsetLeft;
-      const walk = (x - startX) * 1; // чутливість drag
-      el.scrollLeft = scrollLeft - walk;
-    };
+  //   const onDown = (e: MouseEvent) => {
+  //     isDown = true;
+  //     el.classList.add("cursor-grabbing");
+  //     startX = e.pageX - el.offsetLeft;
+  //     scrollLeft = el.scrollLeft;
+  //   };
+  //   const onLeave = () => {
+  //     isDown = false;
+  //     el.classList.remove("cursor-grabbing");
+  //   };
+  //   const onUp = () => {
+  //     isDown = false;
+  //     el.classList.remove("cursor-grabbing");
+  //   };
+  //   const onMove = (e: MouseEvent) => {
+  //     if (!isDown) return;
+  //     e.preventDefault();
+  //     const x = e.pageX - el.offsetLeft;
+  //     const walk = (x - startX) * 1; // чутливість drag
+  //     el.scrollLeft = scrollLeft - walk;
+  //   };
 
-    el.addEventListener("mousedown", onDown);
-    el.addEventListener("mouseleave", onLeave);
-    el.addEventListener("mouseup", onUp);
-    el.addEventListener("mousemove", onMove);
+  //   el.addEventListener("mousedown", onDown);
+  //   el.addEventListener("mouseleave", onLeave);
+  //   el.addEventListener("mouseup", onUp);
+  //   el.addEventListener("mousemove", onMove);
 
-    return () => {
-      el.removeEventListener("mousedown", onDown);
-      el.removeEventListener("mouseleave", onLeave);
-      el.removeEventListener("mouseup", onUp);
-      el.removeEventListener("mousemove", onMove);
-    };
-  }, []);
+  //   return () => {
+  //     el.removeEventListener("mousedown", onDown);
+  //     el.removeEventListener("mouseleave", onLeave);
+  //     el.removeEventListener("mouseup", onUp);
+  //     el.removeEventListener("mousemove", onMove);
+  //   };
+  // }, []);
 
   // useEffect(() => {
 
@@ -235,7 +235,7 @@ const UsersTable = ({
     },
     {
       id: "regularDateEnd",
-      label: "Subscription Until",
+      label: "Sub Until",
       icon: <RiTimerLine size="1.5em" />,
       render: (u) =>
         u.regularDateEnd && moment(u.regularDateEnd).format("DD-MM-YYYY"),
@@ -293,16 +293,16 @@ const UsersTable = ({
     users.length > 0 && (
       <div
         ref={scrollRef}
-        className="scrollbar-x -mx-16 overflow-x-auto touch-pan-x scroll-smooth cursor-grab rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-900"
+        className="scrollbar-x overflow-x-auto touch-pan-x scroll-smooth  rounded-xl border border-gray-200 bg-white shadow-sm"
       >
         <div className="overflow-x-auto">
           <table className="min-w-[960px] w-full table-auto text-left">
-            <thead className="sticky top-0 z-10 bg-gray-50 text-gray-700 dark:bg-gray-800 dark:text-gray-200">
-              <tr className="border-b border-gray-200 dark:border-gray-700">
+            <thead className="sticky top-0 z-10 bg-white text-foreground ">
+              <tr className="border-b border-gray-200 ">
                 <th scope="col" className="w-10 px-3 py-2">
                   <input
                     type="checkbox"
-                    className="size-4 rounded border-gray-300 text-gray-900"
+                    className="size-4 rounded border-gray-300 text-muted-foreground"
                     disabled
                   />
                 </th>
@@ -312,7 +312,7 @@ const UsersTable = ({
                     onClick={() => col.sortKey && handleSort(col.sortKey)}
                     className={
                       "select-none px-3 py-3 text-sm font-semibold " +
-                      (col.sortKey ? "cursor-pointer hover:text-gray-900" : "")
+                      (col.sortKey ? "cursor-pointer hover:text-gray-800" : "")
                     }
                     style={{
                       width: colState[col.id] === "collapsed" ? "60px" : "auto",
@@ -334,7 +334,7 @@ const UsersTable = ({
                           e.stopPropagation();
                           toggleCollapse(col.id);
                         }}
-                        className="ml-auto inline-flex h-6 w-6 items-center justify-center rounded hover:bg-gray-200 dark:hover:bg-gray-700"
+                        className="ml-auto inline-flex h-6 w-6 items-center justify-center rounded hover:bg-gray-300 "
                         title="Collapse column"
                       >
                         {colState[col.id] === "collapsed" ? "+" : "−"}
@@ -348,7 +348,7 @@ const UsersTable = ({
               {paginatedUsers.map((user) => (
                 <tr
                   key={user._id}
-                  className="border-b border-gray-100 hover:bg-gray-50 dark:border-gray-800 dark:hover:bg-gray-800/60"
+                  className="border-b border-gray-200 hover:bg-gray-600/50 "
                 >
                   <th scope="row" className="px-3 py-2">
                     <input
@@ -363,7 +363,7 @@ const UsersTable = ({
                   {COLUMNS.map((col) => (
                     <td
                       key={col.id}
-                      className="px-3 py-2 text-sm text-gray-800 dark:text-gray-100"
+                      className="px-3 py-2 text-sm text-foreground"
                       style={{
                         maxWidth:
                           colState[col.id] === "collapsed" ? "60px" : "none",
@@ -383,7 +383,7 @@ const UsersTable = ({
             </tbody>
             <tfoot>
               <tr>
-                <td className="px-3 py-2 text-sm text-gray-600 dark:text-gray-300">
+                <td className="px-3 py-2 text-sm text-gray-600 ">
                   {updateUsers.length > 0 && updateUsers.length}
                 </td>
                 <td colSpan={COLUMNS.length} />

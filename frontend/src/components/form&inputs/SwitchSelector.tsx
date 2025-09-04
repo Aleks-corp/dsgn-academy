@@ -17,12 +17,12 @@ const SwitchSelector: React.FC<SwitchSelectorProps> = ({
   setItems,
   constants,
   optionClass = "flex items-center gap-2",
-  containerClass = "flex flex-col",
+  containerClass = "flex gap-2",
   showBox = false,
 }) => {
   return (
     <>
-      <p className="mb-3 text-xl font-medium text-foreground">{title}</p>
+      <p className="mb-3 text-xs font-medium text-foreground">{title}</p>
       <div className={containerClass}>
         {constants.map((item, index) => (
           <div key={index} className={optionClass}>
@@ -37,7 +37,7 @@ const SwitchSelector: React.FC<SwitchSelectorProps> = ({
                   )
                 )
               }
-              name={title === "Kits" ? item : ""}
+              name={title === "Категорії" ? item : ""}
             />
             {showBox && (
               <div className="flex-grow">

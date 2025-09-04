@@ -78,7 +78,9 @@ export default function Header({ isOpenAside, setIsOpenAside }: Props) {
   return (
     <header className="relative w-full max-h-[80px] flex items-center lg:justify-between bg-background border-b border-border z-50">
       <div className="w-full lg:w-auto flex items-center justify-between md:justify-normal">
-        <div className={`flex items-center px-3 md:px-5 pt-4 pb-3 shrink-1`}>
+        <div
+          className={`flex items-center gap-2 px-3 md:px-5 pt-4 pb-3 shrink-1`}
+        >
           <button
             className="hidden w-10 h-10 md:flex items-center justify-center p-2 cursor-pointer"
             onClick={() => setIsOpenAside(!isOpenAside)}
@@ -87,7 +89,7 @@ export default function Header({ isOpenAside, setIsOpenAside }: Props) {
           </button>
           <Logo />
         </div>
-        <div className={`py-5 transition-all duration-300 `}>
+        <div className={`pl-0 md:pl-5 py-5 transition-all duration-300 `}>
           <form
             onSubmit={(e) => {
               e.preventDefault();

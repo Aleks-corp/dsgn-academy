@@ -1,5 +1,5 @@
 interface IButton {
-  text?: string;
+  text?: string | React.ReactElement;
   onClick?: () => void;
   type: "submit" | "reset" | "button" | undefined;
   style?: "accent";
@@ -23,7 +23,9 @@ export default function Button({
         style === "accent"
           ? "bg-accent text-text-white hover:bg-accent-hover transition-colors duration-300 disabled:opacity-40"
           : "btn-gradient"
-      } inline-flex justify-center items-center gap-1 py-2 px-6 rounded-xl shadow-btn cursor-pointer disabled:cursor-default ${className}`}
+      } ${
+        icon ? "px-5" : "px-6"
+      } inline-flex justify-center items-center gap-1 py-2 rounded-xl shadow-btn cursor-pointer disabled:cursor-default ${className}`}
       onClick={onClick}
       disabled={disabled}
     >

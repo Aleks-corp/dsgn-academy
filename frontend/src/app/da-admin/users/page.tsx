@@ -15,9 +15,10 @@ import {
   selectAdminLoadingCheck,
   selectTotalFolowers,
 } from "@/selectors/admin.selectors";
-import Loader from "@/components/loaders/LoaderCircle";
+import Loader from "@/components/loaders/Loader";
 
 import UsersTable from "@/components/admin/UserTable";
+import Button from "@/components/buttons/Button";
 
 const UsersPage = () => {
   const dispatch = useAppDispatch();
@@ -39,38 +40,41 @@ const UsersPage = () => {
   return (
     <div className="mx-auto w-full px-4 py-6">
       {/* About block */}
-      <div className="mb-6 rounded-xl border border-gray-200 bg-white p-4 shadow-sm dark:border-gray-700 dark:bg-gray-900">
-        <p className="mb-2 text-sm font-medium text-gray-700 dark:text-gray-200">
+      <div className="mb-6 rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+        <p className="mb-2 text-sm font-medium text-foreground">
           About subscription:
         </p>
-        <ul className="space-y-1 text-sm text-gray-600 dark:text-gray-300">
+        <ul className="flex gap-4 space-y-1 text-sm text-foreground">
           <li>
-            <span className="font-medium text-gray-800 dark:text-gray-100">
-              Free:
+            <span className="font-medium text-muted-foreground">
+              All users:
             </span>{" "}
+            <span className="opacity-80">({users.length} person)</span>
+          </li>
+          <li>
+            <span className="font-medium text-muted-foreground">Free:</span>{" "}
             <span className="opacity-80">
-              (without payment, limited access)
+              ({users.filter((u) => u.subscription === "free").length} person)
             </span>
           </li>
           <li>
-            <span className="font-medium text-gray-800 dark:text-gray-100">
-              Premium:
-            </span>{" "}
+            <span className="font-medium text-muted-foreground">Premium:</span>{" "}
             <span className="opacity-80">
-              (active paid subscription; can watch content)
+              ({users.filter((u) => u.subscription === "premium").length}{" "}
+              person)
             </span>
           </li>
           <li>
-            <span className="font-medium text-gray-800 dark:text-gray-100">
-              Tester:
-            </span>{" "}
-            <span className="opacity-80">(180 days; full access)</span>
+            <span className="font-medium text-muted-foreground ">Tester:</span>{" "}
+            <span className="opacity-80">
+              ({users.filter((u) => u.subscription === "tester").length} person)
+            </span>
           </li>
           <li>
-            <span className="font-medium text-gray-800 dark:text-gray-100">
-              Admin:
-            </span>{" "}
-            <span className="opacity-80">(all access)</span>
+            <span className="font-medium text-muted-foreground">Admin:</span>{" "}
+            <span className="opacity-80">
+              ({users.filter((u) => u.subscription === "admin").length} person)
+            </span>
           </li>
         </ul>
       </div>
@@ -84,56 +88,91 @@ const UsersPage = () => {
           />
 
           {updateUsers.length > 0 && (
-            <div className="sticky bottom-4 z-10 mt-4 flex flex-wrap items-center gap-3 rounded-xl border border-gray-200 bg-white/90 p-3 shadow-lg backdrop-blur dark:border-gray-700 dark:bg-gray-900/90">
+            <div className="sticky bottom-4 z-10 mt-4 mx-4 flex flex-wrap items-center gap-3 rounded-xl border border-gray-200 bg-white/90 p-3 shadow-lg backdrop-blur">
               {/* Check subscription */}
-              <button
-                type="button"
-                onClick={() =>
-                  dispatch(patchCheckSub({ usersId: updateUsers }))
-                }
-                className="inline-flex items-center gap-2 rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium text-gray-800 hover:bg-gray-100 active:bg-gray-200 dark:border-gray-600 dark:text-gray-100 dark:hover:bg-gray-800"
-              >
-                {isLoadingCheck ? <Loader /> : <span>Check subscription</span>}
-              </button>
+              {!isLoadingCheck ? (
+                <Button
+                  type="button"
+                  text={"Check subscription"}
+                  onClick={() =>
+                    dispatch(patchCheckSub({ usersId: updateUsers }))
+                  }
+                />
+              ) : (
+                <button
+                  type="button"
+                  className="btn-gradient inline-flex items-center justify-center shadow-btn rounded-lg px-3 py-2"
+                  disabled
+                >
+                  <Loader />
+                </button>
+              )}
 
               {/* Set member for 1 month */}
-              <button
-                type="button"
-                onClick={() =>
-                  dispatch(
-                    patchUsers({ usersId: updateUsers, subscription: "member" })
-                  )
-                }
-                className="inline-flex items-center gap-2 rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium text-gray-800 hover:bg-gray-100 active:bg-gray-200 dark:border-gray-600 dark:text-gray-100 dark:hover:bg-gray-800"
-              >
-                {isLoadingUpdate ? (
+              {!isLoadingUpdate ? (
+                <Button
+                  type="button"
+                  text="Set sub-tion for 1 month"
+                  onClick={() =>
+                    dispatch(
+                      patchUsers({
+                        usersId: updateUsers,
+                        subscription: "premium",
+                      })
+                    )
+                  }
+                  style="accent"
+                />
+              ) : (
+                <button
+                  type="button"
+                  className="btn-gradient inline-flex items-center justify-center shadow-btn rounded-lg px-3 py-2"
+                  disabled
+                >
                   <Loader />
-                ) : (
-                  <span>Set sub-tion for 1 month</span>
-                )}
-              </button>
+                </button>
+              )}
 
               {/* Set free */}
-              <button
-                type="button"
-                onClick={() =>
-                  dispatch(
-                    patchUsers({ usersId: updateUsers, subscription: "free" })
-                  )
-                }
-                className="inline-flex items-center gap-2 rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium text-gray-800 hover:bg-gray-100 active:bg-gray-200 dark:border-gray-600 dark:text-gray-100 dark:hover:bg-gray-800"
-              >
-                {isLoadingUpdate ? <Loader /> : <span>Set Free</span>}
-              </button>
+              {!isLoadingUpdate ? (
+                <Button
+                  type="button"
+                  text="Set Free"
+                  onClick={() =>
+                    dispatch(
+                      patchUsers({ usersId: updateUsers, subscription: "free" })
+                    )
+                  }
+                  style="accent"
+                />
+              ) : (
+                <button
+                  type="button"
+                  className="btn-gradient inline-flex items-center justify-center shadow-btn rounded-lg px-3 py-2"
+                  disabled
+                >
+                  <Loader />
+                </button>
+              )}
 
               {/* Ban / Unban */}
-              <button
-                type="button"
-                onClick={() => dispatch(banUsers({ usersId: updateUsers }))}
-                className="inline-flex items-center gap-2 rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium text-gray-800 hover:bg-gray-100 active:bg-gray-200 dark:border-gray-600 dark:text-gray-100 dark:hover:bg-gray-800"
-              >
-                <span>Ban | Unban</span>
-              </button>
+              {!isLoadingUpdate ? (
+                <Button
+                  type="button"
+                  text="Ban | Unban"
+                  onClick={() => dispatch(banUsers({ usersId: updateUsers }))}
+                  className="bg-red-700"
+                  style="accent"
+                />
+              ) : (
+                <button
+                  type="button"
+                  className="btn-gradient inline-flex items-center justify-center shadow-btn rounded-lg px-3 py-2"
+                  disabled
+                >
+                  <Loader />
+                </button>
+              )}
             </div>
           )}
 
@@ -146,10 +185,10 @@ const UsersPage = () => {
                   key={i}
                   onClick={() => setCurrentPage(i + 1)}
                   className={
-                    "min-w-9 rounded-lg border px-3 py-1.5 text-sm font-medium " +
+                    "font-inter cursor-pointer min-w-9 rounded-lg border px-3 py-1.5 text-sm font-medium " +
                     (currentPage === i + 1
-                      ? "border-gray-800 bg-gray-800 text-white dark:border-gray-100 dark:bg-gray-100 dark:text-gray-900"
-                      : "border-gray-300 text-gray-800 hover:bg-gray-100 dark:border-gray-600 dark:text-gray-100 dark:hover:bg-gray-800")
+                      ? "border-gray-800 bg-gray-800 text-white "
+                      : "border-gray-300 text-gray-800 hover:bg-gray-100 ")
                   }
                 >
                   {i + 1}
@@ -165,7 +204,7 @@ const UsersPage = () => {
             ) : (
               totalUsers > users.length && (
                 <button
-                  className="inline-flex items-center gap-2 rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium text-gray-800 hover:bg-gray-100 active:bg-gray-200 dark:border-gray-600 dark:text-gray-100 dark:hover:bg-gray-800"
+                  className="inline-flex items-center gap-2 rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium text-gray-800 hover:bg-gray-100 active:bg-gray-200"
                   type="button"
                   onClick={() => {
                     const nextPage = currentPage + 1;
@@ -173,7 +212,7 @@ const UsersPage = () => {
                     dispatch(
                       getAllUsers({
                         page: nextPage,
-                        limit: 100,
+                        limit: 500,
                       })
                     );
                   }}

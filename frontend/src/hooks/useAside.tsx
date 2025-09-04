@@ -79,7 +79,7 @@ export function useSelectedPage() {
       setSelectedPage("users");
       return;
     }
-    if (pathname === "/da-admin/analitics") {
+    if (pathname === "/da-admin") {
       setSelectedPage("analitics");
       return;
     }

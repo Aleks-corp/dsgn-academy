@@ -18,6 +18,7 @@ function AdminPage() {
   return (
     <div className="w-full">
       <p>Admin Page</p>
+      <div>AnaliticPage</div>
       <Button type="button" text="Вийти" onClick={handleLogout} />
     </div>
   );

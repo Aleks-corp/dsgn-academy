@@ -46,8 +46,17 @@ function AddShortPage() {
   const [free, setFree] = useState(false);
 
   const handleAddFilter = () => {
-    if (filterInput.trim() && !tags.includes(filterInput.trim())) {
-      setTags([...tags, filterInput.trim()]);
+    if (!filterInput.trim()) return;
+
+    let newFilters = filterInput
+      .split(",")
+      .map((f) => f.trim())
+      .filter(Boolean);
+
+    newFilters = newFilters.filter((f) => !tags.includes(f));
+
+    if (newFilters.length > 0) {
+      setTags([...tags, ...newFilters]);
       setFilterInput("");
     }
   };
