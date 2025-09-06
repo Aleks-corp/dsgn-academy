@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
-Disallow: /dl-admin
+Disallow: /da-admin
 Sitemap: https://dsgn.academy/sitemap.xml

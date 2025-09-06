@@ -65,7 +65,7 @@ export default function HeroSection() {
         className="flex absolute left-[50%] top-[50%] w-12 h-12 md:w-16 md:h-16 justify-center items-center p-3 translate-x-[140px] translate-y-[-108px] md:translate-x-[232px] md:translate-y-[-148px] cursor-grab active:cursor-grabbing"
       >
         <Image
-          src="/icons/rive.png"
+          src="/icons/rive.svg"
           alt="Rive"
           width={40}
           height={40}
