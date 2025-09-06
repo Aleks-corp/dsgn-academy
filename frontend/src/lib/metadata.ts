@@ -23,7 +23,7 @@ export const metadata: Metadata = {
       { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
     ],
   },
-  manifest: "/site.manifest",
+  manifest: "/site.webmanifest",
   openGraph: {
     title: "Dsgn Academy — Освітня платформа для дизайнерів українською",
     description:
