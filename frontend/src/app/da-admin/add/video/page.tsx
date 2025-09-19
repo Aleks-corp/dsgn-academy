@@ -2,14 +2,15 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
-import Vimeo from "@u-wave/react-vimeo";
 import { Eye, Pencil, RefreshCcw } from "lucide-react";
 import toast from "react-hot-toast";
 import Datetime from "react-datetime";
 import "react-datetime/css/react-datetime.css";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { addVideo } from "@/redux/videos/video.thunk";
+import { selectIsLoadingVideos } from "@/selectors/videos.selectors";
 import { fetchVideoData } from "@/lib/api/getVideoData";
+import { durationStringToString } from "@/lib/duration.utils";
 import { AddVideo } from "@/types/videos.type";
 import { categoriesConstant } from "@/constants/categories.constant";
 
@@ -18,10 +19,9 @@ import SwitchSelector from "@/components/form&inputs/SwitchSelector";
 import Switch from "@/components/form&inputs/Switch";
 import Input from "@/components/form&inputs/Input";
 import Button from "@/components/buttons/Button";
-import { selectIsLoadingVideos } from "@/redux/selectors/videos.selectors";
 import Loader from "@/components/loaders/Loader";
-import { durationStringToString } from "@/lib/duration.utils";
 import SwitchName from "@/components/form&inputs/SwitchName";
+import VidstackPlayer from "@/components/VideoVidstack";
 
 export interface IData {
   name: string;
@@ -377,15 +377,10 @@ function AddVideoPage() {
           <div className="flex-2/3 bg-muted-background rounded-2xl overflow-hidden">
             {video && videoData ? (
               <div className="relative max-w-xl aspect-video">
-                <Vimeo
-                  key={video}
-                  video={video}
-                  responsive
-                  pip
-                  speed
-                  autoplay={false}
-                  width="100%"
-                  height="100%"
+                <VidstackPlayer
+                  title={title}
+                  cover={cover}
+                  video={video as string}
                 />
               </div>
             ) : (

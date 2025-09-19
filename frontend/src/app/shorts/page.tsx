@@ -5,19 +5,16 @@ import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import {
   fetchShorts,
   fetchShortsCount,
-  fetchShortsNext,
   fetchTopShortTags,
 } from "@/redux/shorts/shorts.thunk";
 import {
   selectIsLoadingShorts,
   selectShorts,
   selectShortsError,
-  selectShortsNextCursor,
   selectShortsTopTags,
   selectTotalShorts,
 } from "@/redux/selectors/shorts.selector";
 
-import Loader from "@/components/loaders/LoaderCircle";
 import InProgressComponent from "@/components/notFound/InProgress";
 import FilterShortsSection from "@/components/shorts/FilterSection";
 import ShortsSection from "@/components/shorts/ShortsSection";
@@ -32,16 +29,17 @@ export default function ShortsPage() {
   const isLoadingShorts = useAppSelector(selectIsLoadingShorts);
   const shorts = useAppSelector(selectShorts);
   const error = useAppSelector(selectShortsError);
-  const nextCursor = useAppSelector(selectShortsNextCursor);
   const totalShorts = useAppSelector(selectTotalShorts);
   const topTags = useAppSelector(selectShortsTopTags);
-
+  const pageRef = useRef(1);
   const { width } = useWindowWidth();
   const loaderRef = useRef<HTMLDivElement | null>(null);
 
   // колонки → скільки грузити
-  const cols = width <= 630 ? 1 : width <= 1200 ? 2 : width <= 1560 ? 3 : 4;
-  const initialLimit = cols * 3;
+  const rowsLimit = Math.floor(
+    width < 1024 ? (width - 23) / 206 : (width - 303) / 206
+  );
+  const initialLimit = rowsLimit * 2;
 
   const activeTag = searchParams.get("filter") || ""; // наше єдине фільтро-поле
 
@@ -53,11 +51,12 @@ export default function ShortsPage() {
 
   // 2) перше завантаження шортсів при зміні тега/колонок
   useEffect(() => {
+    pageRef.current = 1;
     dispatch(
       fetchShorts({
         limit: initialLimit,
         tag: activeTag,
-        cursor: "",
+        page: pageRef.current,
         tagsMode: "any",
       })
     );
@@ -68,28 +67,42 @@ export default function ShortsPage() {
     if (!loaderRef.current) return;
     const el = loaderRef.current;
 
-    const onIntersect: IntersectionObserverCallback = (entries) => {
-      const first = entries[0];
-      if (first.isIntersecting && nextCursor && !isLoadingShorts) {
-        // наступна сторінка по курсору
-        dispatch(fetchShortsNext());
-      }
-    };
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const first = entries[0];
+        if (
+          first.isIntersecting &&
+          shorts.length < (totalShorts ?? Infinity) &&
+          !isLoadingShorts
+        ) {
+          // наступна сторінка по курсору
+          const nextPage = pageRef.current + 1;
+          pageRef.current = nextPage;
+          dispatch(
+            fetchShorts({
+              limit: initialLimit,
+              tag: activeTag,
+              page: nextPage,
+              tagsMode: "any",
+            })
+          );
+        }
+      },
+      { threshold: 1 }
+    );
 
-    const observer = new IntersectionObserver(onIntersect, { threshold: 1 });
     observer.observe(el);
     return () => observer.unobserve(el);
-  }, [dispatch, nextCursor, isLoadingShorts]);
+  }, [
+    dispatch,
+    isLoadingShorts,
+    shorts.length,
+    totalShorts,
+    initialLimit,
+    activeTag,
+  ]);
 
-  if (isLoadingShorts) {
-    return (
-      <div className="w-20 h-20 mt-10">
-        <Loader />
-      </div>
-    );
-  }
-
-  if (shorts.length === 0 && !isLoadingShorts) {
+  if (shorts.length === 0 && !isLoadingShorts && !error) {
     return (
       <InProgressComponent
         title="Розділ"
@@ -97,7 +110,8 @@ export default function ShortsPage() {
       />
     );
   }
-  if (shorts.length === 0 && error && !isLoadingShorts) {
+
+  if (error && !isLoadingShorts && shorts.length === 0) {
     return <NotFoundComponent />;
   }
 

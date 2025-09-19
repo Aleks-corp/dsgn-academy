@@ -18,6 +18,8 @@ export type TagsMode = "any" | "all";
 export interface ShortsListResponse {
   shorts: IShort[];
   nextCursor: string | null;
+  total: number;
+  page: number;
 }
 
 export interface ShortsSequenceResponse {

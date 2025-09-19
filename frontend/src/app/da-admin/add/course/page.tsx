@@ -2,14 +2,15 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
-import Vimeo from "@u-wave/react-vimeo";
 import { X, Pencil, Save } from "lucide-react";
 import toast from "react-hot-toast";
 import Datetime from "react-datetime";
 import "react-datetime/css/react-datetime.css";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { addCourse } from "@/redux/courses/course.thunk";
+import { selectIsLoadingCourses } from "@/selectors/courses.selector";
 import { fetchVideoData } from "@/lib/api/getVideoData";
+import { durationStringToString } from "@/lib/duration.utils";
 import { AddCourse, ICourseVideo } from "@/types/courses.type";
 import { categoriesConstant } from "@/constants/categories.constant";
 
@@ -17,9 +18,8 @@ import { withAdminGuard } from "@/guards/WithAdminGuard";
 import SwitchSelector from "@/components/form&inputs/SwitchSelector";
 import Input from "@/components/form&inputs/Input";
 import Button from "@/components/buttons/Button";
-import { selectIsLoadingCourses } from "@/redux/selectors/courses.selector";
 import Loader from "@/components/loaders/Loader";
-import { durationStringToString } from "@/lib/duration.utils";
+import VidstackPlayer from "@/components/VideoVidstack";
 
 export interface IData {
   name: string;
@@ -335,12 +335,10 @@ function AddCourseVideoForm() {
           <div className="relative">
             <div className="flex mt-6 gap-6">
               <div className="relative w-1/2 aspect-video">
-                <Vimeo
-                  video={courseVideos[selectedCourse].url}
-                  responsive
-                  autoplay={false}
-                  width="100%"
-                  height="100%"
+                <VidstackPlayer
+                  title={courseVideos[selectedCourse].title}
+                  cover={courseVideos[selectedCourse].cover}
+                  video={courseVideos[selectedCourse].url as string}
                 />
                 <p className="absolute font-inter top-[20px] right-[5px] px-2 py-1 bg-muted rounded-lg">
                   {durationStringToString(

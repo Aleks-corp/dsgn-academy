@@ -21,6 +21,7 @@ type Props = {
   cover?: string | null;
   video?: string | null;
   className?: string;
+  containerClassName?: string;
 };
 
 export default function VidstackPlayer({
@@ -28,6 +29,7 @@ export default function VidstackPlayer({
   cover,
   video,
   className,
+  containerClassName,
 }: Props) {
   const provider = "vimeo";
   const ref = useRef<MediaPlayerInstance>(null);
@@ -51,7 +53,7 @@ export default function VidstackPlayer({
   }
 
   return (
-    <div className="w-full rounded-4xl">
+    <div className={`w-full rounded-4xl ${containerClassName ?? ""}`}>
       <MediaPlayer
         ref={ref}
         src={src}

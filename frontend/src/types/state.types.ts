@@ -46,18 +46,14 @@ export interface VideoState {
 
 export interface ShortState {
   shorts: IShort[];
-  totalShorts: number | undefined;
-  nextCursor: string | null;
-  isLoading: boolean;
-  error: string | null;
+  totalShorts: number;
   selected: IShort | null;
-  sequence: string[];
-  seqCursor: string | null;
   topTags: TopTagItem[];
-  // filters
+  limit: number;
   activeTags: string[];
   tagsMode: TagsMode;
-  limit: number;
+  isLoadingShorts: boolean;
+  error: string | null;
 }
 
 export interface AuthState {

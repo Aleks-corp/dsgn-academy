@@ -1,17 +1,19 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
+import { useParams } from "next/navigation";
 import { Eye, Pencil, RefreshCcw } from "lucide-react";
 import toast from "react-hot-toast";
 import Datetime from "react-datetime";
 import "react-datetime/css/react-datetime.css";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { addShort } from "@/redux/shorts/shorts.thunk";
+import { editShort, fetchShortById } from "@/redux/shorts/shorts.thunk";
+import { clearSelected } from "@/redux/shorts/shortsSlice";
 import { selectIsLoadingShorts } from "@/selectors/shorts.selector";
+import { AddShort } from "@/types/shorts.type";
 import { fetchVideoData } from "@/lib/api/getVideoData";
 import { durationStringToString } from "@/lib/duration.utils";
-import { AddShort } from "@/types/shorts.type";
 
 import { withAdminGuard } from "@/guards/WithAdminGuard";
 import Input from "@/components/form&inputs/Input";
@@ -28,7 +30,7 @@ export interface IData {
   release_time: string;
 }
 
-function AddShortPage() {
+function EditShortPage() {
   const dispatch = useAppDispatch();
   const isLoading = useAppSelector(selectIsLoadingShorts);
   const [switchEditTitle, setSwitchEditTitle] = useState<boolean>(true);
@@ -46,6 +48,28 @@ function AddShortPage() {
   const [filterInput, setFilterInput] = useState("");
   const [tags, setTags] = useState<string[]>([]);
   const [free, setFree] = useState(true);
+  const { id } = useParams();
+
+  useEffect(() => {
+    dispatch(fetchShortById(id as string)).then((res) => {
+      if (res?.payload) {
+        setShortData(res.payload);
+        setFree(res.payload.free);
+        setVideo(res.payload.video);
+        setOriginalVideo(res.payload.originalVideo);
+        setCover(res.payload.cover);
+        setTitle(res.payload.title);
+        setDescription(res.payload.description);
+        setDuration(res.payload.duration);
+        setPublishedAt(res.payload.publishedAt);
+        setTags(res.payload.tags);
+      }
+    });
+
+    return () => {
+      dispatch(clearSelected());
+    };
+  }, [dispatch, id]);
 
   const handleAddFilter = () => {
     if (!filterInput.trim()) return;
@@ -149,7 +173,7 @@ function AddShortPage() {
       req.originalVideo = originalVideo;
     }
     try {
-      const res = await dispatch(addShort(req));
+      const res = await dispatch(editShort({ patch: req, id: id as string }));
 
       if (res?.type === "shorts/addShort/rejected") {
         toast.error(
@@ -181,7 +205,7 @@ function AddShortPage() {
         <div className="flex gap-3 mb-6">
           <div className="w-3 h-6 rounded-sm bg-[#FE5938]" />
           <h2 className="text-xl font-medium leading-7 tracking-thinest text-foreground">
-            Додати Shorts
+            Редагувати Shorts
           </h2>
         </div>
         <div className="flex items-end justify-between gap-4 mb-3">
@@ -438,4 +462,4 @@ function AddShortPage() {
     </div>
   );
 }
-export default withAdminGuard(AddShortPage);
+export default withAdminGuard(EditShortPage);

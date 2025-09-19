@@ -14,12 +14,12 @@ export default function ShortsCard({ short }: { short: IShort }) {
           <SafeImage
             src={short.cover}
             alt={short.title}
-            width={190}
-            height={260}
+            width={480}
+            height={270}
             className="relative w-auto h-full object-cover rounded-2xl"
           />
           {!short.free && (
-            <div className="absolute top-9 right-2 flex justify-center items-center w-6 h-6 p-1 bg-[#00000060] rounded-md backdrop-blur-sm">
+            <div className="absolute top-2 right-2 flex justify-center items-center w-6 h-6 p-1 bg-[#00000060] rounded-md backdrop-blur-sm">
               <Image
                 src={`/icons/crown.svg`}
                 alt="Crown"

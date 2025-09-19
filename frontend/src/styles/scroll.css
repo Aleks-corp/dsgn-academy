@@ -21,3 +21,12 @@
   height: 1px; /* просто фіктивна висота, щоб елемент існував */
   display: block;
 }
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE та Edge */
+  scrollbar-width: none; /* Firefox */
+}
