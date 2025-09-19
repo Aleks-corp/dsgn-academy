@@ -19,6 +19,8 @@ const {
   updateShorts,
   removeShorts,
   getTopTags,
+  getShortsAround,
+  getShortsPage,
 } = shortController;
 
 const { shortAddSchema, shortUpdateSchema } = shortsSchemas;
@@ -29,6 +31,8 @@ shortsRouter.use(authenticateToken);
 
 shortsRouter.get("/", getShortsList); // GET /api/shorts
 shortsRouter.get("/count", getShortsCounts);
+shortsRouter.get("/around/:id", getShortsAround);
+shortsRouter.get("/page", getShortsPage);
 shortsRouter.get("/sequence", sequence); // GET /api/shorts/sequence
 shortsRouter.get("/tags/top", getTopTags); // GET /api/shorts/tags/top?limit=20
 shortsRouter.get("/:id", isValidId, getShortsById); // GET /api/shorts/:id

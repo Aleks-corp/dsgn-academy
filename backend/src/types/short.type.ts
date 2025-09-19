@@ -14,3 +14,20 @@ export interface IShort extends Document {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export type AroundArgs = { id: string; before: number; after: number };
+export type PageArgs = { cursor: string; limit: number };
+
+export type AroundResult = {
+  center: IShort;
+  before: IShort[];
+  after: IShort[];
+  prevCursor?: string;
+  nextCursor?: string;
+};
+
+export type PageResult = {
+  items: IShort[];
+  nextCursor?: string;
+  prevCursor?: string;
+};

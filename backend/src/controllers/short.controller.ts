@@ -7,14 +7,11 @@ const getShortsList = async (
   req: Request,
   res: Response
 ): Promise<Response> => {
-  const { limit, cursor, tags, tagsMode } = req.query;
+  const { limit, page, tags, tagsMode } = req.query;
   const filtersQuery: Record<string, unknown> = {};
 
   if (typeof tags === "string" && tags.trim() !== "") {
     filtersQuery.tags = tags.trim(); // CSV або один тег — сервіс розбере
-  }
-  if (typeof cursor === "string" && cursor.trim() !== "") {
-    filtersQuery.cursor = cursor.trim();
   }
   if (
     typeof tagsMode === "string" &&
@@ -22,14 +19,18 @@ const getShortsList = async (
   ) {
     filtersQuery.tagsMode = tagsMode;
   }
-  if (
-    typeof limit === "string" &&
-    limit.trim() !== "" &&
-    Number.isFinite(Number(limit))
-  ) {
-    filtersQuery.limit = Number(limit);
+  if (typeof page === "string" && page.trim() !== "") {
+    const parsed = parseInt(page, 10);
+    if (!isNaN(parsed) && parsed > 0) {
+      filtersQuery.page = parsed;
+    }
   }
-
+  if (typeof limit === "string" && limit.trim() !== "") {
+    const parsed = parseInt(limit, 10);
+    if (!isNaN(parsed) && parsed > 0) {
+      filtersQuery.limit = parsed;
+    }
+  }
   const data = await shortService.listShorts(filtersQuery);
   return res.json(data);
 };
@@ -101,6 +102,23 @@ const getTopTags = async (
   res.json({ tags: data });
 };
 
+const getShortsAround = async (req: Request, res: Response): Promise<void> => {
+  const { id } = req.params;
+  const before = Math.max(0, Number(req.query.before) || 3);
+  const after = Math.max(0, Number(req.query.after) || 3);
+
+  const data = await shortService.shortsAroundService({ id, before, after });
+  res.json(data); // { center, before, after, prevCursor?, nextCursor? }
+};
+
+const getShortsPage = async (req: Request, res: Response): Promise<void> => {
+  const cursor = String(req.query.cursor || "");
+  const limit = Math.min(50, Math.max(1, Number(req.query.limit) || 10));
+
+  const data = await shortService.shortsPageService({ cursor, limit });
+  res.json(data); // { items, nextCursor? }
+};
+
 export default {
   getShortsList: ctrlWrapper(getShortsList),
   sequence: ctrlWrapper(sequence),
@@ -110,4 +128,6 @@ export default {
   updateShorts: ctrlWrapper(updateShorts),
   removeShorts: ctrlWrapper(removeShorts),
   getTopTags: ctrlWrapper(getTopTags),
+  getShortsAround: ctrlWrapper(getShortsAround),
+  getShortsPage: ctrlWrapper(getShortsPage),
 };
