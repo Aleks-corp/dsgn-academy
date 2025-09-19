@@ -33,6 +33,7 @@ export default function VidstackPlayer({
 }: Props) {
   const provider = "vimeo";
   const ref = useRef<MediaPlayerInstance>(null);
+  const volume = parseFloat(localStorage.getItem("player-volume") || "0.25");
 
   const src = useMemo(() => {
     if (provider === "vimeo" && video) return `${video}`;
@@ -60,7 +61,11 @@ export default function VidstackPlayer({
         title={title}
         onProviderChange={onProviderChange}
         poster={cover ?? undefined}
-        volume={0.25}
+        volume={volume}
+        onVolumeChange={(e) => {
+          localStorage.setItem("player-volume", String(e.volume));
+        }}
+        preload="auto"
         controls
         playsInline
         className={`yt-fix ${className ?? ""}`}

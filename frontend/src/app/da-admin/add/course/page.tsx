@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
-import { X, Pencil, Save } from "lucide-react";
+import { X, Pencil, Eye, RefreshCcw } from "lucide-react";
 import toast from "react-hot-toast";
 import Datetime from "react-datetime";
 import "react-datetime/css/react-datetime.css";
@@ -10,7 +10,6 @@ import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { addCourse } from "@/redux/courses/course.thunk";
 import { selectIsLoadingCourses } from "@/selectors/courses.selector";
 import { fetchVideoData } from "@/lib/api/getVideoData";
-import { durationStringToString } from "@/lib/duration.utils";
 import { AddCourse, ICourseVideo } from "@/types/courses.type";
 import { categoriesConstant } from "@/constants/categories.constant";
 
@@ -41,9 +40,9 @@ function AddCourseVideoForm() {
 
   const [isEditingTitle, setIsEditingTitle] = useState(true);
   const [isEditingDescription, setIsEditingDescription] = useState(true);
-  const [isEditingSelectedTitle, setIsEditingSelectedTitle] = useState(false);
+  const [isEditingSelectedTitle, setIsEditingSelectedTitle] = useState(true);
   const [isEditingSelectedDescription, setIsEditingSelectedDescription] =
-    useState(false);
+    useState(true);
 
   const [categoryState, setCategoryState] = useState<
     { [key: string]: boolean }[]
@@ -200,30 +199,41 @@ function AddCourseVideoForm() {
   };
 
   return (
-    <div className="flex flex-col gap-5 w-full p-5">
-      <h2 className="text-xl font-semibold text-foreground">Додати курс</h2>
-      <div className="flex gap-8 w-full">
-        <div className="flex-1/2">
-          {/* Input + кнопка додати */}
-          <div className="mb-4">
+    <div className="flex w-full p-5">
+      <div className="px-6 flex-1/2">
+        <div className="flex gap-3 mb-6">
+          <div className="w-3 h-6 rounded-sm bg-[#874FFF]" />
+          <h2 className="text-xl font-medium leading-7 tracking-thinest text-foreground">
+            Додати курс
+          </h2>
+        </div>
+        <div className="flex items-end justify-between gap-4 mb-3">
+          <label className="text-xs font-medium leading-4 tracking-thin text-foreground">
+            Посилання на відео
             <Input
               value={videoInput}
               onChange={(e) => setVideoInput(e.target.value)}
-              placeholder="https://vimeo.com/1110000000"
+              placeholder="https://vimeo.com/111000111000"
+              className="font-inter text-xs font-medium leading-4 tracking-thin text-muted mt-2"
               required
             />
-            <Button
-              text="Додати відео до курсу"
-              onClick={handleAddVideo}
-              type="button"
-              className="mt-2 disabled:pointer-events-none"
-              disabled={!videoInput}
-            />
-          </div>
+          </label>
+          <Button
+            text="Витягнути з Vimeo"
+            type="button"
+            className="w-fit h-10"
+            icon={
+              <Image src="/icons/vimeo.svg" width={16} height={16} alt="Logo" />
+            }
+            onClick={handleAddVideo}
+          />
+        </div>
+        <div className="mb-6">
           {courseVideos.length > 0 && (
-            <div className="flex flex-col gap-2">
+            <ol className="flex flex-col gap-2" type="1">
               {courseVideos.map((v, idx) => (
-                <div key={v.url + idx} className="flex items-center gap-3">
+                <li key={v.url + idx} className="flex items-center gap-3">
+                  <p className="text-sm text-muted-foreground">{idx + 1}.</p>
                   <p className="text-sm text-muted-foreground">{v.url}</p>
                   <button
                     onClick={() => handleRemoveVideo(v.url)}
@@ -231,228 +241,288 @@ function AddCourseVideoForm() {
                   >
                     <X size={18} />
                   </button>
-                </div>
+                </li>
               ))}
+            </ol>
+          )}
+        </div>
+        <div className="mb-3">
+          <div className="flex justify-between w-full mb-2">
+            <label className="text-xs font-medium leading-4 tracking-thin text-foreground w-full">
+              Заголовок Курсу
+            </label>
+            {isEditingTitle ? (
+              <button
+                onClick={() => setIsEditingTitle(false)}
+                className="cursor-pointer"
+              >
+                <Eye size={18} />
+              </button>
+            ) : (
+              <button
+                onClick={() => setIsEditingTitle(true)}
+                className="cursor-pointer"
+              >
+                <Pencil size={18} />
+              </button>
+            )}
+          </div>
+          {isEditingTitle ? (
+            <div className="flex gap-2 items-center rounded-xl">
+              <Input
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="Введіть назву курсу"
+                className="font-inter text-xs font-medium leading-4 tracking-thin text-muted w-full"
+                required
+              />
+            </div>
+          ) : (
+            <div className="flex gap-2 items-center w-full rounded-xl px-5 py-3">
+              <div className="w-full min-h-4">{title}</div>
             </div>
           )}
+        </div>
+        <div className="mb-3">
+          <div className="flex justify-between w-full mb-2">
+            <label className="text-xs font-medium leading-4 tracking-thin text-foreground w-full">
+              Опис Курсу
+            </label>
+            {isEditingDescription ? (
+              <button
+                onClick={() => setIsEditingDescription(false)}
+                className="cursor-pointer"
+              >
+                <Eye size={18} />
+              </button>
+            ) : (
+              <button
+                onClick={() => setIsEditingDescription(true)}
+                className="cursor-pointer"
+              >
+                <Pencil size={18} />
+              </button>
+            )}
+          </div>
+          {isEditingDescription ? (
+            <div className="flex gap-2 items-center rounded-xl">
+              <textarea
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="Введіть Опис"
+                className="min-h-60 border-0 px-3 py-2 w-full rounded-xl shadow-input focus:shadow-input-hover focus:outline-0 font-inter text-xs font-medium leading-4 tracking-thin text-muted"
+                required
+              />
+            </div>
+          ) : (
+            <div className="flex gap-2 items-center w-full rounded-xl px-5 py-3">
+              <div className="w-full min-h-10">
+                <p className=" whitespace-pre-line">{description}</p>
+              </div>
+            </div>
+          )}
+        </div>
+        <SwitchSelector
+          title="Категорії"
+          items={categoryState}
+          setItems={setCategoryState}
+          constants={categoriesConstant}
+          // containerClass=""
+          // optionClass=""
+        />
+        <div className="flex justify-between items-center">
+          <p className="text-xs font-medium leading-4 tracking-thin text-foreground">
+            Дата публікації
+          </p>
           <Datetime
             inputProps={{
               placeholder: `дата публікації`,
               className:
-                "my-4 min-w-56 font-inter leading-4 tracking-[-0.13px] border-0 px-6 py-4 rounded-xl bg-icon shadow-input focus:shadow-input-hover focus:outline-0 text-base font-semibold text-muted",
+                "min-w-64 font-inter text-xs font-medium leading-4 tracking-thin border-0 px-5 py-3 rounded-xl bg-icon shadow-input focus:shadow-input-hover focus:outline-0",
               required: true,
               value: publishedAt ? publishedAt : "",
             }}
             onChange={(e) => setPublishedAt(e.toString())}
             value={publishedAt !== "" ? new Date(publishedAt) : ""}
           />
-          {/* Додані відео (посилання + кнопка видалення) */}
-        </div>
-
-        <div className="flex-1/2 overflow-hidden">
-          {/* Title */}
-          <div className="mb-4">
-            <label className="text-base font-medium text-foreground mt-4">
-              Назва курсу:
-            </label>
-            {isEditingTitle ? (
-              <div className="flex gap-2 items-center">
-                <Input
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  placeholder="Введіть назву курсу"
-                />
-                <button
-                  onClick={() => setIsEditingTitle(false)}
-                  className="cursor-pointer"
-                >
-                  <Save size={18} />
-                </button>
-              </div>
-            ) : (
-              <div className="flex gap-2 items-center w-full ">
-                <div className="w-full min-h-10 bg-white">{title}</div>
-                <button
-                  onClick={() => setIsEditingTitle(true)}
-                  className="cursor-pointer"
-                >
-                  <Pencil size={18} />
-                </button>
-              </div>
-            )}
-          </div>
-          {/* Description */}
-          <div className="mb-4">
-            <label className="text-base font-medium text-foreground mt-4">
-              Опис курсу:
-            </label>
-            {isEditingDescription ? (
-              <div className="flex gap-2 items-start">
-                <textarea
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  className="w-full px-3 py-2 min-h-40 rounded-md bg-white shadow-input"
-                ></textarea>
-                <button
-                  onClick={() => setIsEditingDescription(false)}
-                  className="cursor-pointer"
-                >
-                  <Save size={18} />
-                </button>
-              </div>
-            ) : (
-              <div className="flex gap-2 items-start w-full">
-                <div className="w-full min-h-40 bg-white whitespace-pre-line">
-                  {description}
-                </div>
-                <button
-                  onClick={() => setIsEditingDescription(true)}
-                  className="cursor-pointer"
-                >
-                  <Pencil size={18} />
-                </button>
-              </div>
-            )}
-          </div>
-          <div className="">
-            <SwitchSelector
-              title="Категорії"
-              items={categoryState}
-              setItems={setCategoryState}
-              constants={categoriesConstant}
-              containerClass="flex items-center justify-center gap-4 flex-wrap"
-              // optionClass=""
-              showBox={true}
-            />
-          </div>
         </div>
       </div>
-      <h3 className="text-lg font-semibold text-foreground">Превʼю</h3>
-      {/* Player + Playlist */}
-      {selectedCourse !== null && (
-        <div className="flex max-w-4xl">
-          {/* Video Player */}
-          <div className="relative">
-            <div className="flex mt-6 gap-6">
-              <div className="relative w-1/2 aspect-video">
+      <div className="px-6 flex-1/2">
+        <div className="flex justify-end mb-6">
+          <Button
+            text={!isLoading ? "Очистити" : ""}
+            icon={isLoading ? <Loader /> : <RefreshCcw size={20} />}
+            type="submit"
+            onClick={reset}
+          />
+          <Button
+            text={!isLoading ? "Зберегти" : ""}
+            icon={isLoading && <Loader />}
+            type="submit"
+            className="ml-5"
+            style="accent"
+            onClick={handleSubmit}
+            disabled={courseVideos.length === 0}
+          />
+        </div>
+
+        <div className="flex gap-6 mb-6">
+          <div className="flex-1/2 bg-muted-background rounded-2xl overflow-hidden">
+            {selectedCourse !== null ? (
+              <div className="relative max-w-xl aspect-video">
                 <VidstackPlayer
                   title={courseVideos[selectedCourse].title}
                   cover={courseVideos[selectedCourse].cover}
                   video={courseVideos[selectedCourse].url as string}
                 />
-                <p className="absolute font-inter top-[20px] right-[5px] px-2 py-1 bg-muted rounded-lg">
-                  {durationStringToString(
-                    courseVideos[selectedCourse].duration
-                  )}
-                </p>
               </div>
-              <div className="w-1/2">
-                <h4 className="font-semibold mb-2">Плейлист</h4>
-                <ul className=" text-sm w-full rounded-2xl bg-white">
-                  {courseVideos.map((v, idx) => (
-                    <button
-                      key={v.url + idx}
-                      type="button"
-                      onClick={() => setSelectedCourse(idx)}
-                      className={`w-full min-h-10 p-2 flex items-center cursor-pointer hover:bg-muted ${
-                        selectedCourse === idx
-                          ? "bg-muted-background rounded-2xl"
-                          : "bg-white"
-                      }`}
-                    >
-                      <li key={v.url} className="w-full">
-                        <div className="flex gap-2 w-full">
-                          <p className="">{idx + 1}.</p>
-                          <Image
-                            src={v.cover}
-                            width={40}
-                            height={20}
-                            alt="cover"
-                          />
-                          <p className="w-full text-start line-clamp-1 font-inter">
-                            {v.title}
-                          </p>
-                        </div>
-                      </li>
-                    </button>
-                  ))}
-                </ul>
-              </div>
-            </div>
-
-            <div className="mt-4">
-              <p>Оригінальне Відео (Youtube URL)</p>
-              <Input
-                value={courseVideos[selectedCourse].originalUrl}
-                onChange={(e) =>
-                  updateCourseVideo(selectedCourse, {
-                    originalUrl: e.target.value,
-                  })
-                }
-                placeholder="https://youtube.com/1110000000"
+            ) : (
+              <Image
+                src="/images/placeholder.png"
+                alt="cover"
+                width={576}
+                height={324}
+                className="w-full h-auto"
               />
-            </div>
-            {isEditingSelectedTitle ? (
-              <div className="flex gap-2 items-center mt-10">
-                <Input
-                  value={courseVideos[selectedCourse].title}
-                  onChange={(e) =>
-                    updateCourseVideo(selectedCourse, { title: e.target.value })
-                  }
-                  placeholder="Введіть назву курсу"
-                />
-                <button onClick={() => setIsEditingSelectedTitle(false)}>
-                  <Save size={18} />
-                </button>
-              </div>
-            ) : (
-              <div className="w-full  flex gap-2 items-center mt-10">
-                <div className="w-full min-h-10 bg-white">
-                  {courseVideos[selectedCourse].title}
-                </div>
-                <button onClick={() => setIsEditingSelectedTitle(true)}>
-                  <Pencil size={18} />
-                </button>
-              </div>
-            )}
-            {isEditingSelectedDescription ? (
-              <div className="flex gap-2 items-start mt-10">
-                <textarea
-                  value={courseVideos[selectedCourse].description}
-                  onChange={(e) =>
-                    updateCourseVideo(selectedCourse, {
-                      description: e.target.value,
-                    })
-                  }
-                  className="w-full px-3 py-2 min-h-40 rounded-md bg-white shadow-input"
-                ></textarea>
-                <button onClick={() => setIsEditingSelectedDescription(false)}>
-                  <Save size={18} />
-                </button>
-              </div>
-            ) : (
-              <div className="flex gap-2 items-start w-full mt-10">
-                <p className="w-full min-h-10 bg-white whitespace-pre-line">
-                  {courseVideos[selectedCourse].description}
-                </p>
-                <button onClick={() => setIsEditingSelectedDescription(true)}>
-                  <Pencil size={18} />
-                </button>
-              </div>
             )}
           </div>
-
-          {/* Playlist */}
+          <div className="flex-1/2">
+            <p className="text-xs font-medium leading-4 tracking-thin text-foreground mb-2">
+              Плейлист
+            </p>
+            <ul className=" text-sm w-full bg-white">
+              {courseVideos.map((v, idx) => (
+                <button
+                  key={v.url + idx}
+                  type="button"
+                  onClick={() => setSelectedCourse(idx)}
+                  className={`w-full min-h-10 p-2 cursor-pointer hover:bg-muted-text ${
+                    selectedCourse === idx ? "bg-muted-background " : "bg-white"
+                  }`}
+                >
+                  <li key={v.url} className="w-full">
+                    <div className="flex gap-2 w-full items-center font-inter">
+                      <p className="">{idx + 1}.</p>
+                      <Image src={v.cover} width={40} height={20} alt="cover" />
+                      <p className="text-xs font-medium leading-4 tracking-thin text-foreground w-full text-start line-clamp-1 font-inter">
+                        {v.title}
+                      </p>
+                    </div>
+                  </li>
+                </button>
+              ))}
+            </ul>
+          </div>
         </div>
-      )}
-      <Button
-        text={!isLoading ? "Завантажити Курс" : ""}
-        icon={isLoading && <Loader />}
-        type="button"
-        className="mt-5 w-fit disabled:pointer-events-none"
-        disabled={courseVideos.length === 0}
-        onClick={handleSubmit}
-      />
+        {selectedCourse !== null && (
+          <>
+            <div className="flex gap-4 mb-3 w-full">
+              <label className="text-xs font-medium leading-4 tracking-thin text-foreground w-full">
+                Посилання на оригінал
+                <Input
+                  value={courseVideos[selectedCourse].originalUrl}
+                  onChange={(e) =>
+                    updateCourseVideo(selectedCourse, {
+                      originalUrl: e.target.value,
+                    })
+                  }
+                  placeholder="https://youtube.com/000000000000"
+                  className="font-inter text-xs font-medium leading-4 tracking-thin text-muted w-full mt-2"
+                  required
+                />
+              </label>
+            </div>
+            <div className="mb-3">
+              <div className="flex justify-between w-full mb-2">
+                <label className="text-xs font-medium leading-4 tracking-thin text-foreground w-full">
+                  Заголовок Відео
+                </label>
+                {isEditingSelectedTitle ? (
+                  <button
+                    onClick={() => setIsEditingSelectedTitle(false)}
+                    className="cursor-pointer"
+                  >
+                    <Eye size={18} />
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => setIsEditingSelectedTitle(true)}
+                    className="cursor-pointer"
+                  >
+                    <Pencil size={18} />
+                  </button>
+                )}
+              </div>
+              {isEditingSelectedTitle ? (
+                <div className="flex gap-2 items-center rounded-xl">
+                  <Input
+                    value={courseVideos[selectedCourse].title}
+                    onChange={(e) =>
+                      updateCourseVideo(selectedCourse, {
+                        title: e.target.value,
+                      })
+                    }
+                    placeholder="Введіть назву курсу"
+                    className="font-inter text-xs font-medium leading-4 tracking-thin text-muted w-full"
+                    required
+                  />
+                </div>
+              ) : (
+                <div className="flex gap-2 items-center w-full rounded-xl px-5 py-3">
+                  <div className="w-full min-h-4">
+                    {courseVideos[selectedCourse].title}
+                  </div>
+                </div>
+              )}
+            </div>
+            <div className="mb-3">
+              <div className="flex justify-between w-full mb-2">
+                <label className="text-xs font-medium leading-4 tracking-thin text-foreground w-full">
+                  Опис Відео
+                </label>
+                {isEditingSelectedDescription ? (
+                  <button
+                    onClick={() => setIsEditingSelectedDescription(false)}
+                    className="cursor-pointer"
+                  >
+                    <Eye size={18} />
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => setIsEditingSelectedDescription(true)}
+                    className="cursor-pointer"
+                  >
+                    <Pencil size={18} />
+                  </button>
+                )}
+              </div>
+              {isEditingSelectedDescription ? (
+                <div className="flex gap-2 items-center rounded-xl">
+                  <textarea
+                    value={courseVideos[selectedCourse].description}
+                    onChange={(e) =>
+                      updateCourseVideo(selectedCourse, {
+                        description: e.target.value,
+                      })
+                    }
+                    placeholder="Введіть Опис"
+                    className="min-h-60 border-0 px-3 py-2 w-full rounded-xl shadow-input focus:shadow-input-hover focus:outline-0 font-inter text-xs font-medium leading-4 tracking-thin text-muted"
+                    required
+                  />
+                </div>
+              ) : (
+                <div className="flex gap-2 items-center w-full rounded-xl px-5 py-3">
+                  <div className="w-full min-h-10">
+                    <p className=" whitespace-pre-line">
+                      {courseVideos[selectedCourse].description}
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+          </>
+        )}
+      </div>
     </div>
   );
 }
