@@ -6,6 +6,7 @@ export interface IShort {
   duration?: string;
   cover: string;
   video: string;
+  files: { link: string; type: string };
   originalVideo?: string;
   free: boolean;
   publishedAt: string;
@@ -42,6 +43,7 @@ export interface AddShort {
   duration?: string;
   cover: string;
   video: string;
+  files: { link: string; type: string };
   originalVideo?: string;
   free: boolean;
   publishedAt: string;

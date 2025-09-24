@@ -100,7 +100,7 @@ export default function VideoPlayer({
         controls={false}
         className="absolute inset-0 h-full w-full object-cover outline-none"
       >
-        <source src={short.video} type="video/mp4" />
+        <source src={short.files.link} type={short.files.type || "video/mp4"} />
       </video>
 
       {/* Центрована іконка Play/Pause */}

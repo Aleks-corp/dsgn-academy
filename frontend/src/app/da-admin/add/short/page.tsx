@@ -26,6 +26,7 @@ export interface IData {
   duration: string;
   pictures: { base_link: string; sizes: { width: string; link: string }[] };
   release_time: string;
+  files: { link: string; width: number; type: string }[];
 }
 
 function AddShortPage() {
@@ -37,6 +38,9 @@ function AddShortPage() {
 
   const [shortData, setShortData] = useState<IData | null>(null);
   const [video, setVideo] = useState("");
+  const [files, setFiles] = useState<{ link: string; type: string } | null>(
+    null
+  );
   const [originalVideo, setOriginalVideo] = useState("");
   const [cover, setCover] = useState("");
   const [title, setTitle] = useState("");
@@ -70,6 +74,12 @@ function AddShortPage() {
     try {
       const res: IData = await fetchVideoData(shortId);
 
+      const preferred =
+        res.files.find((f) => f.width === 720) ||
+        res.files.reduce((prev, curr) =>
+          curr.width > prev.width ? curr : prev
+        );
+
       const cover = res.pictures?.sizes?.find(
         (s) => parseInt(s.width) >= 768
       )?.link;
@@ -79,6 +89,9 @@ function AddShortPage() {
       setDuration(res.duration.toString());
       setPublishedAt(res.release_time);
       setCover(cover || "");
+      if (preferred) {
+        setFiles({ link: preferred.link, type: preferred.type });
+      }
     } catch (error) {
       console.info("🚀 ~ error:", error);
     }
@@ -87,6 +100,7 @@ function AddShortPage() {
   const reset = () => {
     setShortData(null);
     setVideo("");
+    setFiles(null);
     setCover("");
     setTitle("");
     setDescription("");
@@ -101,6 +115,11 @@ function AddShortPage() {
   const handleSubmit = async () => {
     if (!title.trim()) {
       toast.error("Заповніть назву відео");
+      return;
+    }
+
+    if (!files) {
+      toast.error("Проблема з відео, спробуй перезавантажити дані з Vimeo");
       return;
     }
 
@@ -135,6 +154,7 @@ function AddShortPage() {
     // }
     const req: AddShort = {
       video,
+      files,
       title,
       tags,
       free,
