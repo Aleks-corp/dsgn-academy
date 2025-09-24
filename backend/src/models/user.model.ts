@@ -21,19 +21,26 @@ const AccountSchema = new Schema(
   },
   { _id: false }
 );
-
-const FavWatchedVideoSchema = new Schema(
+const WatchedVideoSchema = new Schema(
   {
-    id: { type: Types.ObjectId, ref: "video" },
-    updatedAt: { type: Date, required: true },
+    id: { type: Types.ObjectId, ref: "video", required: true },
+    currentTime: { type: Number, default: 0 }, // секунди
   },
   { _id: false }
 );
 
-const FavWatchedCourseSchema = new Schema(
+const WatchedCourseSchema = new Schema(
   {
-    id: { type: Types.ObjectId, ref: "course" },
-    updatedAt: { type: Date, required: true },
+    id: { type: Types.ObjectId, ref: "course", required: true },
+    currentTime: { type: Number, default: 0 },
+  },
+  { _id: false }
+);
+
+const WatchedShortSchema = new Schema(
+  {
+    id: { type: Types.ObjectId, ref: "short", required: true },
+    currentTime: { type: Number, default: 0 },
   },
   { _id: false }
 );
@@ -112,10 +119,12 @@ const userSchema = new Schema<IUser, IUserModelType>(
     resetPasswordExpires: {
       type: Number,
     },
-    favoritesCourses: { type: [FavWatchedCourseSchema], default: [] },
-    favoritesVideos: { type: [FavWatchedVideoSchema], default: [] },
-    watchedCourses: { type: [FavWatchedCourseSchema], default: [] },
-    watchedVideos: { type: [FavWatchedVideoSchema], default: [] },
+    bookmarkedCourses: [{ type: Types.ObjectId, ref: "course" }],
+    bookmarkedVideos: [{ type: Types.ObjectId, ref: "video" }],
+    bookmarkedShorts: [{ type: Types.ObjectId, ref: "short" }],
+    watchedCourses: { type: [WatchedCourseSchema], default: [] },
+    watchedVideos: { type: [WatchedVideoSchema], default: [] },
+    watchedShorts: { type: [WatchedShortSchema], default: [] },
   },
   { versionKey: false, timestamps: true }
 );

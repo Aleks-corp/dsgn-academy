@@ -4,12 +4,12 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 // import axios from "axios";
 import { nanoid } from "nanoid";
-import type { ObjectId } from "mongoose";
+import type { Types } from "mongoose";
 
 import type {
   IUser,
-  IUserFavWatched,
   IUserReg,
+  IUserWatched,
   OAuthUpsertInput,
   OAuthUpsertResult,
   UserSubscription,
@@ -214,7 +214,7 @@ export const oauthUpsertService = async ({
 };
 
 export const logoutService = async (
-  _id: ObjectId
+  _id: Types.ObjectId
 ): Promise<{ message: string }> => {
   const user = await UserModel.findById(_id);
   if (!user) {
@@ -297,7 +297,7 @@ export const changeNameService = async ({
   userId,
 }: {
   name: string;
-  userId: ObjectId;
+  userId: Types.ObjectId;
 }): Promise<string> => {
   const updatedUser = await UserModel.findByIdAndUpdate(userId, {
     name,
@@ -344,7 +344,7 @@ export const changePasswordService = async ({
 }: {
   oldPassword: string;
   newPassword: string;
-  userId: ObjectId;
+  userId: Types.ObjectId;
 }): Promise<{
   message: string;
 }> => {
@@ -371,7 +371,7 @@ export const createPaymentService = async ({
   userId,
 }: {
   data: PaymentData;
-  userId: ObjectId;
+  userId: Types.ObjectId;
 }): Promise<PaymentData> => {
   if (!userId) {
     throw HttpError(401, "Будь ласка, увійдіть в систему");
@@ -475,7 +475,7 @@ export const paymentWebhookService = async (
 };
 
 export const paymentStatusService = async (
-  userId: ObjectId
+  userId: Types.ObjectId
 ): Promise<UserSubscription> => {
   const user = await UserModel.findById(userId);
   if (!user) {
@@ -522,34 +522,6 @@ export const unsubscribeWebhookService = async (
   return { message };
 };
 
-export const undateFaforitesVideosService = async (
-  cleanIds: IUserFavWatched[],
-  _id: string | ObjectId
-): Promise<void> => {
-  await UserModel.findByIdAndUpdate(_id, { favoritesVideos: cleanIds });
-};
-
-export const undateWatchedVideosService = async (
-  cleanIds: IUserFavWatched[],
-  _id: string | ObjectId
-): Promise<void> => {
-  await UserModel.findByIdAndUpdate(_id, { watchedVideos: cleanIds });
-};
-
-export const undateFaforitesCoursesService = async (
-  cleanIds: IUserFavWatched[],
-  _id: string | ObjectId
-): Promise<void> => {
-  await UserModel.findByIdAndUpdate(_id, { favoritesCourses: cleanIds });
-};
-
-export const undateWatchedCoursesService = async (
-  cleanIds: IUserFavWatched[],
-  _id: string | ObjectId
-): Promise<void> => {
-  await UserModel.findByIdAndUpdate(_id, { watchedCourses: cleanIds });
-};
-
 export const callSupportService = async (user: IUser): Promise<void> => {
   await sendMailToSprt({ user });
 };
@@ -559,4 +531,193 @@ export const reportSupportService = async (
   report: string
 ): Promise<void> => {
   await sendMailToSprt({ user, report });
+};
+
+export const toggleBookmarkedVideoService = async (
+  userId: Types.ObjectId | string,
+  videoId: Types.ObjectId | string
+): Promise<{ action: "bookmarked" | "unbookmarked" }> => {
+  const user = await UserModel.findById(userId);
+  if (!user) throw HttpError(404, "User not found");
+
+  const hasBookmarked = user.bookmarkedVideos?.some(
+    (id) => id.toString() === videoId.toString()
+  );
+
+  if (hasBookmarked) {
+    await UserModel.findByIdAndUpdate(userId, {
+      $pull: { bookmarkedVideos: videoId },
+    });
+    return { action: "unbookmarked" };
+  } else {
+    await UserModel.findByIdAndUpdate(userId, {
+      $addToSet: { bookmarkedVideos: videoId },
+    });
+    return { action: "bookmarked" };
+  }
+};
+
+export const updateBookmarkedVideosService = async (
+  cleanIds: Types.ObjectId[],
+  userId: Types.ObjectId | string
+): Promise<void> => {
+  await UserModel.findByIdAndUpdate(userId, {
+    bookmarkedVideos: cleanIds.map((id) => id.toString()),
+  });
+};
+
+export const updateWatchedVideosService = async (
+  userId: Types.ObjectId | string,
+  videoId: Types.ObjectId | string,
+  currentTime: number
+): Promise<IUserWatched> => {
+  const user = await UserModel.findById(userId);
+  if (!user) throw HttpError(404, "User not found");
+
+  const watched = user.watchedVideos || [];
+  const idx = watched.findIndex((w) => w.id.toString() === videoId.toString());
+
+  if (idx >= 0) {
+    watched[idx].currentTime = currentTime;
+  } else {
+    watched.push({ id: videoId, currentTime });
+  }
+
+  await UserModel.findByIdAndUpdate(userId, { watchedVideos: watched });
+
+  return { id: videoId, currentTime };
+};
+
+export const syncWatchedVideosService = async (
+  cleanIds: (Types.ObjectId | string)[],
+  userId: Types.ObjectId | string
+): Promise<void> => {
+  const watched = cleanIds.map((id) => ({ id: id.toString(), currentTime: 0 }));
+  await UserModel.findByIdAndUpdate(userId, { watchedVideos: watched });
+};
+
+export const toggleBookmarkedCourseService = async (
+  userId: Types.ObjectId | string,
+  courseId: Types.ObjectId | string
+): Promise<{ action: "bookmarked" | "unbookmarked" }> => {
+  const user = await UserModel.findById(userId);
+  if (!user) throw HttpError(404, "User not found");
+
+  const hasBookmarked = user.bookmarkedCourses?.some(
+    (id) => id.toString() === courseId.toString()
+  );
+
+  if (hasBookmarked) {
+    await UserModel.findByIdAndUpdate(userId, {
+      $pull: { bookmarkedCourses: courseId },
+    });
+    return { action: "unbookmarked" };
+  } else {
+    await UserModel.findByIdAndUpdate(userId, {
+      $addToSet: { bookmarkedCourses: courseId },
+    });
+    return { action: "bookmarked" };
+  }
+};
+
+export const updateBookmarkedCoursesService = async (
+  cleanIds: (Types.ObjectId | string)[],
+  userId: Types.ObjectId | string
+): Promise<void> => {
+  await UserModel.findByIdAndUpdate(userId, {
+    bookmarkedCourses: cleanIds.map((id) => id.toString()),
+  });
+};
+
+export const updateWatchedCoursesService = async (
+  userId: Types.ObjectId | string,
+  courseId: Types.ObjectId | string,
+  currentTime: number
+): Promise<IUserWatched> => {
+  const user = await UserModel.findById(userId);
+  if (!user) throw HttpError(404, "User not found");
+
+  const watched = user.watchedCourses || [];
+  const idx = watched.findIndex((w) => w.id.toString() === courseId.toString());
+
+  if (idx >= 0) {
+    watched[idx].currentTime = currentTime;
+  } else {
+    watched.push({ id: courseId, currentTime });
+  }
+
+  await UserModel.findByIdAndUpdate(userId, { watchedCourses: watched });
+
+  return { id: courseId, currentTime };
+};
+
+export const syncWatchedCoursesService = async (
+  cleanIds: (Types.ObjectId | string)[],
+  userId: Types.ObjectId | string
+): Promise<void> => {
+  const watched = cleanIds.map((id) => ({ id: id.toString(), currentTime: 0 }));
+  await UserModel.findByIdAndUpdate(userId, { watchedCourses: watched });
+};
+
+export const toggleBookmarkedShortService = async (
+  userId: Types.ObjectId | string,
+  shortId: Types.ObjectId | string
+): Promise<{ action: "bookmarked" | "unbookmarked" }> => {
+  const user = await UserModel.findById(userId);
+  if (!user) throw HttpError(404, "User not found");
+
+  const hasBookmarked = user.bookmarkedShorts?.some(
+    (id) => id.toString() === shortId.toString()
+  );
+
+  if (hasBookmarked) {
+    await UserModel.findByIdAndUpdate(userId, {
+      $pull: { bookmarkedShorts: shortId },
+    });
+    return { action: "unbookmarked" };
+  } else {
+    await UserModel.findByIdAndUpdate(userId, {
+      $addToSet: { bookmarkedShorts: shortId },
+    });
+    return { action: "bookmarked" };
+  }
+};
+
+export const updateBookmarkedShortsService = async (
+  cleanIds: Types.ObjectId[],
+  userId: Types.ObjectId | string
+): Promise<void> => {
+  await UserModel.findByIdAndUpdate(userId, {
+    bookmarkedShorts: cleanIds.map((id) => id.toString()),
+  });
+};
+
+export const updateWatchedShortsService = async (
+  userId: Types.ObjectId | string,
+  shortId: Types.ObjectId | string,
+  currentTime: number
+): Promise<IUserWatched> => {
+  const user = await UserModel.findById(userId);
+  if (!user) throw HttpError(404, "User not found");
+
+  const watched = user.watchedShorts || [];
+  const idx = watched.findIndex((w) => w.id.toString() === shortId.toString());
+
+  if (idx >= 0) {
+    watched[idx].currentTime = currentTime;
+  } else {
+    watched.push({ id: shortId, currentTime });
+  }
+
+  await UserModel.findByIdAndUpdate(userId, { watchedShorts: watched });
+
+  return { id: shortId, currentTime };
+};
+
+export const syncWatchedShortsService = async (
+  cleanIds: (Types.ObjectId | string)[],
+  userId: Types.ObjectId | string
+): Promise<void> => {
+  const watched = cleanIds.map((id) => ({ id: id.toString(), currentTime: 0 }));
+  await UserModel.findByIdAndUpdate(userId, { watchedShorts: watched });
 };

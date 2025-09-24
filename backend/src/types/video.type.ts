@@ -12,8 +12,9 @@ export interface IVideo extends Document {
   duration: string;
   free: boolean;
   recommended: boolean;
-  favoritedBy?: string[];
-  watchedBy?: string[];
+  likedBy?: Types.ObjectId[];
+  bookmarked?: boolean;
+  watched?: { progress: number };
   publishedAt?: Date;
   createdAt?: Date;
   updatedAt?: Date;

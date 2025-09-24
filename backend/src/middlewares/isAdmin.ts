@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 import type { JwtPayload } from "jsonwebtoken";
 import type { NextFunction, Response, Request } from "express";
-import type { Document, ObjectId } from "mongoose";
+import type { Document, Types } from "mongoose";
 import "dotenv/config";
 
 import { ctrlWrapper } from "../decorators/index.js";
@@ -11,7 +11,7 @@ import { UserModel } from "../models/index.js";
 import type { IUser } from "../types/user.type.js";
 
 export interface UserDocument extends IUser, Document {
-  _id: ObjectId;
+  _id: Types.ObjectId;
 }
 
 const JWT_SECRET = process.env.JWT_SECRET || "";

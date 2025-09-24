@@ -15,6 +15,7 @@ export interface IData {
   duration: number;
   pictures: { base_link: string };
   release_time: string;
+  files: IProgressive[];
   play: {
     progressive: IProgressive[];
   };

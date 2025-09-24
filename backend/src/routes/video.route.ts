@@ -15,44 +15,45 @@ const {
   getVideoById,
   getCategoriesVideos,
   getVideosCounts,
-  getFavoriteVideos,
+  getBookmarkedVideos,
+  toggleBookmarkedVideo,
   getWatchedVideos,
+  updateWatchedVideo,
+  toggleLikeVideo,
   getVideoDataFromVimeo,
   addVideo,
   deleteVideoById,
   updateVideo,
-  toggleFavoriteVideo,
 } = videoController;
 
 const videosRouter = Router();
 
 const { videoAddSchema, videoUpdateSchema } = videosSchemas;
 
-videosRouter.use(authenticateToken);
-
-videosRouter.get("/", getVideos);
-
-videosRouter.get("/categories", getCategoriesVideos);
-
-videosRouter.get("/counts/category", getVideosCounts);
-
-videosRouter.get("/counts/category/:category", getVideosCounts);
-
-videosRouter.get("/favorites", authenticateUser, getFavoriteVideos);
-
-videosRouter.get("/watched", authenticateUser, getWatchedVideos);
-
+videosRouter.get("/", authenticateToken, getVideos);
+videosRouter.get("/categories", authenticateToken, getCategoriesVideos);
+videosRouter.get("/counts/category", authenticateToken, getVideosCounts);
 videosRouter.get(
-  "/data/vimeo/:vimeoId",
-  authenticateAdmin,
-  getVideoDataFromVimeo
+  "/counts/category/:category",
+  authenticateToken,
+  getVideosCounts
 );
 
-videosRouter.get("/:id", isValidId, getVideoById);
+videosRouter.get("/bookmarked", authenticateUser, getBookmarkedVideos);
+videosRouter.patch("/bookmarked/:id", authenticateUser, toggleBookmarkedVideo);
+videosRouter.get("/watched", authenticateUser, getWatchedVideos);
+videosRouter.patch("/watched/:id", authenticateUser, updateWatchedVideo);
+videosRouter.patch("/like/:id", isValidId, authenticateUser, toggleLikeVideo);
+
+videosRouter.get("/:id", authenticateToken, isValidId, getVideoById);
+
+videosRouter.use(authenticateAdmin);
+
+videosRouter.get("/data/vimeo/:vimeoId", getVideoDataFromVimeo);
 
 videosRouter.post(
   "/",
-  authenticateAdmin,
+
   isEmptyBody,
   validateBody(videoAddSchema),
   addVideo
@@ -63,17 +64,10 @@ videosRouter.patch(
   isValidId,
   isEmptyBody,
   validateBody(videoUpdateSchema),
-  authenticateUser,
+
   updateVideo
 );
 
-videosRouter.patch(
-  "/:id/favorite",
-  isValidId,
-  authenticateUser,
-  toggleFavoriteVideo
-);
-
-videosRouter.delete("/:id", isValidId, authenticateUser, deleteVideoById);
+videosRouter.delete("/:id", isValidId, deleteVideoById);
 
 export default videosRouter;

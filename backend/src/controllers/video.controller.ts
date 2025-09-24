@@ -5,10 +5,11 @@ import { videoServices } from "../services/index.js";
 import { ctrlWrapper } from "../decorators/index.js";
 import { HttpError, fetchVideoDataById } from "../utils/index.js";
 import {
-  undateFaforitesVideosService,
-  undateWatchedVideosService,
+  toggleBookmarkedVideoService,
+  updateBookmarkedVideosService,
+  updateWatchedVideosService,
+  syncWatchedVideosService,
 } from "../services/user.service.js";
-// import type { IProgressive } from "../utils/addcover.utils.js";
 
 const {
   getVideosService,
@@ -16,11 +17,12 @@ const {
   getVideosCategoriesService,
   getVideosFiltersService,
   getVideosTotalService,
-  getFavoriteWatchedVideosService,
   addVideoService,
   updateVideoService,
   deleteVideoByIdService,
-  toggleFavoriteVideoService,
+  getBookmarkedVideosService,
+  getWatchedVideosService,
+  toggleLikeVideoService,
 } = videoServices;
 
 /**
@@ -57,8 +59,24 @@ export const getVideos = async (req: Request, res: Response): Promise<void> => {
   if (videos.length === 0 || total === 0) {
     throw HttpError(404, "Відео не знайдено");
   }
+  let patchedVideos = videos;
+  if (req.user) {
+    patchedVideos = videos.map((video) => {
+      const isBookmarked = req.user?.bookmarkedVideos?.some(
+        (b) => b.toString() === video._id.toString()
+      );
+      const progress = req.user?.watchedVideos?.find(
+        (w) => w.id.toString() === video._id.toString()
+      );
+      return {
+        ...video.toObject(),
+        bookmarked: isBookmarked || false,
+        watched: { progress: progress?.currentTime || 0 },
+      };
+    });
+  }
   res.json({
-    videos,
+    videos: patchedVideos,
     total,
     page: currentPage,
     limit: perPage,
@@ -98,19 +116,23 @@ export const getVideoById = async (
   res: Response
 ): Promise<void> => {
   const { id } = req.params;
+  const user = req.user;
   const video = await getVideoByIdService(id);
   if (!video) {
     throw HttpError(404, "Video not found");
   }
-  // const data = await fetchVideoDataById(video.video);
-  // const progressive = data?.play?.progressive?.map((i: IProgressive) => ({
-  //   link: i.link,
-  //   type: i.type,
-  //   rendition: i.rendition,
-  // }));
-  // const updatedVideo = { ...video.toObject(), progressive };
-
-  res.json(video);
+  const bookmarked =
+    user?.bookmarkedVideos?.some(
+      (b) => b.toString() === video._id.toString()
+    ) || false;
+  const progress = user?.watchedVideos?.find(
+    (w) => w.id.toString() === video._id.toString()
+  );
+  res.json({
+    ...video.toObject(),
+    bookmarked,
+    watched: { progress: progress?.currentTime || 0 },
+  });
 };
 
 export const getCategoriesVideos = async (
@@ -135,7 +157,7 @@ export const getFiltersVideos = async (
   res.json(filters);
 };
 
-export const getFavoriteVideos = async (
+export const getBookmarkedVideos = async (
   req: Request,
   res: Response
 ): Promise<void> => {
@@ -146,25 +168,33 @@ export const getFavoriteVideos = async (
   const { limit = "9", page = "1" } = req.query;
   const perPage = Math.max(1, Number(limit));
   const currentPage = Math.max(1, Number(page));
-  const videoIds = user.favoritesVideos || [];
+  const videoIds = user.bookmarkedVideos || [];
   if (videoIds.length === 0) {
     throw HttpError(404, "No videos found");
   }
-  const { videos, total, cleanIds } = await getFavoriteWatchedVideosService(
+  const { videos, total, cleanIds } = await getBookmarkedVideosService(
     videoIds,
     {
       limit: perPage,
       page: currentPage,
     }
   );
-  if (cleanIds.length !== (user.favoritesVideos?.length || 0)) {
-    await undateFaforitesVideosService(cleanIds, user._id);
+  if (cleanIds.length !== (user.bookmarkedVideos?.length || 0)) {
+    await updateBookmarkedVideosService(cleanIds, user._id);
   }
   if (!videos || videos.length === 0) {
     throw HttpError(404, "No videos found");
   }
   res.json({
-    videos,
+    videos: videos.map((v: IVideo) => ({
+      ...v.toObject(),
+      bookmarked: true,
+      watched: {
+        progress:
+          user.watchedVideos?.find((w) => w.id.toString() === v._id.toString())
+            ?.currentTime || 0,
+      },
+    })),
     total,
     page: currentPage,
     limit: perPage,
@@ -187,21 +217,29 @@ export const getWatchedVideos = async (
   if (videoIds.length === 0) {
     throw HttpError(404, "No videos found");
   }
-  const { videos, total, cleanIds } = await getFavoriteWatchedVideosService(
-    videoIds,
-    {
-      limit: perPage,
-      page: currentPage,
-    }
-  );
-  if (cleanIds.length !== (user.favoritesVideos?.length || 0)) {
-    await undateWatchedVideosService(cleanIds, user._id);
+  const { videos, total, cleanIds } = await getWatchedVideosService(videoIds, {
+    limit: perPage,
+    page: currentPage,
+  });
+  if (cleanIds.length !== (user.watchedVideos?.length || 0)) {
+    await syncWatchedVideosService(cleanIds, user._id);
   }
   if (!videos || videos.length === 0) {
     throw HttpError(404, "No videos found");
   }
   res.json({
-    videos: videos,
+    videos: videos.map((v: IVideo) => {
+      const progress = user.watchedVideos?.find(
+        (w) => w.id.toString() === v._id.toString()
+      );
+      return {
+        ...v.toObject(),
+        watched: { progress: progress?.currentTime || 0 },
+        bookmarked: user.bookmarkedVideos?.some(
+          (b) => b.toString() === v._id.toString()
+        ),
+      };
+    }),
     total,
     page: currentPage,
     limit: perPage,
@@ -247,19 +285,49 @@ export const deleteVideoById = async (
   res.json({ message: "Video deleted" });
 };
 
-export const toggleFavoriteVideo = async (
+export const toggleBookmarkedVideo = async (
   req: Request,
   res: Response
 ): Promise<void> => {
   const { id: videoId } = req.params;
-  const { _id: userId } = req.user;
-  if (!userId) {
-    throw HttpError(404, "User not found");
+  const userId = req.user?._id;
+
+  const { action } = await toggleBookmarkedVideoService(userId, videoId);
+
+  res.json({ message: `Video ${action} bookmark` });
+};
+
+export const updateWatchedVideo = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const { id: videoId } = req.params;
+  const userId = req.user?._id;
+  const { currentTime } = req.body;
+
+  if (typeof currentTime !== "number") {
+    throw HttpError(400, "currentTime must be a number");
   }
 
-  const { action } = await toggleFavoriteVideoService(userId, videoId);
+  const updated = await updateWatchedVideosService(
+    userId,
+    videoId,
+    currentTime
+  );
 
-  res.json({ message: `Video ${action} favorites` });
+  res.json({ message: "Progress updated", watched: updated });
+};
+
+export const toggleLikeVideo = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const { id: videoId } = req.params;
+  const userId = req.user?._id;
+
+  const { action } = await toggleLikeVideoService(userId, videoId);
+
+  res.json({ message: `Video ${action} like` });
 };
 
 export default {
@@ -267,12 +335,14 @@ export default {
   getVideosCounts: ctrlWrapper(getVideosCounts),
   getVideoById: ctrlWrapper(getVideoById),
   getCategoriesVideos: ctrlWrapper(getCategoriesVideos),
-  getFiltersVideos: ctrlWrapper(getFiltersVideos),
-  getFavoriteVideos: ctrlWrapper(getFavoriteVideos),
+  getFiltersVideos: ctrlWrapper(getFiltersVideos), //
+  getBookmarkedVideos: ctrlWrapper(getBookmarkedVideos),
+  toggleBookmarkedVideo: ctrlWrapper(toggleBookmarkedVideo),
   getWatchedVideos: ctrlWrapper(getWatchedVideos),
+  updateWatchedVideo: ctrlWrapper(updateWatchedVideo),
   getVideoDataFromVimeo: ctrlWrapper(getVideoDataFromVimeo),
   addVideo: ctrlWrapper(addVideo),
   updateVideo: ctrlWrapper(updateVideo),
   deleteVideoById: ctrlWrapper(deleteVideoById),
-  toggleFavoriteVideo: ctrlWrapper(toggleFavoriteVideo),
+  toggleLikeVideo: ctrlWrapper(toggleLikeVideo),
 };

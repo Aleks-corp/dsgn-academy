@@ -1,4 +1,4 @@
-import type { Document } from "mongoose";
+import type { Document, Types } from "mongoose";
 
 export interface ICourseVideo {
   title: string;
@@ -10,13 +10,14 @@ export interface ICourseVideo {
 }
 
 export interface ICourse extends Document {
-  _id: string;
+  _id: Types.ObjectId;
   title: string;
   description: string;
   category: string[];
   videos: ICourseVideo[];
-  favoritedBy?: string[];
-  watchedBy?: string[];
+  likedBy?: Types.ObjectId[];
+  bookmarked?: boolean;
+  watched?: { progress: number };
   publishedAt?: Date;
   createdAt?: Date;
   updatedAt?: Date;

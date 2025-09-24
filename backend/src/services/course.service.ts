@@ -1,7 +1,8 @@
-import type { FilterQuery, ObjectId } from "mongoose";
+import type { FilterQuery, Types } from "mongoose";
 
-import { CourseModel, UserModel } from "../models/index.js";
+import { CourseModel } from "../models/index.js";
 import type { ICourse } from "../types/course.type.js";
+import type { IUserWatched } from "../types/user.type.js";
 
 const getCoursesService = async (
   filter: FilterQuery<ICourse>,
@@ -60,28 +61,80 @@ export const deleteCourseByIdService = async (
   return CourseModel.findByIdAndDelete(id).exec();
 };
 
-export const toggleFavoriteCourseService = async (
-  userId: string | ObjectId,
-  courseId: string
-): Promise<{ action: "added to" | "removed from" }> => {
-  const user = await UserModel.findById(userId);
-  if (!user) throw new Error("User not found");
+export const getBookmarkedCoursesService = async (
+  courseIds: (Types.ObjectId | string)[],
+  options: { limit: number; page: number }
+): Promise<{
+  courses: ICourse[];
+  total: number;
+  cleanIds: Types.ObjectId[];
+}> => {
+  const { limit, page } = options;
+  const skip = (page - 1) * limit;
 
-  const isFavorite = user.favoritesCourses?.some(
-    (id) => id.toString() === courseId
+  const [courses, total] = await Promise.all([
+    CourseModel.find({ _id: { $in: courseIds } }, "-createdAt -updatedAt")
+      .sort({ publishedAt: -1, _id: -1 })
+      .skip(skip)
+      .limit(limit)
+      .exec(),
+    CourseModel.countDocuments({ _id: { $in: courseIds } }),
+  ]);
+
+  const cleanIds = courses.map((c) => c._id);
+
+  return { courses, total, cleanIds };
+};
+
+export const getWatchedCoursesService = async (
+  watched: IUserWatched[],
+  options: { limit: number; page: number }
+): Promise<{
+  courses: ICourse[];
+  total: number;
+  cleanIds: Types.ObjectId[];
+}> => {
+  const { limit, page } = options;
+  const skip = (page - 1) * limit;
+
+  const ids = watched.map((w) => w.id);
+
+  const [courses, total] = await Promise.all([
+    CourseModel.find({ _id: { $in: ids } }, "-createdAt -updatedAt")
+      .sort({ publishedAt: -1, _id: -1 })
+      .skip(skip)
+      .limit(limit)
+      .exec(),
+    CourseModel.countDocuments({ _id: { $in: ids } }),
+  ]);
+
+  const cleanIds = courses.map((c) => c._id);
+
+  return { courses, total, cleanIds };
+};
+
+export const toggleLikeCourseService = async (
+  userId: Types.ObjectId | string,
+  courseId: Types.ObjectId | string
+): Promise<{ action: "liked" | "unliked" }> => {
+  const course = await CourseModel.findById(courseId);
+  if (!course) throw new Error("Course not found");
+
+  const hasLiked = course.likedBy?.some(
+    (id) => id.toString() === userId.toString()
   );
 
-  const action = isFavorite ? "removed from" : "added to";
-
-  await UserModel.findByIdAndUpdate(userId, {
-    [isFavorite ? "$pull" : "$addToSet"]: { favoritesCourses: courseId },
-  });
-
-  await CourseModel.findByIdAndUpdate(courseId, {
-    [isFavorite ? "$pull" : "$addToSet"]: { favoritedBy: userId },
-  });
-
-  return { action };
+  if (hasLiked) {
+    await CourseModel.findByIdAndUpdate(courseId, {
+      $pull: { likedBy: userId },
+    });
+    return { action: "unliked" };
+  } else {
+    await CourseModel.findByIdAndUpdate(courseId, {
+      $addToSet: { likedBy: userId },
+    });
+    return { action: "liked" };
+  }
 };
 
 export default {
@@ -91,5 +144,7 @@ export default {
   addCourseService,
   updateCourseService,
   deleteCourseByIdService,
-  toggleFavoriteCourseService,
+  getBookmarkedCoursesService,
+  getWatchedCoursesService,
+  toggleLikeCourseService,
 };

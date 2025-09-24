@@ -16,24 +16,33 @@ const {
   addCourse,
   updateCourse,
   deleteCourseById,
-  toggleFavoriteCourse,
+  getBookmarkedCourses,
+  toggleBookmarkCourse,
+  getWatchedCourses,
+  updateWatchedCourse,
+  toggleLikeCourse,
 } = courseController;
 
 const { courseAddSchema, courseUpdateSchema } = coursesSchemas;
 
 const coursesRouter = Router();
 
-coursesRouter.use(authenticateToken);
+coursesRouter.get("/", authenticateToken, getCourses);
+coursesRouter.get("/counts", authenticateToken, getCoursesCounts);
 
-coursesRouter.get("/", getCourses);
+coursesRouter.get("/bookmarked", authenticateUser, getBookmarkedCourses);
+coursesRouter.patch("/bookmarked/:id", authenticateUser, toggleBookmarkCourse);
+coursesRouter.get("/watched", authenticateUser, getWatchedCourses);
+coursesRouter.patch("/watched/:id", authenticateUser, updateWatchedCourse);
+coursesRouter.patch("/like/:id", isValidId, authenticateUser, toggleLikeCourse);
 
-coursesRouter.get("/counts", getCoursesCounts);
+coursesRouter.get("/:id", authenticateToken, isValidId, getCourseById);
 
-coursesRouter.get("/:id", isValidId, getCourseById);
+coursesRouter.use(authenticateAdmin);
 
 coursesRouter.post(
   "/",
-  authenticateAdmin,
+
   isEmptyBody,
   validateBody(courseAddSchema),
   addCourse
@@ -44,17 +53,10 @@ coursesRouter.patch(
   isValidId,
   isEmptyBody,
   validateBody(courseUpdateSchema),
-  authenticateUser,
+
   updateCourse
 );
 
-coursesRouter.patch(
-  "/:id/favorite",
-  isValidId,
-  authenticateUser,
-  toggleFavoriteCourse
-);
-
-coursesRouter.delete("/:id", isValidId, authenticateUser, deleteCourseById);
+coursesRouter.delete("/:id", isValidId, deleteCourseById);
 
 export default coursesRouter;

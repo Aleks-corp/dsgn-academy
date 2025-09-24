@@ -1,8 +1,7 @@
-import type { FilterQuery, ObjectId } from "mongoose";
-
-import { VideoModel, UserModel } from "../models/index.js";
+import type { FilterQuery, Types } from "mongoose";
+import { VideoModel } from "../models/index.js";
 import type { IVideo } from "../types/video.type.js";
-import type { IUserFavWatched } from "../types/user.type.js";
+import type { IUserWatched } from "../types/user.type.js";
 
 const getVideosService = async (
   filter: FilterQuery<IVideo>,
@@ -60,7 +59,7 @@ export const getVideosFiltersService = async (
   baseFilter: FilterQuery<IVideo> = {}
 ): Promise<{ filter: string; count: number }[]> => {
   const filters = await VideoModel.aggregate([
-    { $match: baseFilter }, // 🟢 додаємо умову
+    { $match: baseFilter },
     { $unwind: "$filter" },
     {
       $group: {
@@ -88,34 +87,6 @@ export const getVideosTotalService = async (
   return count;
 };
 
-export const getFavoriteWatchedVideosService = async (
-  videoIds: IUserFavWatched[],
-  options: { limit: number; page: number }
-): Promise<{
-  videos: IVideo[];
-  total: number;
-  cleanIds: IUserFavWatched[];
-}> => {
-  const sorted = videoIds.sort(
-    (a: IUserFavWatched, b: IUserFavWatched) =>
-      new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
-  );
-  const allIds = sorted.map((i) => i.id);
-  const videos = await VideoModel.find({ _id: { $in: allIds } })
-    .select("-video -updatedAt -createdAt")
-    .lean();
-  const videoMap = new Map(videos.map((v) => [v._id.toString(), v]));
-  const valid = sorted.filter((y) => videoMap.has(y.id.toString()));
-  const slice = valid.slice(
-    (options.page - 1) * options.limit,
-    options.page * options.limit
-  );
-  const ordered = slice
-    .map((f) => videoMap.get(f.id.toString()))
-    .filter(Boolean) as IVideo[];
-  return { videos: ordered, total: valid.length, cleanIds: valid };
-};
-
 export const addVideoService = async (body: IVideo): Promise<IVideo> => {
   return VideoModel.create(body);
 };
@@ -136,28 +107,73 @@ export const deleteVideoByIdService = async (
   return VideoModel.findByIdAndDelete(id).exec();
 };
 
-export const toggleFavoriteVideoService = async (
-  userId: string | ObjectId,
-  videoId: string
-): Promise<{ action: "added to" | "removed from" }> => {
-  const user = await UserModel.findById(userId);
-  if (!user) throw new Error("User not found");
+export const getBookmarkedVideosService = async (
+  videoIds: Types.ObjectId[],
+  options: { limit: number; page: number }
+): Promise<{ videos: IVideo[]; total: number; cleanIds: Types.ObjectId[] }> => {
+  const { limit, page } = options;
+  const skip = (page - 1) * limit;
 
-  const isFavorite = user.favoritesCourses?.some(
-    (id) => id.toString() === videoId
+  const [videos, total] = await Promise.all([
+    VideoModel.find({ _id: { $in: videoIds } }, "-createdAt -updatedAt -video")
+      .sort({ publishedAt: -1, _id: -1 })
+      .skip(skip)
+      .limit(limit)
+      .exec(),
+    VideoModel.countDocuments({ _id: { $in: videoIds } }),
+  ]);
+
+  // чистимо ті id, яких вже немає в базі
+  const cleanIds = videos.map((v) => v._id);
+
+  return { videos, total, cleanIds };
+};
+
+export const getWatchedVideosService = async (
+  watched: IUserWatched[],
+  options: { limit: number; page: number }
+): Promise<{ videos: IVideo[]; total: number; cleanIds: Types.ObjectId[] }> => {
+  const { limit, page } = options;
+  const skip = (page - 1) * limit;
+
+  const ids = watched.map((w) => w.id);
+
+  const [videos, total] = await Promise.all([
+    VideoModel.find({ _id: { $in: ids } }, "-createdAt -updatedAt -video")
+      .sort({ publishedAt: -1, _id: -1 })
+      .skip(skip)
+      .limit(limit)
+      .exec(),
+    VideoModel.countDocuments({ _id: { $in: ids } }),
+  ]);
+
+  const cleanIds = videos.map((v) => v._id);
+
+  return { videos, total, cleanIds };
+};
+
+export const toggleLikeVideoService = async (
+  userId: Types.ObjectId | string,
+  videoId: Types.ObjectId | string
+): Promise<{ action: "liked" | "unliked" }> => {
+  const video = await VideoModel.findById(videoId);
+  if (!video) throw new Error("Video not found");
+
+  const hasLiked = video.likedBy?.some(
+    (id) => id.toString() === userId.toString()
   );
 
-  const action = isFavorite ? "removed from" : "added to";
-
-  await UserModel.findByIdAndUpdate(userId, {
-    [isFavorite ? "$pull" : "$addToSet"]: { favoritesCourses: videoId },
-  });
-
-  await VideoModel.findByIdAndUpdate(videoId, {
-    [isFavorite ? "$pull" : "$addToSet"]: { favoritedBy: userId },
-  });
-
-  return { action };
+  if (hasLiked) {
+    await VideoModel.findByIdAndUpdate(videoId, {
+      $pull: { likedBy: userId },
+    });
+    return { action: "unliked" };
+  } else {
+    await VideoModel.findByIdAndUpdate(videoId, {
+      $addToSet: { likedBy: userId },
+    });
+    return { action: "liked" };
+  }
 };
 
 export default {
@@ -166,9 +182,10 @@ export default {
   getVideosCategoriesService,
   getVideosFiltersService,
   getVideosTotalService,
-  getFavoriteWatchedVideosService,
   addVideoService,
   updateVideoService,
   deleteVideoByIdService,
-  toggleFavoriteVideoService,
+  getBookmarkedVideosService,
+  getWatchedVideosService,
+  toggleLikeVideoService,
 };

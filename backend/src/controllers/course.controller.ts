@@ -4,6 +4,13 @@ import { courseServices } from "../services/index.js";
 import { ctrlWrapper } from "../decorators/index.js";
 import { HttpError } from "../utils/index.js";
 
+import {
+  toggleBookmarkedCourseService,
+  updateBookmarkedCoursesService,
+  updateWatchedCoursesService,
+  syncWatchedCoursesService,
+} from "../services/user.service.js";
+
 const {
   getCoursesService,
   getCoursesTotalService,
@@ -11,7 +18,9 @@ const {
   addCourseService,
   updateCourseService,
   deleteCourseByIdService,
-  toggleFavoriteCourseService,
+  getBookmarkedCoursesService,
+  getWatchedCoursesService,
+  toggleLikeCourseService,
 } = courseServices;
 
 /**
@@ -22,6 +31,7 @@ export const getCourses = async (
   req: Request,
   res: Response
 ): Promise<void> => {
+  const user = req.user;
   const { q, category, limit = 3, page = 1 } = req.query;
   const currentTime = new Date();
   const filter: Record<string, unknown> = {};
@@ -43,7 +53,19 @@ export const getCourses = async (
   });
 
   res.json({
-    courses: courses,
+    courses: courses.map((c: ICourse) => {
+      const bookmarked = user?.bookmarkedCourses?.some(
+        (b) => b.toString() === c._id.toString()
+      );
+      const progress = user?.watchedCourses?.find(
+        (w) => w.id.toString() === c._id.toString()
+      );
+      return {
+        ...c.toObject(),
+        bookmarked,
+        watched: { progress: progress?.currentTime || 0 },
+      };
+    }),
     total,
     page: currentPage,
     limit: perPage,
@@ -67,12 +89,24 @@ export const getCourseById = async (
   res: Response
 ): Promise<void> => {
   const { id } = req.params;
+  const user = req.user;
   const course = await getCourseByIdService(id);
   if (!course) {
     res.status(404).json({ error: "Course not found" });
     return;
   }
-  res.json(course);
+  const bookmarked = user?.bookmarkedCourses?.some(
+    (b) => b.toString() === course._id.toString()
+  );
+  const progress = user?.watchedCourses?.find(
+    (w) => w.id.toString() === course._id.toString()
+  );
+
+  res.json({
+    ...course.toObject(),
+    bookmarked,
+    watched: { progress: progress?.currentTime || 0 },
+  });
 };
 
 export const addCourse = async (req: Request, res: Response): Promise<void> => {
@@ -109,19 +143,133 @@ export const deleteCourseById = async (
   res.json({ message: "Course deleted" });
 };
 
-export const toggleFavoriteCourse = async (
+export const getBookmarkedCourses = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const user = req.user;
+  if (!user) throw HttpError(401);
+
+  const { limit = "9", page = "1" } = req.query;
+  const perPage = Math.max(1, Number(limit));
+  const currentPage = Math.max(1, Number(page));
+  const courseIds = user.bookmarkedCourses || [];
+  if (courseIds.length === 0) throw HttpError(404, "No courses found");
+
+  const { courses, total, cleanIds } = await getBookmarkedCoursesService(
+    courseIds,
+    { limit: perPage, page: currentPage }
+  );
+
+  if (cleanIds.length !== (user.bookmarkedCourses?.length || 0)) {
+    await updateBookmarkedCoursesService(cleanIds, user._id);
+  }
+
+  res.json({
+    courses: courses.map((c: ICourse) => ({
+      ...c.toObject(),
+      bookmarked: true,
+      watched: {
+        progress:
+          user.watchedCourses?.find((w) => w.id.toString() === c._id.toString())
+            ?.currentTime || 0,
+      },
+    })),
+    total,
+    page: currentPage,
+    limit: perPage,
+    hasMore: currentPage * perPage < courseIds.length,
+  });
+};
+
+export const toggleBookmarkCourse = async (
   req: Request,
   res: Response
 ): Promise<void> => {
   const { id: courseId } = req.params;
-  const { _id: userId } = req.user;
-  if (!userId) {
-    throw HttpError(404, "User not found");
+  const userId = req.user?._id;
+  if (!userId) throw HttpError(401);
+
+  const { action } = await toggleBookmarkedCourseService(userId, courseId);
+
+  res.json({ message: `Course ${action} bookmark` });
+};
+
+export const getWatchedCourses = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const user = req.user;
+  if (!user) throw HttpError(401);
+
+  const { limit = "9", page = "1" } = req.query;
+  const perPage = Math.max(1, Number(limit));
+  const currentPage = Math.max(1, Number(page));
+  const courseIds = user.watchedCourses || [];
+  if (courseIds.length === 0) throw HttpError(404, "No courses found");
+
+  const { courses, total, cleanIds } = await getWatchedCoursesService(
+    courseIds,
+    { limit: perPage, page: currentPage }
+  );
+
+  if (cleanIds.length !== (user.watchedCourses?.length || 0)) {
+    await syncWatchedCoursesService(cleanIds, user._id);
   }
 
-  const { action } = await toggleFavoriteCourseService(userId, courseId);
+  res.json({
+    courses: courses.map((c: ICourse) => {
+      const progress = user.watchedCourses?.find(
+        (w) => w.id.toString() === c._id.toString()
+      );
+      return {
+        ...c.toObject(),
+        watched: { progress: progress?.currentTime || 0 },
+        bookmarked: user.bookmarkedCourses?.some(
+          (b) => b.toString() === c._id.toString()
+        ),
+      };
+    }),
+    total,
+    page: currentPage,
+    limit: perPage,
+    hasMore: currentPage * perPage < courseIds.length,
+  });
+};
 
-  res.json({ message: `Course ${action} favorites` });
+export const updateWatchedCourse = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const { id: courseId } = req.params;
+  const userId = req.user?._id;
+  const { currentTime } = req.body;
+
+  if (!userId) throw HttpError(401);
+  if (typeof currentTime !== "number") {
+    throw HttpError(400, "currentTime must be a number");
+  }
+
+  const updated = await updateWatchedCoursesService(
+    userId,
+    courseId,
+    currentTime
+  );
+
+  res.json({ message: "Progress updated", watched: updated });
+};
+
+export const toggleLikeCourse = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const { id: courseId } = req.params;
+  const userId = req.user?._id;
+  if (!userId) throw HttpError(401);
+
+  const { action } = await toggleLikeCourseService(userId, courseId);
+
+  res.json({ message: `Course ${action} like` });
 };
 
 export default {
@@ -131,5 +279,9 @@ export default {
   addCourse: ctrlWrapper(addCourse),
   updateCourse: ctrlWrapper(updateCourse),
   deleteCourseById: ctrlWrapper(deleteCourseById),
-  toggleFavoriteCourse: ctrlWrapper(toggleFavoriteCourse),
+  getBookmarkedCourses: ctrlWrapper(getBookmarkedCourses),
+  toggleBookmarkCourse: ctrlWrapper(toggleBookmarkCourse),
+  getWatchedCourses: ctrlWrapper(getWatchedCourses),
+  updateWatchedCourse: ctrlWrapper(updateWatchedCourse),
+  toggleLikeCourse: ctrlWrapper(toggleLikeCourse),
 };

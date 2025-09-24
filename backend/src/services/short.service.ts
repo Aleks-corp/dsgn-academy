@@ -1,19 +1,7 @@
-import { Types } from "mongoose";
+import type { Types } from "mongoose";
 import { ShortModel } from "../models/index.js";
-import {
-  encodeCursor,
-  decodeCursor,
-  encodeCur,
-  decodeCur,
-} from "../utils/cursor.utils.js";
-import type {
-  PageResult,
-  AroundArgs,
-  AroundResult,
-  IShort,
-  PageArgs,
-} from "../types/short.type.js";
-import HttpError from "../utils/httperror.utils.js";
+import type { IShort } from "../types/short.type.js";
+import type { IUserWatched } from "../types/user.type.js";
 
 type TagsMode = "any" | "all";
 
@@ -25,11 +13,8 @@ export type FiltersQuery = {
   page?: unknown;
 };
 
-type SeqResult = Promise<{ ids: string[]; nextCursor: string | null }>;
-
 function parseParams(q: FiltersQuery): {
   limit: number;
-  cursor?: string;
   tags?: string[];
   tagsMode: TagsMode;
   page?: number;
@@ -52,12 +37,6 @@ function parseParams(q: FiltersQuery): {
       : undefined;
   const page = Number.isFinite(pageNum as number) ? (pageNum as number) : 1;
 
-  // cursor
-  const cursor =
-    typeof q.cursor === "string" && q.cursor.trim() !== ""
-      ? q.cursor.trim()
-      : undefined;
-
   // tags
   let tagsArr: string[] | undefined;
   if (typeof q.tags === "string" && q.tags.trim() !== "") {
@@ -71,15 +50,14 @@ function parseParams(q: FiltersQuery): {
   const tagsMode: TagsMode =
     q.tagsMode === "all" || q.tagsMode === "any" ? q.tagsMode : "any";
 
-  return { limit, page, cursor, tags: tagsArr, tagsMode };
+  return { limit, page, tags: tagsArr, tagsMode };
 }
 
 function buildFilter(params: {
-  cursor?: string;
   tags?: string[];
   tagsMode: TagsMode;
 }): Record<string, unknown> {
-  const { cursor, tags, tagsMode } = params;
+  const { tags, tagsMode } = params;
   const now = new Date();
 
   const filter: Record<string, unknown> = {
@@ -88,19 +66,6 @@ function buildFilter(params: {
 
   if (tags && tags.length) {
     filter.tags = tagsMode === "all" ? { $all: tags } : { $in: tags };
-  }
-
-  if (cursor) {
-    const cur = decodeCursor(cursor);
-    if (cur) {
-      filter.$or = [
-        { createdAt: { $lt: new Date(cur.createdAt) } },
-        {
-          createdAt: new Date(cur.createdAt),
-          _id: { $lt: new Types.ObjectId(cur.id) },
-        },
-      ];
-    }
   }
 
   return filter;
@@ -142,29 +107,6 @@ export const getShortById = async (id: string): Promise<IShort | null> => {
   }).lean<IShort | null>();
 };
 
-export const getSequence = async (q: FiltersQuery): SeqResult => {
-  const { limit, cursor, tags, tagsMode } = parseParams(q);
-  const filter = buildFilter({ cursor, tags, tagsMode });
-
-  const docs = await ShortModel.find(filter)
-    .select({ _id: 1, publishedAt: 1 })
-    .sort({ publishedAt: -1, _id: -1 })
-    .limit(limit + 1)
-    .lean<{ _id: Types.ObjectId; publishedAt: Date }[]>();
-
-  const hasMore = docs.length > limit;
-  const items = hasMore ? docs.slice(0, limit) : docs;
-
-  const nextCursor = hasMore
-    ? encodeCursor(
-        items[items.length - 1].publishedAt,
-        String(items[items.length - 1]._id)
-      )
-    : null;
-
-  return { ids: items.map((d) => String(d._id)), nextCursor };
-};
-
 export const createShort = async (
   payload: Partial<IShort>
 ): Promise<IShort> => {
@@ -200,136 +142,84 @@ export const topTags = async (
   return agg as { tag: string; count: number }[];
 };
 
-export const shortsAroundService = async ({
-  id,
-  before,
-  after,
-}: AroundArgs): Promise<AroundResult> => {
-  if (!Types.ObjectId.isValid(id)) throw HttpError(400, "Invalid id");
+export const getBookmarkedShortsService = async (
+  shortIds: (Types.ObjectId | string)[],
+  options: { limit: number; page: number }
+): Promise<{ shorts: IShort[]; total: number; cleanIds: Types.ObjectId[] }> => {
+  const { limit, page } = options;
+  const skip = (page - 1) * limit;
 
-  const center = await ShortModel.findOne({ _id: id /* , published: true */ })
-    .lean()
-    .exec();
-  if (!center) throw HttpError(404, "Short not found");
-
-  // новіші за центр (йдуть "вище" у фіді)
-  const newerQuery = {
-    $or: [
-      { publishedAt: { $gt: center.publishedAt } },
-      {
-        $and: [
-          { publishedAt: center.publishedAt },
-          { _id: { $gt: center._id } },
-        ],
-      },
-    ],
-    // + будь-які додаткові фільтри (наприклад, isPublished)
-  };
-
-  // старіші за центр (йдуть "нижче" у фіді)
-  const olderQuery = {
-    $or: [
-      { publishedAt: { $lt: center.publishedAt } },
-      {
-        $and: [
-          { publishedAt: center.publishedAt },
-          { _id: { $lt: center._id } },
-        ],
-      },
-    ],
-  };
-
-  const [beforeDocs, afterDocs] = await Promise.all([
-    ShortModel.find(newerQuery)
-      .sort({ publishedAt: 1, _id: 1 })
-      .limit(before)
-      .lean()
-      .exec(),
-    ShortModel.find(olderQuery)
+  const [shorts, total] = await Promise.all([
+    ShortModel.find({ _id: { $in: shortIds } }, "-updatedAt")
       .sort({ publishedAt: -1, _id: -1 })
-      .limit(after)
-      .lean()
+      .skip(skip)
+      .limit(limit)
       .exec(),
+    ShortModel.countDocuments({ _id: { $in: shortIds } }),
   ]);
 
-  // курсори
-  let prevCursor: string | undefined;
-  let nextCursor: string | undefined;
+  // чистимо ті id, яких вже немає в базі
+  const cleanIds = shorts.map((s) => s._id);
 
-  if (beforeDocs.length === before && beforeDocs.length > 0) {
-    // ще є "новіші" за поточну голову
-    prevCursor = encodeCur(beforeDocs[beforeDocs.length - 1], "prev");
-  } else if (beforeDocs.length === 0) {
-    // якщо зовсім нема новіших, можна лишити undefined
-  }
-
-  if (afterDocs.length === after && afterDocs.length > 0) {
-    // ще є "старіші" за поточний хвіст
-    nextCursor = encodeCur(afterDocs[afterDocs.length - 1], "next");
-  }
-  console.log(">>> around prevCursor", prevCursor);
-  console.log(">>> around nextCursor", nextCursor);
-  return {
-    center,
-    before: beforeDocs.reverse(),
-    after: afterDocs,
-    prevCursor,
-    nextCursor,
-  };
+  return { shorts, total, cleanIds };
 };
 
-export const shortsPageService = async ({
-  cursor,
-  limit,
-}: PageArgs): Promise<PageResult> => {
-  if (!cursor) throw HttpError(400, "Cursor is required");
-  const { t, id, d } = decodeCur(cursor);
+export const getWatchedShortsService = async (
+  watched: IUserWatched[],
+  options: { limit: number; page: number }
+): Promise<{ shorts: IShort[]; total: number; cleanIds: Types.ObjectId[] }> => {
+  const { limit, page } = options;
+  const skip = (page - 1) * limit;
 
-  const cmp =
-    d === "next"
-      ? {
-          // старіші (рух вниз)
-          $or: [
-            { publishedAt: { $lt: t } },
-            { $and: [{ publishedAt: t }, { _id: { $lt: id } }] },
-          ],
-        }
-      : {
-          // новіші (рух вгору)
-          $or: [
-            { publishedAt: { $gt: t } },
-            { $and: [{ publishedAt: t }, { _id: { $gt: id } }] },
-          ],
-        };
+  const ids = watched.map((w) => w.id);
 
-  const items = await ShortModel.find(cmp)
-    .sort(
-      d === "next" ? { publishedAt: -1, _id: -1 } : { publishedAt: 1, _id: 1 }
-    )
-    .limit(limit)
-    .lean()
-    .exec();
+  const [shorts, total] = await Promise.all([
+    ShortModel.find({ _id: { $in: ids } }, "-updatedAt")
+      .sort({ publishedAt: -1, _id: -1 })
+      .skip(skip)
+      .limit(limit)
+      .exec(),
+    ShortModel.countDocuments({ _id: { $in: ids } }),
+  ]);
 
-  if (!items.length) {
-    return { items: [], nextCursor: undefined, prevCursor: undefined };
+  const cleanIds = shorts.map((s) => s._id);
+
+  return { shorts, total, cleanIds };
+};
+
+export const toggleLikeShortService = async (
+  userId: Types.ObjectId | string,
+  shortId: Types.ObjectId | string
+): Promise<{ action: "liked" | "unliked" }> => {
+  const short = await ShortModel.findById(shortId);
+  if (!short) throw new Error("Short not found");
+
+  const hasLiked = short.likedBy?.some(
+    (id) => id.toString() === userId.toString()
+  );
+
+  if (hasLiked) {
+    await ShortModel.findByIdAndUpdate(shortId, {
+      $pull: { likedBy: userId },
+    });
+    return { action: "unliked" };
+  } else {
+    await ShortModel.findByIdAndUpdate(shortId, {
+      $addToSet: { likedBy: userId },
+    });
+    return { action: "liked" };
   }
-
-  // завжди повертаємо обидва курсори
-  const nextCursor = encodeCur(items[items.length - 1], "next");
-  const prevCursor = encodeCur(items[0], "prev");
-
-  return { items, nextCursor, prevCursor };
 };
 
 export default {
   listShorts,
   getShortsTotalService,
   getShortById,
-  getSequence,
   createShort,
   updateShort,
   deleteShort,
   topTags,
-  shortsAroundService,
-  shortsPageService,
+  getBookmarkedShortsService,
+  getWatchedShortsService,
+  toggleLikeShortService,
 };

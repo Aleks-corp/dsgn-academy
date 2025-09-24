@@ -13,8 +13,7 @@ const videoSchema = new Schema<IVideo>(
     duration: { type: String, required: true },
     free: { type: Boolean, required: true },
     recommended: { type: Boolean, required: true },
-    favoritedBy: [{ type: Schema.Types.ObjectId, ref: "user" }],
-    watchedBy: [{ type: Schema.Types.ObjectId, ref: "user" }],
+    likedBy: [{ type: Schema.Types.ObjectId, ref: "user" }],
     publishedAt: { type: Date },
   },
   { timestamps: true }

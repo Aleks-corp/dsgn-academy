@@ -19,8 +19,7 @@ const courseSchema = new Schema<ICourse>(
     description: { type: String, required: true },
     category: { type: [String], required: true },
     videos: { type: [videoSchema], required: true },
-    favoritedBy: [{ type: Schema.Types.ObjectId, ref: "user" }],
-    watchedBy: [{ type: Schema.Types.ObjectId, ref: "user" }],
+    likedBy: [{ type: Schema.Types.ObjectId, ref: "user" }],
     publishedAt: { type: Date },
   },
   { timestamps: true }

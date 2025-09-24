@@ -2,6 +2,13 @@ import type { Request, Response } from "express";
 import ctrlWrapper from "../decorators/ctrlWrapper.js";
 import { shortService } from "../services/index.js";
 import { HttpError } from "../utils/index.js";
+import {
+  toggleBookmarkedShortService,
+  updateBookmarkedShortsService,
+  updateWatchedShortsService,
+  syncWatchedShortsService,
+} from "../services/user.service.js";
+import type { IShort } from "../types/short.type.js";
 
 const getShortsList = async (
   req: Request,
@@ -46,31 +53,6 @@ export const getShortsCounts = async (
   });
 };
 
-const sequence = async (req: Request, res: Response): Promise<void> => {
-  const { limit, cursor, tags, tagsMode } = req.query;
-
-  const filtersQuery: Record<string, unknown> = {};
-  if (typeof tags === "string" && tags.trim() !== "")
-    filtersQuery.tags = tags.trim();
-  if (typeof cursor === "string" && cursor.trim() !== "")
-    filtersQuery.cursor = cursor.trim();
-  if (
-    typeof tagsMode === "string" &&
-    (tagsMode === "any" || tagsMode === "all")
-  ) {
-    filtersQuery.tagsMode = tagsMode;
-  }
-  if (
-    typeof limit === "string" &&
-    limit.trim() !== "" &&
-    Number.isFinite(Number(limit))
-  ) {
-    filtersQuery.limit = Number(limit);
-  }
-  const data = await shortService.getSequence(filtersQuery);
-  res.json(data);
-};
-
 const getShortsById = async (req: Request, res: Response): Promise<void> => {
   const doc = await shortService.getShortById(req.params.id);
   if (!doc) throw HttpError(404, "NotFound");
@@ -102,32 +84,142 @@ const getTopTags = async (
   res.json({ tags: data });
 };
 
-const getShortsAround = async (req: Request, res: Response): Promise<void> => {
-  const { id } = req.params;
-  const before = Math.max(0, Number(req.query.before) || 3);
-  const after = Math.max(0, Number(req.query.after) || 3);
+const getBookmarkedShorts = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const user = req.user;
+  if (!user) throw HttpError(401);
 
-  const data = await shortService.shortsAroundService({ id, before, after });
-  res.json(data); // { center, before, after, prevCursor?, nextCursor? }
+  const { limit = "9", page = "1" } = req.query;
+  const perPage = Math.max(1, Number(limit));
+  const currentPage = Math.max(1, Number(page));
+  const shortIds = user.bookmarkedShorts || [];
+  if (shortIds.length === 0) throw HttpError(404, "No shorts found");
+
+  const { shorts, total, cleanIds } =
+    await shortService.getBookmarkedShortsService(shortIds, {
+      limit: perPage,
+      page: currentPage,
+    });
+
+  if (cleanIds.length !== (user.bookmarkedShorts?.length || 0)) {
+    await updateBookmarkedShortsService(cleanIds, user._id);
+  }
+
+  res.json({
+    shorts: shorts.map((s: IShort) => ({
+      ...s.toObject(),
+      bookmarked: true,
+      watched: {
+        progress:
+          user.watchedShorts?.find((w) => w.id.toString() === s._id.toString())
+            ?.currentTime || 0,
+      },
+    })),
+    total,
+    page: currentPage,
+    limit: perPage,
+    hasMore: currentPage * perPage < shortIds.length,
+  });
 };
 
-const getShortsPage = async (req: Request, res: Response): Promise<void> => {
-  const cursor = String(req.query.cursor || "");
-  const limit = Math.min(50, Math.max(1, Number(req.query.limit) || 10));
+const toggleBookmarkedShort = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const { id: shortId } = req.params;
+  const userId = req.user?._id;
+  if (!userId) throw HttpError(401);
 
-  const data = await shortService.shortsPageService({ cursor, limit });
-  res.json(data); // { items, nextCursor? }
+  const { action } = await toggleBookmarkedShortService(userId, shortId);
+
+  res.json({ message: `Short ${action} bookmark` });
+};
+
+const getWatchedShorts = async (req: Request, res: Response): Promise<void> => {
+  const user = req.user;
+  if (!user) throw HttpError(401);
+
+  const { limit = "9", page = "1" } = req.query;
+  const perPage = Math.max(1, Number(limit));
+  const currentPage = Math.max(1, Number(page));
+  const shortIds = user.watchedShorts || [];
+  if (shortIds.length === 0) throw HttpError(404, "No shorts found");
+
+  const { shorts, total, cleanIds } =
+    await shortService.getWatchedShortsService(shortIds, {
+      limit: perPage,
+      page: currentPage,
+    });
+
+  if (cleanIds.length !== (user.watchedShorts?.length || 0)) {
+    await syncWatchedShortsService(cleanIds, user._id);
+  }
+
+  res.json({
+    shorts: shorts.map((s: IShort) => {
+      const progress = user.watchedShorts?.find(
+        (w) => w.id.toString() === s._id.toString()
+      );
+      return {
+        ...s.toObject(),
+        watched: { progress: progress?.currentTime || 0 },
+        bookmarked: user.bookmarkedShorts?.some(
+          (b) => b.toString() === s._id.toString()
+        ),
+      };
+    }),
+    total,
+    page: currentPage,
+    limit: perPage,
+    hasMore: currentPage * perPage < shortIds.length,
+  });
+};
+
+const updateWatchedShort = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const { id: shortId } = req.params;
+  const userId = req.user?._id;
+  const { currentTime } = req.body;
+
+  if (!userId) throw HttpError(401);
+  if (typeof currentTime !== "number") {
+    throw HttpError(400, "currentTime must be a number");
+  }
+
+  const updated = await updateWatchedShortsService(
+    userId,
+    shortId,
+    currentTime
+  );
+
+  res.json({ message: "Progress updated", watched: updated });
+};
+
+const toggleLikeShort = async (req: Request, res: Response): Promise<void> => {
+  const { id: shortId } = req.params;
+  const userId = req.user?._id;
+  if (!userId) throw HttpError(401);
+
+  const { action } = await shortService.toggleLikeShortService(userId, shortId);
+
+  res.json({ message: `Short ${action} like` });
 };
 
 export default {
   getShortsList: ctrlWrapper(getShortsList),
-  sequence: ctrlWrapper(sequence),
   getShortsCounts: ctrlWrapper(getShortsCounts),
   getShortsById: ctrlWrapper(getShortsById),
   createShorts: ctrlWrapper(createShorts),
   updateShorts: ctrlWrapper(updateShorts),
   removeShorts: ctrlWrapper(removeShorts),
   getTopTags: ctrlWrapper(getTopTags),
-  getShortsAround: ctrlWrapper(getShortsAround),
-  getShortsPage: ctrlWrapper(getShortsPage),
+  getBookmarkedShorts: ctrlWrapper(getBookmarkedShorts),
+  toggleBookmarkedShort: ctrlWrapper(toggleBookmarkedShort),
+  getWatchedShorts: ctrlWrapper(getWatchedShorts),
+  updateWatchedShort: ctrlWrapper(updateWatchedShort),
+  toggleLikeShort: ctrlWrapper(toggleLikeShort),
 };

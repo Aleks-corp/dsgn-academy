@@ -1,4 +1,4 @@
-import type { ObjectId, Document, Types } from "mongoose";
+import type { Types, Document } from "mongoose";
 
 export type OAuthProvider = "google" | "linkedin";
 
@@ -14,13 +14,13 @@ export interface IUserAccount {
   providerId: string;
 }
 
-export interface IUserFavWatched {
-  id: Types.ObjectId;
-  updatedAt: Date;
+export interface IUserWatched {
+  id: Types.ObjectId | string;
+  currentTime?: number;
 }
 
 export interface IUser extends Document {
-  _id: string | ObjectId;
+  _id: string | Types.ObjectId;
   name: string;
   avatar: string;
   email: string;
@@ -45,10 +45,12 @@ export interface IUser extends Document {
   verificationToken: string;
   resetPasswordToken?: string;
   resetPasswordExpires?: number;
-  favoritesCourses?: IUserFavWatched[];
-  favoritesVideos?: IUserFavWatched[];
-  watchedCourses?: IUserFavWatched[];
-  watchedVideos?: IUserFavWatched[];
+  bookmarkedCourses?: Types.ObjectId[];
+  bookmarkedVideos?: Types.ObjectId[];
+  bookmarkedShorts?: Types.ObjectId[];
+  watchedCourses?: IUserWatched[];
+  watchedVideos?: IUserWatched[];
+  watchedShorts?: IUserWatched[];
   createdAt?: Date;
   updatedAt?: Date;
 }

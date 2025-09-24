@@ -1,6 +1,6 @@
 import "dotenv/config";
 import type { Request, Response } from "express";
-import type { ObjectId } from "mongoose";
+import type { Types } from "mongoose";
 
 import { HttpError } from "../utils/index.js";
 import { ctrlWrapper } from "../decorators/index.js";
@@ -126,7 +126,7 @@ export const oauthUpsert = async (
 
 const logout = async (req: Request, res: Response): Promise<void> => {
   const { _id } = req.user;
-  const message = await logoutService(_id as ObjectId);
+  const message = await logoutService(_id as Types.ObjectId);
   res.status(204).json(message);
 };
 
@@ -194,7 +194,7 @@ const resetPassword = async (req: Request, res: Response): Promise<void> => {
 
 const changeName = async (req: Request, res: Response): Promise<void> => {
   const { name } = req.body;
-  const userId = req.user._id as ObjectId;
+  const userId = req.user._id as Types.ObjectId;
   const newName = await changeNameService({
     name,
     userId,
@@ -204,7 +204,7 @@ const changeName = async (req: Request, res: Response): Promise<void> => {
 
 const changePassword = async (req: Request, res: Response): Promise<void> => {
   const { oldPassword, newPassword } = req.body;
-  const userId = req.user._id as ObjectId;
+  const userId = req.user._id as Types.ObjectId;
   const message = await changePasswordService({
     oldPassword,
     newPassword,
@@ -215,7 +215,7 @@ const changePassword = async (req: Request, res: Response): Promise<void> => {
 
 const createPayment = async (req: Request, res: Response): Promise<void> => {
   const data: PaymentData = req.body;
-  const userId = req.user._id as ObjectId;
+  const userId = req.user._id as Types.ObjectId;
   const paymentData = await createPaymentService({ data, userId });
   res.json(paymentData);
 };
@@ -239,7 +239,9 @@ const paymentWebhook = async (req: Request, res: Response): Promise<void> => {
 };
 
 const paymentStatus = async (req: Request, res: Response): Promise<void> => {
-  const subscription = await paymentStatusService(req.user._id as ObjectId);
+  const subscription = await paymentStatusService(
+    req.user._id as Types.ObjectId
+  );
   res.json({ subscription });
 };
 

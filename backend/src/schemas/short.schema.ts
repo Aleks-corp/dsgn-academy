@@ -9,10 +9,6 @@ const shortAddSchema = Joi.object({
     "string.empty": `'description' cannot be an empty field`,
     "any.required": `missing required 'description' field`,
   }),
-  // category: Joi.array().items(Joi.string()).required().messages({
-  //   "string.empty": `'category' cannot be an empty field`,
-  //   "any.required": `missing required 'category' field`,
-  // }),
   tags: Joi.array().items(Joi.string()).required().messages({
     "string.empty": `'filter' cannot be an empty field`,
     "any.required": `missing required 'filter' field`,
@@ -21,6 +17,16 @@ const shortAddSchema = Joi.object({
     "string.empty": `'video' cannot be an empty field`,
     "any.required": `missing required 'video' field`,
   }),
+  files: Joi.object({
+    link: Joi.string().uri().required().messages({
+      "string.empty": `'files.link' cannot be empty`,
+      "any.required": `missing required 'files.link' field`,
+    }),
+    type: Joi.string().required().messages({
+      "string.empty": `'files.type' cannot be empty`,
+      "any.required": `missing required 'files.type' field`,
+    }),
+  }).required(),
   originalVideo: Joi.string().messages({
     "string.empty": `'originalVideo' cannot be an empty field`,
   }),
@@ -60,6 +66,16 @@ const shortUpdateSchema = Joi.object({
     "string.empty": `'video' cannot be an empty field`,
     "any.required": `missing required 'video' field`,
   }),
+  files: Joi.object({
+    link: Joi.string().uri().required().messages({
+      "string.empty": `'files.link' cannot be empty`,
+      "any.required": `missing required 'files.link' field`,
+    }),
+    type: Joi.string().required().messages({
+      "string.empty": `'files.type' cannot be empty`,
+      "any.required": `missing required 'files.type' field`,
+    }),
+  }).required(),
   originalVideo: Joi.string().messages({
     "string.empty": `'originalVideo' cannot be an empty field`,
   }),
