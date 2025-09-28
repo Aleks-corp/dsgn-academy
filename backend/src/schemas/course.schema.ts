@@ -69,6 +69,7 @@ const courseUpdateSchema = Joi.object({
   videos: Joi.array()
     .items(
       Joi.object({
+        _id: Joi.string().optional(),
         title: Joi.string().required().messages({
           "string.empty": `'description' cannot be an empty field`,
           "any.required": `missing required 'url' field`,
