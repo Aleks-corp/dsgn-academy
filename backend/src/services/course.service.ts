@@ -2,7 +2,6 @@ import type { FilterQuery, Types } from "mongoose";
 
 import { CourseModel } from "../models/index.js";
 import type { ICourse } from "../types/course.type.js";
-import type { IUserWatched } from "../types/user.type.js";
 
 const getCoursesService = async (
   filter: FilterQuery<ICourse>,
@@ -87,7 +86,7 @@ export const getBookmarkedCoursesService = async (
 };
 
 export const getWatchedCoursesService = async (
-  watched: IUserWatched[],
+  watched: { courseId: Types.ObjectId; videoId: Types.ObjectId }[],
   options: { limit: number; page: number }
 ): Promise<{
   courses: ICourse[];
@@ -97,7 +96,7 @@ export const getWatchedCoursesService = async (
   const { limit, page } = options;
   const skip = (page - 1) * limit;
 
-  const ids = watched.map((w) => w.id);
+  const ids = [...new Set(watched.map((w) => w.courseId))];
 
   const [courses, total] = await Promise.all([
     CourseModel.find({ _id: { $in: ids } }, "-createdAt -updatedAt")
@@ -108,9 +107,7 @@ export const getWatchedCoursesService = async (
     CourseModel.countDocuments({ _id: { $in: ids } }),
   ]);
 
-  const cleanIds = courses.map((c) => c._id);
-
-  return { courses, total, cleanIds };
+  return { courses, total, cleanIds: courses.map((c) => c._id) };
 };
 
 export const toggleLikeCourseService = async (

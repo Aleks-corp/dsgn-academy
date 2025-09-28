@@ -24,14 +24,15 @@ const AccountSchema = new Schema(
 const WatchedVideoSchema = new Schema(
   {
     id: { type: Types.ObjectId, ref: "video", required: true },
-    currentTime: { type: Number, default: 0 }, // секунди
+    currentTime: { type: Number, default: 0 },
   },
   { _id: false }
 );
 
 const WatchedCourseSchema = new Schema(
   {
-    id: { type: Types.ObjectId, ref: "course", required: true },
+    courseId: { type: Types.ObjectId, ref: "course", required: true },
+    videoId: { type: Types.ObjectId, required: true },
     currentTime: { type: Number, default: 0 },
   },
   { _id: false }

@@ -1,4 +1,5 @@
 import type { Request, Response } from "express";
+import { Types } from "mongoose";
 import type { ICourse } from "../types/course.type.js";
 import { courseServices } from "../services/index.js";
 import { ctrlWrapper } from "../decorators/index.js";
@@ -8,7 +9,6 @@ import {
   toggleBookmarkedCourseService,
   updateBookmarkedCoursesService,
   updateWatchedCoursesService,
-  syncWatchedCoursesService,
 } from "../services/user.service.js";
 
 const {
@@ -57,14 +57,18 @@ export const getCourses = async (
       const bookmarked = user?.bookmarkedCourses?.some(
         (b) => b.toString() === c._id.toString()
       );
-      const progress = user?.watchedCourses?.find(
-        (w) => w.id.toString() === c._id.toString()
-      );
-      return {
-        ...c.toObject(),
-        bookmarked,
-        watched: { progress: progress?.currentTime || 0 },
-      };
+      const videos = c.videos.map((v) => {
+        const progress = user?.watchedCourses?.find(
+          (w) =>
+            w.courseId.toString() === c._id.toString() &&
+            w.videoId.toString() === v._id.toString()
+        );
+        return {
+          ...v.toObject(),
+          watched: { progress: progress?.currentTime || 0 },
+        };
+      });
+      return { ...c.toObject(), bookmarked, videos };
     }),
     total,
     page: currentPage,
@@ -91,22 +95,24 @@ export const getCourseById = async (
   const { id } = req.params;
   const user = req.user;
   const course = await getCourseByIdService(id);
-  if (!course) {
-    res.status(404).json({ error: "Course not found" });
-    return;
-  }
+  if (!course) throw HttpError(404, "Course not found");
+
   const bookmarked = user?.bookmarkedCourses?.some(
     (b) => b.toString() === course._id.toString()
   );
-  const progress = user?.watchedCourses?.find(
-    (w) => w.id.toString() === course._id.toString()
-  );
-
-  res.json({
-    ...course.toObject(),
-    bookmarked,
-    watched: { progress: progress?.currentTime || 0 },
+  const videos = course.videos.map((v) => {
+    const progress = user?.watchedCourses?.find(
+      (w) =>
+        w.courseId.toString() === course._id.toString() &&
+        w.videoId.toString() === v._id.toString()
+    );
+    return {
+      ...v.toObject(),
+      watched: { progress: progress?.currentTime || 0 },
+    };
   });
+
+  res.json({ ...course.toObject(), bookmarked, videos });
 };
 
 export const addCourse = async (req: Request, res: Response): Promise<void> => {
@@ -171,8 +177,9 @@ export const getBookmarkedCourses = async (
       bookmarked: true,
       watched: {
         progress:
-          user.watchedCourses?.find((w) => w.id.toString() === c._id.toString())
-            ?.currentTime || 0,
+          user.watchedCourses?.find(
+            (w) => w.courseId.toString() === c._id.toString()
+          )?.currentTime || 0,
       },
     })),
     total,
@@ -205,35 +212,40 @@ export const getWatchedCourses = async (
   const { limit = "9", page = "1" } = req.query;
   const perPage = Math.max(1, Number(limit));
   const currentPage = Math.max(1, Number(page));
-  const courseIds = user.watchedCourses || [];
-  if (courseIds.length === 0) throw HttpError(404, "No courses found");
 
-  const { courses, total, cleanIds } = await getWatchedCoursesService(
-    courseIds,
-    { limit: perPage, page: currentPage }
+  const { courses, total } = await getWatchedCoursesService(
+    (user.watchedCourses || []).map((w) => ({
+      courseId: new Types.ObjectId(w.courseId),
+      videoId: new Types.ObjectId(w.videoId),
+    })),
+    {
+      limit: perPage,
+      page: currentPage,
+    }
   );
-
-  if (cleanIds.length !== (user.watchedCourses?.length || 0)) {
-    await syncWatchedCoursesService(cleanIds, user._id);
-  }
 
   res.json({
     courses: courses.map((c: ICourse) => {
-      const progress = user.watchedCourses?.find(
-        (w) => w.id.toString() === c._id.toString()
+      const bookmarked = user.bookmarkedCourses?.some(
+        (b) => b.toString() === c._id.toString()
       );
-      return {
-        ...c.toObject(),
-        watched: { progress: progress?.currentTime || 0 },
-        bookmarked: user.bookmarkedCourses?.some(
-          (b) => b.toString() === c._id.toString()
-        ),
-      };
+      const videos = c.videos.map((v) => {
+        const progress = user.watchedCourses?.find(
+          (w) =>
+            w.courseId.toString() === c._id.toString() &&
+            w.videoId.toString() === v._id.toString()
+        );
+        return {
+          ...v.toObject(),
+          watched: { progress: progress?.currentTime || 0 },
+        };
+      });
+      return { ...c.toObject(), bookmarked, videos };
     }),
     total,
     page: currentPage,
     limit: perPage,
-    hasMore: currentPage * perPage < courseIds.length,
+    hasMore: currentPage * perPage < (user.watchedCourses?.length || 0),
   });
 };
 
@@ -242,17 +254,18 @@ export const updateWatchedCourse = async (
   res: Response
 ): Promise<void> => {
   const { id: courseId } = req.params;
+  const { videoId, currentTime } = req.body;
   const userId = req.user?._id;
-  const { currentTime } = req.body;
 
   if (!userId) throw HttpError(401);
-  if (typeof currentTime !== "number") {
+  if (!videoId) throw HttpError(400, "videoId is required");
+  if (typeof currentTime !== "number")
     throw HttpError(400, "currentTime must be a number");
-  }
 
   const updated = await updateWatchedCoursesService(
     userId,
     courseId,
+    videoId as string,
     currentTime
   );
 

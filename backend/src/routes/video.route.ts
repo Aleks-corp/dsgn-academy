@@ -42,7 +42,12 @@ videosRouter.get(
 videosRouter.get("/bookmarked", authenticateUser, getBookmarkedVideos);
 videosRouter.patch("/bookmarked/:id", authenticateUser, toggleBookmarkedVideo);
 videosRouter.get("/watched", authenticateUser, getWatchedVideos);
-videosRouter.patch("/watched/:id", authenticateUser, updateWatchedVideo);
+videosRouter.patch(
+  "/watched/:id",
+  isValidId,
+  authenticateUser,
+  updateWatchedVideo
+);
 videosRouter.patch("/like/:id", isValidId, authenticateUser, toggleLikeVideo);
 
 videosRouter.get("/:id", authenticateToken, isValidId, getVideoById);

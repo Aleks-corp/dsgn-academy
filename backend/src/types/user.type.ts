@@ -19,6 +19,12 @@ export interface IUserWatched {
   currentTime?: number;
 }
 
+export interface IUserWatchedCourse {
+  courseId: Types.ObjectId | string;
+  videoId: Types.ObjectId | string;
+  currentTime: number;
+}
+
 export interface IUser extends Document {
   _id: string | Types.ObjectId;
   name: string;
@@ -48,7 +54,7 @@ export interface IUser extends Document {
   bookmarkedCourses?: Types.ObjectId[];
   bookmarkedVideos?: Types.ObjectId[];
   bookmarkedShorts?: Types.ObjectId[];
-  watchedCourses?: IUserWatched[];
+  watchedCourses?: IUserWatchedCourse[];
   watchedVideos?: IUserWatched[];
   watchedShorts?: IUserWatched[];
   createdAt?: Date;

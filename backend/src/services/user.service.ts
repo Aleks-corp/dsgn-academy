@@ -4,7 +4,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 // import axios from "axios";
 import { nanoid } from "nanoid";
-import type { Types } from "mongoose";
+import { Types } from "mongoose";
 
 import type {
   IUser,
@@ -632,31 +632,36 @@ export const updateBookmarkedCoursesService = async (
 export const updateWatchedCoursesService = async (
   userId: Types.ObjectId | string,
   courseId: Types.ObjectId | string,
+  videoId: Types.ObjectId | string,
   currentTime: number
-): Promise<IUserWatched> => {
+): Promise<{
+  courseId: Types.ObjectId | string;
+  videoId: Types.ObjectId | string;
+  currentTime: number;
+}> => {
   const user = await UserModel.findById(userId);
   if (!user) throw HttpError(404, "User not found");
 
   const watched = user.watchedCourses || [];
-  const idx = watched.findIndex((w) => w.id.toString() === courseId.toString());
+  const idx = watched.findIndex(
+    (w) =>
+      w.courseId.toString() === courseId.toString() &&
+      w.videoId.toString() === videoId.toString()
+  );
 
   if (idx >= 0) {
     watched[idx].currentTime = currentTime;
   } else {
-    watched.push({ id: courseId, currentTime });
+    watched.push({
+      courseId: new Types.ObjectId(courseId),
+      videoId: new Types.ObjectId(videoId),
+      currentTime,
+    });
   }
 
   await UserModel.findByIdAndUpdate(userId, { watchedCourses: watched });
 
-  return { id: courseId, currentTime };
-};
-
-export const syncWatchedCoursesService = async (
-  cleanIds: (Types.ObjectId | string)[],
-  userId: Types.ObjectId | string
-): Promise<void> => {
-  const watched = cleanIds.map((id) => ({ id: id.toString(), currentTime: 0 }));
-  await UserModel.findByIdAndUpdate(userId, { watchedCourses: watched });
+  return { courseId, videoId, currentTime };
 };
 
 export const toggleBookmarkedShortService = async (

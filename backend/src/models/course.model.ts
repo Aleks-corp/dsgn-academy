@@ -1,17 +1,14 @@
 import { Schema, model } from "mongoose";
 import type { ICourseVideo, ICourse } from "../types/course.type.js";
 
-const videoSchema = new Schema<ICourseVideo>(
-  {
-    title: { type: String, required: true },
-    url: { type: String, required: true },
-    originalUrl: { type: String },
-    description: { type: String, required: true },
-    cover: { type: String, required: true },
-    duration: { type: String, required: true },
-  },
-  { _id: false }
-);
+const videoSchema = new Schema<ICourseVideo>({
+  title: { type: String, required: true },
+  url: { type: String, required: true },
+  originalUrl: { type: String },
+  description: { type: String, required: true },
+  cover: { type: String, required: true },
+  duration: { type: String, required: true },
+});
 
 const courseSchema = new Schema<ICourse>(
   {
