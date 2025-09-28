@@ -1,12 +1,11 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { useSearchParams } from "next/navigation";
 
-import { fetchCourses } from "@/redux/courses/course.thunk";
+import { fetchBookMarkedCourses } from "@/redux/courses/course.thunk";
 import {
-  selectCourses,
+  selectBookmarkedCourses,
   selectIsLoadingCourses,
 } from "@/selectors/courses.selector";
 import { useWindowWidth } from "@/hooks/useWindowWidth";
@@ -15,17 +14,15 @@ import CoursesSection from "@/components/courses/CoursesSection";
 import NotFoundComponent from "@/components/notFound/NotFound";
 import { VideoCardsSkeleton } from "@/components/skeleton/VideoCardSkeleton";
 import { selectVideosError } from "@/redux/selectors/videos.selectors";
-import { clearCourses } from "@/redux/courses/courseSlice";
 
 interface FetchCourseResponse {
   total: number;
   courses: unknown[];
 }
 
-function CoursesPage() {
+function BookmarkedCourses() {
   const dispatch = useAppDispatch();
-  const searchParams = useSearchParams();
-  const courses = useAppSelector(selectCourses);
+  const courses = useAppSelector(selectBookmarkedCourses);
   const isLoadingVideo = useAppSelector(selectIsLoadingCourses);
   const error = useAppSelector(selectVideosError);
   const { width } = useWindowWidth();
@@ -39,27 +36,17 @@ function CoursesPage() {
   const initialLimit = cols * 3;
   const loadMoreCount = cols * 2;
 
-  const makeQuery = useCallback(
-    (page: number, limit: number) => ({
-      category: searchParams.get("category") || "",
-      page,
-      limit,
-    }),
-    [searchParams]
-  );
-
   useEffect(() => {
     pageRef.current = 1;
     setIsLoading(true);
-    dispatch(fetchCourses(makeQuery(1, initialLimit))).then((res) => {
-      const payload = (res as { payload?: FetchCourseResponse }).payload;
-      if (payload?.total) setTotal(payload.total);
-      setIsLoading(false);
-    });
-    return () => {
-      dispatch(clearCourses());
-    };
-  }, [dispatch, initialLimit, makeQuery]);
+    dispatch(fetchBookMarkedCourses({ page: 1, limit: initialLimit })).then(
+      (res) => {
+        const payload = (res as { payload?: FetchCourseResponse }).payload;
+        if (payload?.total) setTotal(payload.total);
+        setIsLoading(false);
+      }
+    );
+  }, [dispatch, initialLimit]);
 
   useEffect(() => {
     if (!loaderRef.current) return;
@@ -75,9 +62,9 @@ function CoursesPage() {
           setIsLoading(true);
           const nextPage = pageRef.current + 1;
           pageRef.current = nextPage;
-          dispatch(fetchCourses(makeQuery(nextPage, loadMoreCount))).finally(
-            () => setIsLoading(false)
-          );
+          dispatch(
+            fetchBookMarkedCourses({ page: nextPage, limit: loadMoreCount })
+          ).finally(() => setIsLoading(false));
         }
       },
       { threshold: 1 }
@@ -89,7 +76,7 @@ function CoursesPage() {
     return () => {
       observer.unobserve(current);
     };
-  }, [dispatch, total, makeQuery, loadMoreCount, isLoading, courses.length]);
+  }, [dispatch, total, loadMoreCount, isLoading, courses.length]);
 
   if (isLoadingVideo && !pageRef.current) {
     return (
@@ -107,10 +94,9 @@ function CoursesPage() {
 
   return (
     <div className="flex flex-col gap-8 w-full mx-auto">
-      {/* <FilterSection /> */}
-      <CoursesSection courses={courses} />
+      <CoursesSection courses={courses} isAddHeader={false} />
       <div ref={loaderRef} className="h-20" />
     </div>
   );
 }
-export default CoursesPage;
+export default BookmarkedCourses;

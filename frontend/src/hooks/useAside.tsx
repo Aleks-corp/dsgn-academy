@@ -57,6 +57,10 @@ export function useSelectedPage() {
       setSelectedPage("subscription");
       return;
     }
+    if (pathname === "/profile/bookmarks") {
+      setSelectedPage("bookmarks");
+      return;
+    }
 
     // --- AdminAside ---
     if (pathname === "/da-admin/add/video") {

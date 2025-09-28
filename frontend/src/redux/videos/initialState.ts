@@ -2,6 +2,7 @@ import { VideoState } from "../../types/state.types";
 
 export const initialState: VideoState = {
   videos: [],
+  bookmarkedVideo: [],
   totalHits: 0,
   categories: [],
   filters: [],

@@ -8,9 +8,11 @@ import { VideoCardsSkeleton } from "../skeleton/VideoCardSkeleton";
 export default function VideosSection({
   videos,
   isLoadingVideo,
+  isAddHeader = true,
 }: {
   videos: IVideo[];
   isLoadingVideo: boolean;
+  isAddHeader?: boolean;
 }) {
   const { width } = useWindowWidth();
 
@@ -21,9 +23,11 @@ export default function VideosSection({
   }
   return (
     <section className="w-full">
-      <h2 className="font-medium text-xl leading-7 tracking-thinest mb-4">
-        Останні відео
-      </h2>
+      {isAddHeader && (
+        <h2 className="font-medium text-xl leading-7 tracking-thinest mb-4">
+          Останні відео
+        </h2>
+      )}
       <div
         className={`grid gap-4 mx-auto
           ${cols === 1 ? "grid-cols-1 justify-items-center" : ""}

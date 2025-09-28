@@ -1,10 +1,12 @@
 export interface ICourseVideo {
+  _id?: string;
   title: string;
   description: string;
   url: string;
   originalUrl?: string;
   cover: string;
   duration: string;
+  watched?: { progress: number };
 }
 
 export interface ICourse {
@@ -13,8 +15,7 @@ export interface ICourse {
   description: string;
   category: string[];
   videos: ICourseVideo[];
-  favoritedBy: string[];
-  watchedBy: string[];
+  bookmarked?: boolean;
   publishedAt?: Date;
   createdAt?: Date;
   updatedAt?: Date;

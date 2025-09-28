@@ -4,11 +4,11 @@ import {
   fetchCourses,
   fetchCourseById,
   fetchCoursesCount,
-  // addCourse,
-  addRemoveFavoritesCourse,
+  // toggleLikeCourse,
   deleteCourse,
   editCourse,
   addCourse,
+  fetchBookMarkedCourses,
 } from "./course.thunk";
 import { ICourse } from "../../types/courses.type";
 import { initialState } from "./initialState";
@@ -60,6 +60,30 @@ export const handleFulfilledCourseById = (
   state.selectedCourse = action.payload;
 };
 
+export const handleFulfilledBookmarkedCourses = (
+  state: CourseState,
+  action: PayloadAction<{
+    courses: ICourse[];
+    total: number;
+    page: number;
+  }>
+): void => {
+  if (action.payload.page === 1) {
+    state.bookmarkedCourses = action.payload.courses;
+  } else {
+    const newCourses = action.payload.courses.filter(
+      (newCourse) =>
+        !state.bookmarkedCourses.some(
+          (existingCourse) => existingCourse._id === newCourse._id
+        )
+    );
+    state.bookmarkedCourses = [...state.bookmarkedCourses, ...newCourses];
+  }
+  state.totalHits = action.payload.total;
+  state.error = "";
+  state.isLoading = false;
+};
+
 export const handleFulfilledAddCourse = (
   state: CourseState,
   action: PayloadAction<ICourse>
@@ -82,20 +106,6 @@ export const handleFulfilledEditCourse = (
   }
 };
 
-export const handleFulfilledAddFavorites = (
-  state: CourseState,
-  action: PayloadAction<ICourse>
-): void => {
-  const updatedCourse = action.payload;
-  const index = state.courses.findIndex((i) => i._id === updatedCourse._id);
-  if (index !== -1) {
-    state.courses[index].favoritedBy = updatedCourse.favoritedBy;
-  }
-  if (state.selectedCourse) {
-    state.selectedCourse.favoritedBy = updatedCourse.favoritedBy;
-  }
-};
-
 export const handleFulfilledDeleteCourse = (
   state: CourseState,
   action: PayloadAction<string | undefined>
@@ -115,7 +125,25 @@ const courseSlice = createSlice({
   reducers: {
     clearCourses(state: CourseState) {
       state.courses = [];
-      state.totalCourses = 0;
+      state.totalHits = 0;
+    },
+    clearBookmarkedCourses(state: CourseState) {
+      state.bookmarkedCourses = [];
+      state.totalHits = 0;
+    },
+    toggleCourseBookMarked(state: CourseState, action: PayloadAction<string>) {
+      const index = state.courses.findIndex((i) => i._id === action.payload);
+      if (index !== -1) {
+        state.courses[index].bookmarked = !state.courses[index].bookmarked;
+      }
+      if (state.bookmarkedCourses.length !== 0) {
+        state.bookmarkedCourses = state.bookmarkedCourses.filter(
+          (course) => course._id !== action.payload
+        );
+      }
+      if (state.selectedCourse && state.selectedCourse._id === action.payload) {
+        state.selectedCourse.bookmarked = !state.selectedCourse.bookmarked;
+      }
     },
     setFilter(state: CourseState, action: PayloadAction<string>) {
       state.currentFilter = action.payload;
@@ -143,11 +171,16 @@ const courseSlice = createSlice({
       .addCase(fetchCourseById.pending, handlePending)
       .addCase(fetchCourseById.fulfilled, handleFulfilledCourseById)
       .addCase(fetchCoursesCount.fulfilled, handleFulfilledCoursesCount)
+      .addCase(fetchBookMarkedCourses.pending, handlePending)
+      .addCase(
+        fetchBookMarkedCourses.fulfilled,
+        handleFulfilledBookmarkedCourses
+      )
       .addCase(addCourse.pending, handlePending)
       .addCase(addCourse.fulfilled, handleFulfilledAddCourse)
       .addCase(editCourse.pending, handlePending)
       .addCase(editCourse.fulfilled, handleFulfilledEditCourse)
-      .addCase(addRemoveFavoritesCourse.fulfilled, handleFulfilledAddFavorites)
+      // .addCase(toggleLikeCourse.fulfilled, handleFulfilledToggleLikeCourse)
       .addCase(deleteCourse.pending, handlePending)
       .addCase(deleteCourse.fulfilled, handleFulfilledDeleteCourse)
       .addMatcher(
@@ -163,6 +196,8 @@ const courseSlice = createSlice({
 
 export const {
   clearCourses,
+  clearBookmarkedCourses,
+  toggleCourseBookMarked,
   setFilter,
   clearCourse,
   deleteCourseFavorites,

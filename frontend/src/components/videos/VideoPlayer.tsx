@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { useAppSelector } from "@/redux/hooks";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 
 import Image from "next/image";
-import { selectIsAdmin } from "@/redux/selectors/auth.selectors";
+import { selectIsAdmin, selectUser } from "@/redux/selectors/auth.selectors";
 import Button from "@/components/buttons/Button";
 import { FaTelegramPlane } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
@@ -19,6 +19,9 @@ import { useParams } from "next/navigation";
 import moment from "moment";
 import VidstackPlayer from "../VideoVidstack";
 import VidstackPlayerYoutube from "../VideoVidstackYoutube";
+import getInitialTime from "@/lib/getInitialTime";
+import { updateWatchedVideo } from "@/redux/videos/video.thunk";
+import { setVideoProgress } from "@/redux/videos/videoSlice";
 
 export default function VideoPlayer({
   video,
@@ -27,6 +30,8 @@ export default function VideoPlayer({
   video: IVideo;
   canWatch: boolean;
 }) {
+  const dispatch = useAppDispatch();
+  const user = useAppSelector(selectUser);
   const [expanded, setExpanded] = useState(false);
   const isAdmin = useAppSelector(selectIsAdmin);
   const { id: videoId } = useParams();
@@ -97,6 +102,24 @@ export default function VideoPlayer({
               title={video.title}
               cover={video.cover}
               video={video.video as string}
+              initialTime={
+                video.watched
+                  ? getInitialTime(video.duration, video.watched.progress)
+                  : 0
+              }
+              onProgress={(time) => {
+                if (user) {
+                  dispatch(
+                    setVideoProgress({ videoId: video._id, currentTime: time })
+                  );
+                  dispatch(
+                    updateWatchedVideo({
+                      videoId: video._id,
+                      currentTime: time,
+                    })
+                  );
+                }
+              }}
             />
           )
         ) : (
@@ -104,6 +127,21 @@ export default function VideoPlayer({
             title={video.title}
             cover={video.cover}
             originalUrl={video.originalVideo as string}
+            initialTime={
+              video.watched
+                ? getInitialTime(video.duration, video.watched.progress)
+                : 0
+            }
+            onProgress={(time) => {
+              if (user) {
+                dispatch(
+                  setVideoProgress({ videoId: video._id, currentTime: time })
+                );
+                dispatch(
+                  updateWatchedVideo({ videoId: video._id, currentTime: time })
+                );
+              }
+            }}
             className="absolute top-0 left-0 w-3xs aspect-video"
           />
         )}

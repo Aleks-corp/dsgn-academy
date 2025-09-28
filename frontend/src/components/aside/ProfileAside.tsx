@@ -113,6 +113,41 @@ export default function ProfileAside({ selectedPage, setSelectedPage }: Props) {
             }
           />
         </button>
+        <button
+          type="button"
+          name="bookmarks"
+          className={`w-full cursor-pointer rounded-xl border-[1px] border-background hover:bg-muted-background hover:border-border ${
+            selectedPage === "bookmarks"
+              ? "bg-muted-background border-border"
+              : ""
+          } `}
+          onClick={(e) => {
+            setSelectedPage(e.currentTarget.name);
+          }}
+        >
+          <NavLinkIcon
+            text="Збережене"
+            rout="/profile/bookmarks"
+            icon={
+              <div
+                className={`flex items-center justify-center w-8 h-8 p-1.5 rounded-lg ${
+                  selectedPage === "bookmarks"
+                    ? "bg-icon shadow-icon text-foreground fill-foreground stroke-foreground"
+                    : ""
+                }`}
+              >
+                <MaskIcon
+                  src="/icons/menu-icons/bookmark.svg"
+                  className={
+                    selectedPage === "bookmarks"
+                      ? "text-foreground"
+                      : "text-muted"
+                  }
+                />
+              </div>
+            }
+          />
+        </button>
       </div>
     </aside>
   );

@@ -5,8 +5,8 @@ import {
   fetchVideoById,
   fetchVideosCount,
   addVideo,
-  addRemoveFavoritesVideo,
   deleteVideo,
+  fetchBookMarkedVideos,
 } from "./video.thunk";
 import { IVideo } from "../../types/videos.type";
 import { initialState } from "./initialState";
@@ -44,6 +44,30 @@ export const handleFulfilledVideos = (
         )
     );
     state.videos = [...state.videos, ...newVideos];
+  }
+  state.totalHits = action.payload.total;
+  state.error = "";
+  state.isLoading = false;
+};
+
+export const handleFulfilledBookmarkedVideos = (
+  state: VideoState,
+  action: PayloadAction<{
+    videos: IVideo[];
+    total: number;
+    page: number;
+  }>
+): void => {
+  if (action.payload.page === 1) {
+    state.bookmarkedVideo = action.payload.videos;
+  } else {
+    const newVideos = action.payload.videos.filter(
+      (newVideo) =>
+        !state.bookmarkedVideo.some(
+          (existingVideo) => existingVideo._id === newVideo._id
+        )
+    );
+    state.bookmarkedVideo = [...state.bookmarkedVideo, ...newVideos];
   }
   state.totalHits = action.payload.total;
   state.error = "";
@@ -100,22 +124,6 @@ export const handleFulfilledAddVideo = (
   state.isLoading = false;
 };
 
-export const handleFulfilledAddFavorites = (
-  state: VideoState,
-  action: PayloadAction<IVideo>
-): void => {
-  const updatedVideo = action.payload;
-  const index = state.videos.findIndex((i) => i._id === updatedVideo._id);
-  if (index !== -1) {
-    state.videos[index].favoritedBy = updatedVideo.favoritedBy;
-  }
-  if (state.selectedVideo) {
-    state.selectedVideo.favoritedBy = updatedVideo.favoritedBy;
-  }
-  state.error = "";
-  state.isLoading = false;
-};
-
 export const handleFulfilledDeleteVideo = (
   state: VideoState,
   action: PayloadAction<string | undefined>
@@ -137,7 +145,11 @@ const videoSlice = createSlice({
   reducers: {
     clearVideos(state: VideoState) {
       state.videos = [];
-      state.totalVideos = 0;
+      state.totalHits = 0;
+    },
+    clearBookmarkedVideos(state: VideoState) {
+      state.bookmarkedVideo = [];
+      state.totalHits = 0;
     },
     setFilter(state: VideoState, action: PayloadAction<string>) {
       state.selectedCategory = action.payload;
@@ -145,17 +157,43 @@ const videoSlice = createSlice({
     clearVideo(state: VideoState) {
       state.selectedVideo = null;
     },
-    deleteVideoFavorites(state: VideoState, action: PayloadAction<string>) {
+    toggleVideoBookMarked(state: VideoState, action: PayloadAction<string>) {
       const index = state.videos.findIndex((i) => i._id === action.payload);
       if (index !== -1) {
-        state.videos.splice(index, 1);
-        if (state.totalVideos) {
-          state.totalVideos = state.totalVideos - 1;
-        }
+        state.videos[index].bookmarked = !state.videos[index].bookmarked;
+      }
+      if (state.bookmarkedVideo.length !== 0) {
+        state.bookmarkedVideo = state.bookmarkedVideo.filter(
+          (video) => video._id !== action.payload
+        );
+      }
+      if (state.selectedVideo && state.selectedVideo._id === action.payload) {
+        state.selectedVideo.bookmarked = !state.selectedVideo.bookmarked;
       }
     },
     setVideoToEdit: (state, action) => {
       state.videoToEdit = action.payload;
+    },
+    setVideoProgress: (
+      state,
+      action: PayloadAction<{ videoId: string; currentTime: number }>
+    ) => {
+      const { videoId, currentTime } = action.payload;
+
+      if (state.selectedVideo && state.selectedVideo._id === videoId) {
+        state.selectedVideo = {
+          ...state.selectedVideo,
+          watched: { progress: currentTime },
+        };
+      }
+
+      const idx = state.videos.findIndex((v) => v._id === videoId);
+      if (idx !== -1) {
+        state.videos[idx] = {
+          ...state.videos[idx],
+          watched: { progress: currentTime },
+        };
+      }
     },
   },
   extraReducers: (builder) => {
@@ -163,12 +201,13 @@ const videoSlice = createSlice({
       .addCase(fetchVideos.pending, handleFetchVideosPending)
       .addCase(fetchVideos.fulfilled, handleFulfilledVideos)
       .addCase(fetchVideos.rejected, handleRejectVideos)
+      .addCase(fetchBookMarkedVideos.pending, handlePending)
+      .addCase(fetchBookMarkedVideos.fulfilled, handleFulfilledBookmarkedVideos)
       .addCase(fetchVideoById.pending, handlePending)
       .addCase(fetchVideoById.fulfilled, handleFulfilledVideoById)
       .addCase(fetchVideosCount.fulfilled, handleFulfilledVideosCount)
       .addCase(addVideo.pending, handlePending)
       .addCase(addVideo.fulfilled, handleFulfilledAddVideo)
-      .addCase(addRemoveFavoritesVideo.fulfilled, handleFulfilledAddFavorites)
       .addCase(deleteVideo.pending, handlePending)
       .addCase(deleteVideo.fulfilled, handleFulfilledDeleteVideo)
       .addMatcher(
@@ -180,9 +219,11 @@ const videoSlice = createSlice({
 
 export const {
   clearVideos,
+  clearBookmarkedVideos,
   setFilter,
   clearVideo,
-  deleteVideoFavorites,
+  toggleVideoBookMarked,
   setVideoToEdit,
+  setVideoProgress,
 } = videoSlice.actions;
 export const videoReducer = videoSlice.reducer;

@@ -1,13 +1,11 @@
 "use client";
 
-// import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import {
   MediaPlayer,
-  // MediaPlayerInstance,
+  MediaPlayerInstance,
   MediaProvider,
-  // useMediaStore,
 } from "@vidstack/react";
-
 import {
   DefaultVideoLayout,
   defaultLayoutIcons,
@@ -23,6 +21,8 @@ type Props = {
   cover?: string | null;
   originalUrl: string;
   className?: string;
+  initialTime?: number;
+  onProgress?: (time: number) => void;
 };
 
 function toYouTubeId(input: string) {
@@ -38,22 +38,45 @@ export default function VidstackPlayerYoutube({
   cover,
   originalUrl,
   className,
+  initialTime = 0,
+  onProgress,
 }: Props) {
-  // const player = useRef<MediaPlayerInstance>(null);
-  // const { paused } = useMediaStore(player);
+  const ref = useRef<MediaPlayerInstance>(null);
   const id = toYouTubeId(originalUrl);
-
   const src = id ? `youtube/${id}` : undefined;
+
+  // встановлюємо стартовий час
+  useEffect(() => {
+    if (ref.current && initialTime > 0) {
+      ref.current.currentTime = initialTime;
+    }
+  }, [initialTime]);
+
+  const handleSaveProgress = () => {
+    const current = ref.current?.currentTime ?? 0;
+    onProgress?.(Math.floor(current));
+  };
+
+  useEffect(() => {
+    const handleSaveProgress = () => {
+      const current = ref.current?.currentTime ?? 0;
+      onProgress?.(Math.floor(current));
+    };
+    const interval = setInterval(handleSaveProgress, 30000);
+    return () => clearInterval(interval);
+  }, [onProgress]);
 
   return (
     <div className="w-full">
       <MediaPlayer
+        ref={ref}
         key={src}
         src={src}
         title={title}
-        // controls
         poster={cover ?? undefined}
         volume={0.25}
+        onPause={handleSaveProgress}
+        onEnded={handleSaveProgress}
         playsInline
         className={`yt-fix ${className ?? ""}`}
       >

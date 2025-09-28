@@ -14,6 +14,7 @@ export interface State {
 
 export interface CourseState {
   courses: ICourse[];
+  bookmarkedCourses: ICourse[];
   totalHits: number;
   totalCourses: number | undefined;
   currentFilter: string;
@@ -25,6 +26,7 @@ export interface CourseState {
 
 export interface VideoState {
   videos: IVideo[];
+  bookmarkedVideo: IVideo[];
   totalHits: number;
   categories: {
     category: string;
@@ -46,6 +48,7 @@ export interface VideoState {
 
 export interface ShortState {
   shorts: IShort[];
+  bookmarkedShorts: IShort[];
   totalShorts: number;
   selected: IShort | null;
   topTags: TopTagItem[];

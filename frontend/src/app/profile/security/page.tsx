@@ -7,7 +7,7 @@ import { selectUser } from "@/redux/selectors/auth.selectors";
 import toast from "react-hot-toast";
 // import Button from "@/components/buttons/Button";
 
-function ProfilePage() {
+function ProfileSecPage() {
   const profile = useAppSelector(selectUser);
 
   const handleDelAcc = () => {
@@ -39,4 +39,4 @@ function ProfilePage() {
     </div>
   );
 }
-export default withUserGuard(ProfilePage);
+export default withUserGuard(ProfileSecPage);

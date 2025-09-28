@@ -10,8 +10,9 @@ export interface IVideo {
   duration: string;
   free: boolean;
   recommended: boolean;
-  favoritedBy?: string[];
-  watchedBy?: string[];
+  likedBy?: string[];
+  bookmarked?: boolean;
+  watched?: { progress: number };
   publishedAt?: Date;
   createdAt?: Date;
   updatedAt?: Date;

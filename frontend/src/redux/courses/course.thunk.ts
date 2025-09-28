@@ -38,48 +38,6 @@ export const fetchCourses = createAsyncThunk(
   }
 );
 
-export const fetchFavoritesCourses = createAsyncThunk(
-  "courses/fetchFavoritesCourses",
-  async ({ page = 1, limit = 9, favorites = false }: Query, thunkAPI) => {
-    const params = new URLSearchParams({
-      page: String(page),
-      limit: String(limit),
-    });
-    if (favorites) params.append("favorites", "true");
-    try {
-      const response = await instance.get(`/courses?${params.toString()}`);
-      return response.data;
-    } catch (error) {
-      if (error instanceof AxiosError) {
-        return thunkAPI.rejectWithValue(
-          error.response?.data.message ?? error.message
-        );
-      }
-    }
-  }
-);
-
-export const fetchWatchedCourses = createAsyncThunk(
-  "courses/fetchWatchedCourses",
-  async ({ page = 1, limit = 9, watched = false }: Query, thunkAPI) => {
-    const params = new URLSearchParams({
-      page: String(page),
-      limit: String(limit),
-    });
-    if (watched) params.append("watched", "true");
-    try {
-      const response = await instance.get(`/courses?${params.toString()}`);
-      return response.data;
-    } catch (error) {
-      if (error instanceof AxiosError) {
-        return thunkAPI.rejectWithValue(
-          error.response?.data.message ?? error.message
-        );
-      }
-    }
-  }
-);
-
 export const fetchCoursesCount = createAsyncThunk(
   "courses/fetchCoursesCount",
   async (_, thunkAPI) => {
@@ -165,14 +123,33 @@ export const editCourse = createAsyncThunk(
   }
 );
 
-export const addRemoveFavoritesCourse = createAsyncThunk(
-  "courses/favorites",
-  async (courseId: string, thunkAPI) => {
+export const deleteCourse = createAsyncThunk(
+  "courses/deleteCourse",
+  async (id: string, thunkAPI) => {
     try {
-      const response = await instance.patch(`/courses`, {
-        courseId,
-      });
+      await instance.delete(`/courses/${id}`);
+      return id;
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        return thunkAPI.rejectWithValue(
+          error.response?.data.message ?? error.message
+        );
+      }
+    }
+  }
+);
 
+export const fetchBookMarkedCourses = createAsyncThunk(
+  "courses/fetchBookMarkedCourses",
+  async ({ page = 1, limit = 9 }: Query, thunkAPI) => {
+    const params = new URLSearchParams({
+      page: String(page),
+      limit: String(limit),
+    });
+    try {
+      const response = await instance.get(
+        `/courses/bookmarked?${params.toString()}`
+      );
       return response.data;
     } catch (error) {
       if (error instanceof AxiosError) {
@@ -184,12 +161,77 @@ export const addRemoveFavoritesCourse = createAsyncThunk(
   }
 );
 
-export const deleteCourse = createAsyncThunk(
-  "courses/deleteCourse",
-  async (id: string, thunkAPI) => {
+export const toggleBookmarkedCourse = createAsyncThunk(
+  "courses/toggleBookmarkedCourse",
+  async (courseId: string, thunkAPI) => {
     try {
-      await instance.delete(`/courses/${id}`);
-      return id;
+      const response = await instance.patch(`/courses/bookmarked/${courseId}`);
+      return { courseId, action: response.data.action };
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        return thunkAPI.rejectWithValue(
+          error.response?.data.message ?? error.message
+        );
+      }
+    }
+  }
+);
+
+export const toggleLikeCourse = createAsyncThunk(
+  "courses/toggleLikeCourse",
+  async (courseId: string, thunkAPI) => {
+    try {
+      const response = await instance.patch(`/courses/like/${courseId}`);
+      return { courseId, action: response.data.action };
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        return thunkAPI.rejectWithValue(
+          error.response?.data.message ?? error.message
+        );
+      }
+    }
+  }
+);
+
+export const fetchWatchedCourses = createAsyncThunk(
+  "courses/fetchWatchedCourses",
+  async ({ page = 1, limit = 9 }: Query, thunkAPI) => {
+    const params = new URLSearchParams({
+      page: String(page),
+      limit: String(limit),
+    });
+
+    try {
+      const response = await instance.get(
+        `/courses/watched?${params.toString()}`
+      );
+      return response.data;
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        return thunkAPI.rejectWithValue(
+          error.response?.data.message ?? error.message
+        );
+      }
+    }
+  }
+);
+
+export const updateWatchedCourse = createAsyncThunk(
+  "courses/updateWatchedCourse",
+  async (
+    {
+      courseId,
+      videoId,
+      currentTime,
+    }: { courseId: string; videoId: string; currentTime: number },
+    thunkAPI
+  ) => {
+    try {
+      const response = await instance.patch(`/courses/watched/${courseId}`, {
+        videoId,
+        currentTime,
+      });
+      return response.data;
     } catch (error) {
       if (error instanceof AxiosError) {
         return thunkAPI.rejectWithValue(

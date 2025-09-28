@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import {
   MediaPlayer,
   MediaPlayerInstance,
@@ -22,6 +22,8 @@ type Props = {
   video?: string | null;
   className?: string;
   containerClassName?: string;
+  initialTime?: number; // старт збереженого часу
+  onProgress?: (time: number) => void; // 🔹 callback
 };
 
 export default function VidstackPlayer({
@@ -30,6 +32,8 @@ export default function VidstackPlayer({
   video,
   className,
   containerClassName,
+  initialTime = 0,
+  onProgress,
 }: Props) {
   const provider = "vimeo";
   const ref = useRef<MediaPlayerInstance>(null);
@@ -39,10 +43,7 @@ export default function VidstackPlayer({
     if (provider === "vimeo" && video) return `${video}`;
   }, [provider, video]);
 
-  function onProviderChange(
-    adapter: MediaProviderAdapter | null
-    // _evt: MediaProviderChangeEvent
-  ) {
+  function onProviderChange(adapter: MediaProviderAdapter | null) {
     if (!adapter) return;
     if (isVimeoProvider(adapter)) {
       Object.assign(adapter, {
@@ -53,6 +54,29 @@ export default function VidstackPlayer({
     }
   }
 
+  // встановлюємо стартовий час
+  useEffect(() => {
+    if (ref.current && initialTime > 0) {
+      ref.current.currentTime = initialTime;
+    }
+  }, [initialTime]);
+
+  // зберігаємо прогрес на паузі / при завершенні
+  const handleSaveProgress = () => {
+    const current = ref.current?.currentTime ?? 0;
+    onProgress?.(Math.floor(current));
+  };
+
+  // авто-оновлення кожні 30 сек
+  useEffect(() => {
+    const handleSaveProgress = () => {
+      const current = ref.current?.currentTime ?? 0;
+      onProgress?.(Math.floor(current));
+    };
+    const interval = setInterval(handleSaveProgress, 30000);
+    return () => clearInterval(interval);
+  }, [onProgress]);
+
   return (
     <div className={`w-full rounded-4xl ${containerClassName ?? ""}`}>
       <MediaPlayer
@@ -62,6 +86,8 @@ export default function VidstackPlayer({
         onProviderChange={onProviderChange}
         poster={cover ?? undefined}
         volume={volume}
+        onPause={handleSaveProgress}
+        onEnded={handleSaveProgress}
         onVolumeChange={(e) => {
           localStorage.setItem("player-volume", String(e.volume));
         }}
@@ -70,13 +96,11 @@ export default function VidstackPlayer({
         playsInline
         className={`yt-fix ${className ?? ""}`}
         keyShortcuts={{
-          // Space-separated list.
           togglePaused: "k Space",
           toggleMuted: "m",
           toggleFullscreen: "f",
           togglePictureInPicture: "i",
           toggleCaptions: "c",
-          // Array.
           seekBackward: ["j", "J", "ArrowLeft"],
           seekForward: ["l", "L", "ArrowRight"],
           volumeUp: "ArrowUp",

@@ -2,6 +2,9 @@ import { State } from "../../types/state.types";
 
 export const selectCourses = (state: State) => state.courses.courses;
 
+export const selectBookmarkedCourses = (state: State) =>
+  state.courses.bookmarkedCourses;
+
 export const selectTotalCourses = (state: State) => state.courses.totalCourses;
 
 export const selectCurrentFilter = (state: State) =>

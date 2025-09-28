@@ -6,6 +6,11 @@ import { ICourse } from "@/types/courses.type";
 import { ListVideo } from "lucide-react";
 import SafeImage from "../SafeImage";
 import { categoriesConst } from "@/constants/categories.constant";
+import { BsBookmark, BsBookmarkFill } from "react-icons/bs";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { selectUser } from "@/redux/selectors/auth.selectors";
+import { toggleBookmarkedCourse } from "@/redux/courses/course.thunk";
+import { toggleCourseBookMarked } from "@/redux/courses/courseSlice";
 
 export default function CoursesCard({
   course,
@@ -14,6 +19,17 @@ export default function CoursesCard({
   course: ICourse;
   path?: string;
 }) {
+  const dispatch = useAppDispatch();
+  const user = useAppSelector(selectUser);
+
+  const handleBookmarkClick = (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    e.preventDefault();
+    e.stopPropagation();
+    dispatch(toggleBookmarkedCourse(course._id));
+    dispatch(toggleCourseBookMarked(course._id));
+  };
   return (
     <Link key={course._id} href={`/courses/${course._id}`}>
       <div
@@ -77,9 +93,28 @@ export default function CoursesCard({
           <p className="font-medium text-[15px] leading-[18px] tracking-thin line-clamp-2">
             {course.title}
           </p>
-          <p className="font-medium text-[12px] leading-4 tracking-thin line-clamp-1 text-muted">
-            {course.category.map((c) => categoriesConst[c] || c).join(", ")}
-          </p>
+          <div className="flex justify-between">
+            <p className="font-medium text-[12px] leading-4 tracking-thin line-clamp-1 text-muted">
+              {course.category.map((c) => categoriesConst[c] || c).join(", ")}
+            </p>
+            {user && (
+              <button
+                type="button"
+                onClick={handleBookmarkClick}
+                className="flex items-center justify-center w-8 h-8 p-1.5 rounded-lg hover:bg-muted-background transition cursor-pointer"
+              >
+                {course.bookmarked ? (
+                  <BsBookmarkFill size={16} color="var(--foreground)" />
+                ) : (
+                  <BsBookmark
+                    style={{ strokeWidth: 0.5 }}
+                    size={16}
+                    color="var(--muted)"
+                  />
+                )}
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </Link>

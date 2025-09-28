@@ -16,6 +16,7 @@ import {
 import { useWindowWidth } from "@/hooks/useWindowWidth";
 import NotFoundComponent from "@/components/notFound/NotFound";
 import InProgressComponent from "@/components/notFound/InProgress";
+import { clearVideos } from "@/redux/videos/videoSlice";
 
 interface FetchVideosResponse {
   total: number;
@@ -62,6 +63,9 @@ function VideosPage() {
       if (payload?.total) setTotal(payload.total);
       setIsLoading(false);
     });
+    return () => {
+      dispatch(clearVideos());
+    };
   }, [dispatch, makeQuery, initialLimit]);
 
   // інфініт-скрол

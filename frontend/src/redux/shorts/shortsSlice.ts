@@ -121,6 +121,12 @@ export const shortSlice = createSlice({
   name: "shorts",
   initialState,
   reducers: {
+    clearShorts(state: ShortState) {
+      state.shorts = [];
+    },
+    clearBookmarkedShorts(state: ShortState) {
+      state.bookmarkedShorts = [];
+    },
     resetFeed(state: ShortState) {
       state.shorts = [];
       state.isLoadingShorts = false;
@@ -165,6 +171,8 @@ export const shortSlice = createSlice({
 });
 
 export const {
+  clearShorts,
+  clearBookmarkedShorts,
   resetFeed,
   setActiveTags,
   setTagsMode,

@@ -5,12 +5,29 @@ import Link from "next/link";
 import { IVideo } from "@/types/videos.type";
 import { durationStringToString } from "@/lib/duration.utils";
 import SafeImage from "../SafeImage";
+import { BsBookmark, BsBookmarkFill } from "react-icons/bs";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { toggleBookmarkedVideo } from "@/redux/videos/video.thunk";
+import { toggleVideoBookMarked } from "@/redux/videos/videoSlice";
+import { selectUser } from "@/redux/selectors/auth.selectors";
 
 export default function VideosCard({ video }: { video: IVideo }) {
+  const dispatch = useAppDispatch();
+  const user = useAppSelector(selectUser);
+
+  const handleBookmarkClick = (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    e.preventDefault();
+    e.stopPropagation();
+    dispatch(toggleBookmarkedVideo(video._id));
+    dispatch(toggleVideoBookMarked(video._id));
+  };
+
   return (
     <Link key={video._id} href={`/videos/${video._id}`}>
       <div className="relative flex flex-col max-w-[560px] min-w-[290px] p-2 rounded-3xl bg-white overflow-hidden hover:shadow-card-video transition-all duration-400">
-        <div className="relative w-full h-full rounded-2xl">
+        <div className="relative w-full h-full rounded-2xl overflow-hidden">
           <SafeImage
             src={video.cover}
             alt={video.title}
@@ -18,6 +35,22 @@ export default function VideosCard({ video }: { video: IVideo }) {
             height={200}
             className="relative w-full h-auto object-cover rounded-2xl"
           />
+          {video.watched && video.watched?.progress !== 0 && (
+            <div className="absolute bottom-0 left-0 w-full h-1.5">
+              <div className="w-full h-0.5 bg-[#0F0F0F] opacity-20" />
+              <div className="w-full h-1 bg-[#A8A8A8]">
+                <div
+                  className="h-1 bg-accent"
+                  style={{
+                    width: `${
+                      (video.watched.progress / parseInt(video.duration)) * 100
+                    }%`,
+                  }}
+                ></div>
+              </div>
+            </div>
+          )}
+
           {video.category.map((c, idx) => {
             return (
               <div
@@ -52,13 +85,32 @@ export default function VideosCard({ video }: { video: IVideo }) {
           </div>
         </div>
 
-        <div className="px-3 pt-3 py-1 flex-1 flex flex-col gap-1">
+        <div className="pl-3 pr-2 pt-3 pb-1 flex-1 flex flex-col gap-1">
           <p className="font-medium text-[15px] leading-[18px] tracking-thin line-clamp-2">
             {video.title.split("_").join(" ")}
           </p>
-          <p className="font-medium text-[12px] leading-4 tracking-thin line-clamp-1 text-muted">
-            {video.filter.slice(0, 2).join(", ")}
-          </p>
+          <div className="flex justify-between">
+            <p className="font-medium text-[12px] leading-4 tracking-thin line-clamp-1 text-muted">
+              {video.filter.slice(0, 2).join(", ")}
+            </p>
+            {user && (
+              <button
+                type="button"
+                onClick={handleBookmarkClick}
+                className="flex items-center justify-center w-8 h-8 p-1.5 rounded-lg hover:bg-muted-background transition cursor-pointer"
+              >
+                {video.bookmarked ? (
+                  <BsBookmarkFill size={16} color="var(--foreground)" />
+                ) : (
+                  <BsBookmark
+                    style={{ strokeWidth: 0.5 }}
+                    size={16}
+                    color="var(--muted)"
+                  />
+                )}
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </Link>

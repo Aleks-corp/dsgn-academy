@@ -76,17 +76,34 @@ export const fetchRecommended = createAsyncThunk(
   }
 );
 
-export const fetchFavoritesVideos = createAsyncThunk(
-  "videos/fetchFavoritesVideos",
-  async ({ page = 1, limit = 9, favorites = false }: Query, thunkAPI) => {
+export const fetchBookMarkedVideos = createAsyncThunk(
+  "videos/fetchBookMarkedVideos",
+  async ({ page = 1, limit = 9 }: Query, thunkAPI) => {
     const params = new URLSearchParams({
       page: String(page),
       limit: String(limit),
     });
-    if (favorites) params.append("favorites", "true");
     try {
-      const response = await instance.get(`/videos?${params.toString()}`);
+      const response = await instance.get(
+        `/videos/bookmarked?${params.toString()}`
+      );
       return response.data;
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        return thunkAPI.rejectWithValue(
+          error.response?.data.message ?? error.message
+        );
+      }
+    }
+  }
+);
+
+export const toggleBookmarkedVideo = createAsyncThunk(
+  "videos/toggleBookmarkedVideo",
+  async (videoId: string, thunkAPI) => {
+    try {
+      const response = await instance.patch(`/videos/bookmarked/${videoId}`);
+      return { videoId, action: response.data.action };
     } catch (error) {
       if (error instanceof AxiosError) {
         return thunkAPI.rejectWithValue(
@@ -99,14 +116,37 @@ export const fetchFavoritesVideos = createAsyncThunk(
 
 export const fetchWatchedVideos = createAsyncThunk(
   "videos/fetchWatchedVideos",
-  async ({ page = 1, limit = 9, watched = false }: Query, thunkAPI) => {
+  async ({ page = 1, limit = 9 }: Query, thunkAPI) => {
     const params = new URLSearchParams({
       page: String(page),
       limit: String(limit),
     });
-    if (watched) params.append("watched", "true");
+
     try {
-      const response = await instance.get(`/videos?${params.toString()}`);
+      const response = await instance.get(
+        `/videos/watched?${params.toString()}`
+      );
+      return response.data;
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        return thunkAPI.rejectWithValue(
+          error.response?.data.message ?? error.message
+        );
+      }
+    }
+  }
+);
+
+export const updateWatchedVideo = createAsyncThunk(
+  "videos/updateWatchedVideo",
+  async (
+    { videoId, currentTime }: { videoId: string; currentTime: number },
+    thunkAPI
+  ) => {
+    try {
+      const response = await instance.patch(`/videos/watched/${videoId}`, {
+        currentTime,
+      });
       return response.data;
     } catch (error) {
       if (error instanceof AxiosError) {
@@ -152,24 +192,6 @@ export const fetchVideosCount = createAsyncThunk(
   }
 );
 
-export const checkDownloadPermission = createAsyncThunk(
-  "posts/checkDownloadPermission",
-  async (videoId: string, thunkAPI) => {
-    try {
-      const response: {
-        data: { downloadUrl: string; dailyDownloadCount?: number };
-      } = await instance.get(`/videos/check-download/${videoId}`);
-      return response.data;
-    } catch (error) {
-      if (error instanceof AxiosError) {
-        return thunkAPI.rejectWithValue(
-          error.response?.data.message ?? error.message
-        );
-      }
-    }
-  }
-);
-
 export const addVideo = createAsyncThunk(
   "videos/addVideo",
   async (data: AddVideo, thunkAPI) => {
@@ -194,25 +216,6 @@ export const editVideo = createAsyncThunk(
   ) => {
     try {
       const response = await instance.patch(`/videos/${videoId}`, video);
-      return response.data;
-    } catch (error) {
-      if (error instanceof AxiosError) {
-        return thunkAPI.rejectWithValue(
-          error.response?.data.message ?? error.message
-        );
-      }
-    }
-  }
-);
-
-export const addRemoveFavoritesVideo = createAsyncThunk(
-  "videos/favorites",
-  async (videoId: string, thunkAPI) => {
-    try {
-      const response = await instance.patch(`/videos`, {
-        videoId,
-      });
-
       return response.data;
     } catch (error) {
       if (error instanceof AxiosError) {

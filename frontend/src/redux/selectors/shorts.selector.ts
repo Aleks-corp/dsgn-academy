@@ -3,6 +3,9 @@ import { State } from "../../types/state.types";
 
 export const selectShorts = (state: State) => state.shorts.shorts;
 
+export const selectBookmarkedShorts = (state: State) =>
+  state.shorts.bookmarkedShorts;
+
 export const selectShort = (state: State) => state.shorts.selected;
 
 export const selectShortsTopTags = (state: State) => state.shorts.topTags;

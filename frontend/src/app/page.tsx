@@ -18,6 +18,8 @@ import { useWindowWidth } from "@/hooks/useWindowWidth";
 import NotFoundComponent from "@/components/notFound/NotFound";
 import { VideoCardsSkeleton } from "@/components/skeleton/VideoCardSkeleton";
 import { fetchCourses } from "@/redux/courses/course.thunk";
+import { clearVideos } from "@/redux/videos/videoSlice";
+import { clearCourses } from "@/redux/courses/courseSlice";
 
 interface FetchVideosResponse {
   total: number;
@@ -59,6 +61,10 @@ function HomePage() {
       if (payload?.total) setTotal(payload.total);
       setIsLoading(false);
     });
+    return () => {
+      dispatch(clearVideos());
+      dispatch(clearCourses());
+    };
   }, [dispatch, makeQuery, initialLimit]);
 
   // інфініт-скрол

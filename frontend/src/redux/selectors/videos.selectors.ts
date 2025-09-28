@@ -2,6 +2,9 @@ import { State } from "../../types/state.types";
 
 export const selectVideos = (state: State) => state.videos.videos;
 
+export const selectBookmarkedVideos = (state: State) =>
+  state.videos.bookmarkedVideo;
+
 export const selectVideoCategories = (state: State) => state.videos.categories;
 
 export const selectVideoFilters = (state: State) => state.videos.filters;

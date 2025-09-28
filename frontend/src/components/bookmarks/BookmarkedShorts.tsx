@@ -8,27 +8,23 @@ import {
   fetchTopShortTags,
 } from "@/redux/shorts/shorts.thunk";
 import {
+  selectBookmarkedShorts,
   selectIsLoadingShorts,
-  selectShorts,
   selectShortsError,
   selectShortsTopTags,
   selectTotalShorts,
 } from "@/redux/selectors/shorts.selector";
 
 import InProgressComponent from "@/components/notFound/InProgress";
-import FilterShortsSection from "@/components/shorts/FilterSection";
 import ShortsSection from "@/components/shorts/ShortsSection";
 import { useWindowWidth } from "@/hooks/useWindowWidth";
-import { useSearchParams } from "next/navigation";
 import NotFoundComponent from "@/components/notFound/NotFound";
-import { clearShorts } from "@/redux/shorts/shortsSlice";
 
-export default function ShortsPage() {
+export default function BookmarkedShorts() {
   const dispatch = useAppDispatch();
-  const searchParams = useSearchParams();
 
   const isLoadingShorts = useAppSelector(selectIsLoadingShorts);
-  const shorts = useAppSelector(selectShorts);
+  const shorts = useAppSelector(selectBookmarkedShorts);
   const error = useAppSelector(selectShortsError);
   const totalShorts = useAppSelector(selectTotalShorts);
   const topTags = useAppSelector(selectShortsTopTags);
@@ -42,8 +38,6 @@ export default function ShortsPage() {
   );
   const initialLimit = rowsLimit * 2;
 
-  const activeTag = searchParams.get("filter") || ""; // наше єдине фільтро-поле
-
   // 1) первинні дані: топ-теги і total
   useEffect(() => {
     if (!topTags?.length) dispatch(fetchTopShortTags({ limit: 20 }));
@@ -56,15 +50,12 @@ export default function ShortsPage() {
     dispatch(
       fetchShorts({
         limit: initialLimit,
-        tag: activeTag,
+
         page: pageRef.current,
         tagsMode: "any",
       })
     );
-    return () => {
-      dispatch(clearShorts());
-    };
-  }, [dispatch, activeTag, initialLimit]);
+  }, [dispatch, initialLimit]);
 
   // 3) infinite-scroll через IntersectionObserver
   useEffect(() => {
@@ -85,7 +76,6 @@ export default function ShortsPage() {
           dispatch(
             fetchShorts({
               limit: initialLimit,
-              tag: activeTag,
               page: nextPage,
               tagsMode: "any",
             })
@@ -97,14 +87,7 @@ export default function ShortsPage() {
 
     observer.observe(el);
     return () => observer.unobserve(el);
-  }, [
-    dispatch,
-    isLoadingShorts,
-    shorts.length,
-    totalShorts,
-    initialLimit,
-    activeTag,
-  ]);
+  }, [dispatch, isLoadingShorts, shorts.length, totalShorts, initialLimit]);
 
   if (shorts.length === 0 && !isLoadingShorts && !error) {
     return (
@@ -121,7 +104,6 @@ export default function ShortsPage() {
 
   return (
     <div className="flex flex-col gap-8 w-full mx-auto">
-      <FilterShortsSection />
       {shorts.length !== 0 && (
         <ShortsSection shorts={shorts} isLoadingShorts={isLoadingShorts} />
       )}

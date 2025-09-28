@@ -19,6 +19,21 @@ export default function HorizontalVideoCard({ video }: { video: IVideo }) {
           height={120}
           className="w-full h-full rounded-xl object-cover"
         />
+        {video.watched && video.watched?.progress !== 0 && (
+          <div className="absolute bottom-0 left-0 w-full h-1.5">
+            <div className="w-full h-0.5 bg-[#0F0F0F] opacity-20" />
+            <div className="w-full h-1 bg-[#A8A8A8]">
+              <div
+                className="h-1 bg-accent"
+                style={{
+                  width: `${
+                    (video.watched.progress / parseInt(video.duration)) * 100
+                  }%`,
+                }}
+              ></div>
+            </div>
+          </div>
+        )}
         {video.category.map((c, idx) => {
           return (
             <div

@@ -12,7 +12,7 @@ import { editCourse, fetchCourseById } from "@/redux/courses/course.thunk";
 import { clearCourse } from "@/redux/courses/courseSlice";
 import { selectIsLoadingCourses } from "@/selectors/courses.selector";
 import { fetchVideoData } from "@/lib/api/getVideoData";
-import { AddCourse, ICourseVideo } from "@/types/courses.type";
+import { AddCourse, ICourse, ICourseVideo } from "@/types/courses.type";
 import { categoriesConstant } from "@/constants/categories.constant";
 
 import { withAdminGuard } from "@/guards/WithAdminGuard";
@@ -55,13 +55,25 @@ function AddCourseVideoForm() {
   useEffect(() => {
     dispatch(fetchCourseById(id as string)).then((res) => {
       if (res?.payload) {
-        setCourseVideos(res.payload.videos);
-        setTitle(res.payload.title);
-        setDescription(res.payload.description);
+        const course = res.payload as ICourse;
+        setCourseVideos(
+          course.videos.map(
+            ({ title, url, originalUrl, description, cover, duration }) => ({
+              title,
+              url,
+              originalUrl,
+              description,
+              cover,
+              duration,
+            })
+          )
+        );
+        setTitle(course.title);
+        setDescription(course.description);
         setPublishedAt(res.payload.publishedAt);
         setCategoryState(
           categoriesConstant.map((c) => ({
-            [c]: res.payload.category.includes(c),
+            [c]: course.category.includes(c),
           }))
         );
       }
