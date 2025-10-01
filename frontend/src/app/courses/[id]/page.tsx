@@ -57,6 +57,13 @@ function CoursePage() {
           <CoursePlayer
             canWatch={canWatch || selectedVideoIndex === 0}
             selectedVideo={course.videos[selectedVideoIndex]}
+            courseId={course._id}
+            nextVideoIdx={
+              selectedVideoIndex < course.videos.length - 1
+                ? selectedVideoIndex + 1
+                : undefined
+            }
+            setSelectedVideoIndex={setSelectedVideoIndex}
           />
         </div>
 

@@ -30,6 +30,15 @@ export default function CoursesCard({
     dispatch(toggleBookmarkedCourse(course._id));
     dispatch(toggleCourseBookMarked(course._id));
   };
+  const videosWatchedProgress = (course: ICourse) =>
+    course.videos.reduce((acc, v) => {
+      if (v.watched) {
+        const time = v.watched.progress / parseInt(v.duration);
+        return time + acc;
+      }
+      return acc;
+    }, 0);
+
   return (
     <Link key={course._id} href={`/courses/${course._id}`}>
       <div
@@ -40,13 +49,31 @@ export default function CoursesCard({
         }  p-2 rounded-3xl bg-white overflow-hidden transition-all duration-400`}
       >
         <div className="relative w-full h-full rounded-2xl">
-          <SafeImage
-            src={course.videos[0].cover}
-            alt={course.title}
-            width={354}
-            height={200}
-            className="relative w-full h-auto backdrop-blur-md object-cover rounded-2xl overflow-hidden z-1"
-          />
+          <div className="relative w-full h-full rounded-2xl overflow-hidden">
+            <SafeImage
+              src={course.videos[0].cover}
+              alt={course.title}
+              width={354}
+              height={200}
+              className="relative w-full h-auto backdrop-blur-md object-cover rounded-2xl overflow-hidden z-1"
+            />
+            {user && videosWatchedProgress(course) !== 0 && (
+              <div className="absolute bottom-0 left-0 w-full h-1.5 z-5">
+                <div className="w-full h-0.5 bg-[#0F0F0F] opacity-20" />
+                <div className="w-full h-1 bg-[#A8A8A8]">
+                  <div
+                    className="h-1 bg-accent"
+                    style={{
+                      width: `${
+                        (videosWatchedProgress(course) / course.videos.length) *
+                        100
+                      }%`,
+                    }}
+                  ></div>
+                </div>
+              </div>
+            )}
+          </div>
           <div className="absolute bottom-0 right-0 w-24 h-full flex flex-col justify-center items-center rounded-r-2xl  bg-[#00000030] backdrop-blur-md z-2">
             <p className="flex justify-center items-center text-white font-medium text-2xl leading-8 tracking-tighter">
               {course.videos.length}

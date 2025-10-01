@@ -39,6 +39,11 @@ function HomePage() {
   // 👇 тримаємо сторінку в ref, щоб уникнути зайвих ререндерів
   const pageRef = useRef(1);
 
+  const coursesLimit =
+    width >= 1024
+      ? Math.ceil((width - 300) / 350)
+      : Math.ceil((width - 32) / 300);
+
   const cols = width <= 630 ? 1 : width <= 1200 ? 2 : width <= 1560 ? 3 : 4;
   const initialLimit = cols * 3;
   const loadMoreCount = cols * 2;
@@ -55,7 +60,7 @@ function HomePage() {
   useEffect(() => {
     pageRef.current = 1;
     setIsLoading(true);
-    dispatch(fetchCourses({ limit: 5 }));
+    dispatch(fetchCourses({ limit: coursesLimit + 1 }));
     dispatch(fetchVideos(makeQuery(1, initialLimit))).then((res) => {
       const payload = (res as { payload?: FetchVideosResponse }).payload;
       if (payload?.total) setTotal(payload.total);
@@ -65,7 +70,7 @@ function HomePage() {
       dispatch(clearVideos());
       dispatch(clearCourses());
     };
-  }, [dispatch, makeQuery, initialLimit]);
+  }, [dispatch, makeQuery, initialLimit, coursesLimit]);
 
   // інфініт-скрол
   useEffect(() => {

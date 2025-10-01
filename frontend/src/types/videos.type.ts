@@ -10,7 +10,10 @@ export interface IVideo {
   duration: string;
   free: boolean;
   recommended: boolean;
-  likedBy?: string[];
+  likedBy?: {
+    count: number;
+    isLiked: boolean;
+  };
   bookmarked?: boolean;
   watched?: { progress: number };
   publishedAt?: Date;

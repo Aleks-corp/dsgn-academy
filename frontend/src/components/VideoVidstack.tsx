@@ -19,11 +19,12 @@ import "@vidstack/react/player/styles/default/layouts/video.css";
 type Props = {
   title: string;
   cover?: string | null;
-  video?: string | null;
+  video: string;
   className?: string;
   containerClassName?: string;
-  initialTime?: number; // старт збереженого часу
+  initialTime?: number;
   onProgress?: (time: number) => void; // 🔹 callback
+  onEndedCb?: () => void;
 };
 
 export default function VidstackPlayer({
@@ -34,6 +35,7 @@ export default function VidstackPlayer({
   containerClassName,
   initialTime = 0,
   onProgress,
+  onEndedCb,
 }: Props) {
   const provider = "vimeo";
   const ref = useRef<MediaPlayerInstance>(null);
@@ -54,28 +56,45 @@ export default function VidstackPlayer({
     }
   }
 
-  // встановлюємо стартовий час
+  const lastTime = useRef(0);
+  const progressCb = useRef<((time: number) => void) | null>(null);
+  const handleTimeUpdate = () => {
+    lastTime.current = ref.current?.currentTime ?? 0;
+  };
+
+  useEffect(() => {
+    progressCb.current = onProgress ?? null;
+  }, [onProgress]);
+
   useEffect(() => {
     if (ref.current && initialTime > 0) {
       ref.current.currentTime = initialTime;
     }
   }, [initialTime]);
 
-  // зберігаємо прогрес на паузі / при завершенні
   const handleSaveProgress = () => {
     const current = ref.current?.currentTime ?? 0;
     onProgress?.(Math.floor(current));
   };
 
-  // авто-оновлення кожні 30 сек
   useEffect(() => {
-    const handleSaveProgress = () => {
-      const current = ref.current?.currentTime ?? 0;
-      onProgress?.(Math.floor(current));
+    return () => {
+      const current = Math.floor(lastTime.current);
+      console.log("unmount");
+      if (current > 0) {
+        progressCb.current?.(current);
+      }
     };
-    const interval = setInterval(handleSaveProgress, 30000);
-    return () => clearInterval(interval);
-  }, [onProgress]);
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      const current = Math.floor(lastTime.current);
+      if (current > 0) {
+        progressCb.current?.(current);
+      }
+    };
+  }, [video]);
 
   return (
     <div className={`w-full rounded-4xl ${containerClassName ?? ""}`}>
@@ -86,8 +105,12 @@ export default function VidstackPlayer({
         onProviderChange={onProviderChange}
         poster={cover ?? undefined}
         volume={volume}
+        onTimeUpdate={handleTimeUpdate}
         onPause={handleSaveProgress}
-        onEnded={handleSaveProgress}
+        onEnded={() => {
+          handleSaveProgress();
+          onEndedCb?.();
+        }}
         onVolumeChange={(e) => {
           localStorage.setItem("player-volume", String(e.volume));
         }}

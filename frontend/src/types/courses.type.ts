@@ -16,6 +16,10 @@ export interface ICourse {
   category: string[];
   videos: ICourseVideo[];
   bookmarked?: boolean;
+  likedBy?: {
+    count: number;
+    isLiked: boolean;
+  };
   publishedAt?: Date;
   createdAt?: Date;
   updatedAt?: Date;

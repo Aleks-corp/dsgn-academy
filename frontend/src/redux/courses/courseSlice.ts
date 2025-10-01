@@ -4,7 +4,6 @@ import {
   fetchCourses,
   fetchCourseById,
   fetchCoursesCount,
-  // toggleLikeCourse,
   deleteCourse,
   editCourse,
   addCourse,
@@ -151,17 +150,53 @@ const courseSlice = createSlice({
     clearCourse(state: CourseState) {
       state.selectedCourse = null;
     },
-    deleteCourseFavorites(state: CourseState, action: PayloadAction<string>) {
-      const index = state.courses.findIndex((i) => i._id === action.payload);
-      if (index !== -1) {
-        state.courses.splice(index, 1);
-        if (state.totalCourses) {
-          state.totalCourses = state.totalCourses - 1;
-        }
-      }
-    },
     setCourseToEdit: (state, action) => {
       state.courseToEdit = action.payload;
+    },
+    toggleCourseLiked(state: CourseState, action: PayloadAction<string>) {
+      if (state.selectedCourse && state.selectedCourse._id === action.payload) {
+        const isLiked = state.selectedCourse.likedBy?.isLiked ?? false;
+        const count = state.selectedCourse.likedBy?.count ?? 0;
+        state.selectedCourse.likedBy = {
+          isLiked: !isLiked,
+          count: isLiked ? Math.max(0, count - 1) : count + 1,
+        };
+      }
+    },
+    setCourseVideoProgress: (
+      state: CourseState,
+      action: PayloadAction<{
+        courseId: string;
+        videoId: string;
+        currentTime: number;
+      }>
+    ) => {
+      const { courseId, videoId, currentTime } = action.payload;
+
+      if (state.selectedCourse && state.selectedCourse._id === courseId) {
+        const videoIdx = state.selectedCourse.videos.findIndex(
+          (v) => v._id === videoId
+        );
+        const video = state.selectedCourse.videos[videoIdx];
+        if (videoIdx !== -1 && video) {
+          state.selectedCourse.videos[videoIdx] = {
+            ...video,
+            watched: { progress: currentTime },
+          };
+        }
+      }
+      const idx = state.courses.findIndex((c) => c._id === courseId);
+      if (idx !== -1) {
+        const videoIdx = state.courses[idx].videos.findIndex(
+          (v) => v._id === videoId
+        );
+        if (videoIdx !== -1) {
+          state.courses[idx].videos[videoIdx] = {
+            ...state.courses[idx].videos[videoIdx],
+            watched: { progress: currentTime },
+          };
+        }
+      }
     },
   },
   extraReducers: (builder) => {
@@ -180,7 +215,6 @@ const courseSlice = createSlice({
       .addCase(addCourse.fulfilled, handleFulfilledAddCourse)
       .addCase(editCourse.pending, handlePending)
       .addCase(editCourse.fulfilled, handleFulfilledEditCourse)
-      // .addCase(toggleLikeCourse.fulfilled, handleFulfilledToggleLikeCourse)
       .addCase(deleteCourse.pending, handlePending)
       .addCase(deleteCourse.fulfilled, handleFulfilledDeleteCourse)
       .addMatcher(
@@ -200,7 +234,8 @@ export const {
   toggleCourseBookMarked,
   setFilter,
   clearCourse,
-  deleteCourseFavorites,
   setCourseToEdit,
+  toggleCourseLiked,
+  setCourseVideoProgress,
 } = courseSlice.actions;
 export const courseReducer = courseSlice.reducer;

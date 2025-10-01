@@ -2,16 +2,25 @@ import Button from "@/components/buttons/Button";
 import { FaTelegramPlane } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
 import toast from "react-hot-toast";
-import { PiThreadsLogoFill } from "react-icons/pi";
+import { PiHeart, PiHeartFill, PiThreadsLogoFill } from "react-icons/pi";
 import { ChevronUp, Edit } from "lucide-react";
 import { useState } from "react";
 import type { ICourse } from "@/types/courses.type";
 import { useWindowWidth } from "@/hooks/useWindowWidth";
 import Link from "next/link";
-import { useAppSelector } from "@/redux/hooks";
-import { selectIsAdmin } from "@/redux/selectors/auth.selectors";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { selectIsAdmin, selectUser } from "@/redux/selectors/auth.selectors";
 import { useParams } from "next/navigation";
 import moment from "moment";
+import {
+  toggleBookmarkedCourse,
+  toggleLikeCourse,
+} from "@/redux/courses/course.thunk";
+import {
+  toggleCourseBookMarked,
+  toggleCourseLiked,
+} from "@/redux/courses/courseSlice";
+import { BsBookmark, BsBookmarkFill } from "react-icons/bs";
 
 export default function CourseDescription({
   course,
@@ -20,6 +29,8 @@ export default function CourseDescription({
   course: ICourse;
   selectedVideoIndex: number;
 }) {
+  const dispatch = useAppDispatch();
+  const user = useAppSelector(selectUser);
   const [expanded, setExpanded] = useState(false);
   const shareUrl = typeof window !== "undefined" ? window.location.href : "";
   const shareText = course.title;
@@ -73,6 +84,54 @@ export default function CourseDescription({
           {course.title}
         </h1>
         <div className="flex items-center justify-end gap-3">
+          {user && (
+            <>
+              <button
+                onClick={() => {
+                  dispatch(toggleLikeCourse(course._id));
+                  dispatch(toggleCourseLiked(course._id));
+                }}
+                className="text-muted hover:opacity-80 min-w-10 h-10 px-2.5 flex justify-center items-center rounded-[10px] border-1 border-border cursor-pointer"
+              >
+                {course.likedBy?.isLiked ? (
+                  <PiHeartFill
+                    size={24}
+                    strokeWidth={1.5}
+                    color="var(--foreground)"
+                  />
+                ) : (
+                  <PiHeart size={24} />
+                )}
+
+                {course.likedBy?.count !== 0 && (
+                  <p
+                    className={`font-inter flex justify-center items-center ml-2 ${
+                      course.likedBy?.isLiked ? "text-foreground" : "text-muted"
+                    } font-medium text-sm`}
+                  >
+                    {course.likedBy?.count}
+                  </p>
+                )}
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  dispatch(toggleBookmarkedCourse(course._id));
+                  dispatch(toggleCourseBookMarked(course._id));
+                }}
+                className="text-black hover:opacity-80 w-10 h-10 flex justify-center items-center rounded-[10px] border-1 border-border cursor-pointer"
+              >
+                {course.bookmarked ? (
+                  <BsBookmarkFill size={20} />
+                ) : (
+                  <BsBookmark
+                    // style={{ strokeWidth: 0.5 }}
+                    size={20}
+                  />
+                )}
+              </button>
+            </>
+          )}
           {isAdmin && (
             <Link href={`/da-admin/add/course/${courseId}`}>
               <Edit />

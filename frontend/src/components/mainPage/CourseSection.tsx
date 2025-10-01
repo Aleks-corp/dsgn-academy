@@ -21,19 +21,28 @@ export default function CoursesSection() {
   const courses = useAppSelector(selectCourses);
   const [isLoading, setIsLoading] = useState(false);
   const [total, setTotal] = useState<number | null>(null);
-  const pageRef = useRef(1);
-
   const { width } = useWindowWidth();
+
+  const limit =
+    width >= 1024
+      ? Math.ceil((width - 300) / 350) % 2 !== 0
+        ? Math.ceil((width - 300) / 350) + 1
+        : Math.ceil((width - 300) / 350)
+      : Math.ceil((width - 32) / 300) % 2 !== 0
+      ? Math.ceil((width - 32) / 300) + 1
+      : Math.ceil((width - 32) / 300);
+
+  const pageRef = useRef(limit / 2);
 
   useEffect(() => {
     setIsLoading(true);
-    dispatch(fetchCourses({ page: 1, limit: 5 }))
+    dispatch(fetchCourses({ page: 1, limit: limit }))
       .then(unwrapResult)
       .then((payload: CoursesPayload) => {
         setIsLoading(false);
         if (payload.total) setTotal(payload.total);
       });
-  }, [dispatch]);
+  }, [dispatch, limit]);
 
   const [atStart, setAtStart] = useState(true);
   const [atEnd, setAtEnd] = useState(false);
@@ -57,13 +66,19 @@ export default function CoursesSection() {
 
   const handleScroll = (target: HTMLDivElement) => {
     const { scrollLeft, clientWidth, scrollWidth } = target;
-    setAtStart(scrollLeft <= 5);
+    setAtStart(scrollLeft <= limit);
     setAtEnd(scrollLeft + clientWidth >= scrollWidth - 5);
 
-    if (scrollLeft + clientWidth >= scrollWidth - 50) {
+    if (scrollLeft + clientWidth >= scrollWidth - 150) {
       loadMore();
     }
   };
+  useEffect(() => {
+    if (scrollRef.current) {
+      const { scrollLeft, clientWidth, scrollWidth } = scrollRef.current;
+      setAtEnd(scrollLeft + clientWidth >= scrollWidth - 5);
+    }
+  }, [courses]);
 
   return (
     <section className="w-full mt-4">

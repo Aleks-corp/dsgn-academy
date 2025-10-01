@@ -9,14 +9,13 @@ import { selectUser } from "@/selectors/auth.selectors";
 
 import BookmarkedVideos from "@/components/bookmarks/BookmarkedVideos";
 import BookmarkedCourses from "@/components/bookmarks/BookmarkedCourses";
-import BookmarkedShorts from "@/components/bookmarks/BookmarkedShorts";
 import { withUserGuard } from "@/guards/WithUserGuard";
 
 function ProfileBookmarkPage() {
   const profile = useAppSelector(selectUser);
-  const [selectedTab, setSelectedTab] = useState<
-    "videos" | "courses" | "shorts"
-  >("videos");
+  const [selectedTab, setSelectedTab] = useState<"videos" | "courses">(
+    "videos"
+  );
 
   const dispatch = useAppDispatch();
 
@@ -38,7 +37,6 @@ function ProfileBookmarkPage() {
         {[
           { id: "videos", label: "Відео" },
           { id: "courses", label: "Курси" },
-          { id: "shorts", label: "Короткі відео" },
         ].map((tab) => (
           <button
             key={tab.id}
@@ -56,7 +54,6 @@ function ProfileBookmarkPage() {
 
       {selectedTab === "videos" && <BookmarkedVideos />}
       {selectedTab === "courses" && <BookmarkedCourses />}
-      {selectedTab === "shorts" && <BookmarkedShorts />}
     </div>
   );
 }

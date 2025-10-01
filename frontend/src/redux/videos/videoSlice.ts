@@ -195,6 +195,16 @@ const videoSlice = createSlice({
         };
       }
     },
+    toggleVideoLiked(state: VideoState, action: PayloadAction<string>) {
+      if (state.selectedVideo && state.selectedVideo._id === action.payload) {
+        const isLiked = state.selectedVideo.likedBy?.isLiked ?? false;
+        const count = state.selectedVideo.likedBy?.count ?? 0;
+        state.selectedVideo.likedBy = {
+          isLiked: !isLiked,
+          count: isLiked ? Math.max(0, count - 1) : count + 1,
+        };
+      }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -225,5 +235,6 @@ export const {
   toggleVideoBookMarked,
   setVideoToEdit,
   setVideoProgress,
+  toggleVideoLiked,
 } = videoSlice.actions;
 export const videoReducer = videoSlice.reducer;

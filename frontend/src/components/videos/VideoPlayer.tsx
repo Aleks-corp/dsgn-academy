@@ -9,7 +9,7 @@ import Button from "@/components/buttons/Button";
 import { FaTelegramPlane } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
 import toast from "react-hot-toast";
-import { PiThreadsLogoFill } from "react-icons/pi";
+import { PiHeart, PiHeartFill, PiThreadsLogoFill } from "react-icons/pi";
 import { ChevronUp, Edit } from "lucide-react";
 import { IVideo } from "@/types/videos.type";
 import { useWindowWidth } from "@/hooks/useWindowWidth";
@@ -20,8 +20,17 @@ import moment from "moment";
 import VidstackPlayer from "../VideoVidstack";
 import VidstackPlayerYoutube from "../VideoVidstackYoutube";
 import getInitialTime from "@/lib/getInitialTime";
-import { updateWatchedVideo } from "@/redux/videos/video.thunk";
-import { setVideoProgress } from "@/redux/videos/videoSlice";
+import {
+  toggleBookmarkedVideo,
+  toggleLikeVideo,
+  updateWatchedVideo,
+} from "@/redux/videos/video.thunk";
+import {
+  setVideoProgress,
+  toggleVideoBookMarked,
+  toggleVideoLiked,
+} from "@/redux/videos/videoSlice";
+import { BsBookmark, BsBookmarkFill } from "react-icons/bs";
 
 export default function VideoPlayer({
   video,
@@ -152,6 +161,56 @@ export default function VideoPlayer({
             {video.title}
           </h1>
           <div className="flex items-center justify-end gap-3">
+            {user && (
+              <>
+                <button
+                  onClick={() => {
+                    dispatch(toggleLikeVideo(video._id));
+                    dispatch(toggleVideoLiked(video._id));
+                  }}
+                  className="text-muted hover:opacity-80 min-w-10 h-10 px-2.5 flex justify-center items-center rounded-[10px] border-1 border-border cursor-pointer"
+                >
+                  {video.likedBy?.isLiked ? (
+                    <PiHeartFill
+                      size={24}
+                      strokeWidth={1.5}
+                      color="var(--foreground)"
+                    />
+                  ) : (
+                    <PiHeart size={24} />
+                  )}
+
+                  {video.likedBy?.count !== 0 && (
+                    <p
+                      className={`font-inter flex justify-center items-center ml-2 ${
+                        video.likedBy?.isLiked
+                          ? "text-foreground"
+                          : "text-muted"
+                      } font-medium text-sm`}
+                    >
+                      {video.likedBy?.count}
+                    </p>
+                  )}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    dispatch(toggleBookmarkedVideo(video._id));
+                    dispatch(toggleVideoBookMarked(video._id));
+                  }}
+                  className="text-black hover:opacity-80 w-10 h-10 flex justify-center items-center rounded-[10px] border-1 border-border cursor-pointer"
+                >
+                  {video.bookmarked ? (
+                    <BsBookmarkFill size={20} />
+                  ) : (
+                    <BsBookmark
+                      // style={{ strokeWidth: 0.5 }}
+                      size={20}
+                    />
+                  )}
+                </button>
+              </>
+            )}
             {isAdmin && (
               <Link href={`/da-admin/add/video/${videoId}`}>
                 <Edit />

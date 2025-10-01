@@ -23,6 +23,7 @@ type Props = {
   className?: string;
   initialTime?: number;
   onProgress?: (time: number) => void;
+  onEndedCb?: () => void;
 };
 
 function toYouTubeId(input: string) {
@@ -40,12 +41,23 @@ export default function VidstackPlayerYoutube({
   className,
   initialTime = 0,
   onProgress,
+  onEndedCb,
 }: Props) {
   const ref = useRef<MediaPlayerInstance>(null);
   const id = toYouTubeId(originalUrl);
+  const volume = parseFloat(localStorage.getItem("player-volume") || "0.25");
   const src = id ? `youtube/${id}` : undefined;
 
-  // встановлюємо стартовий час
+  const lastTime = useRef(0);
+  const progressCb = useRef<((time: number) => void) | null>(null);
+  const handleTimeUpdate = () => {
+    lastTime.current = ref.current?.currentTime ?? 0;
+  };
+
+  useEffect(() => {
+    progressCb.current = onProgress ?? null;
+  }, [onProgress]);
+
   useEffect(() => {
     if (ref.current && initialTime > 0) {
       ref.current.currentTime = initialTime;
@@ -58,13 +70,14 @@ export default function VidstackPlayerYoutube({
   };
 
   useEffect(() => {
-    const handleSaveProgress = () => {
-      const current = ref.current?.currentTime ?? 0;
-      onProgress?.(Math.floor(current));
+    return () => {
+      const current = Math.floor(lastTime.current);
+      console.log("unmount");
+      if (current > 0) {
+        progressCb.current?.(current);
+      }
     };
-    const interval = setInterval(handleSaveProgress, 30000);
-    return () => clearInterval(interval);
-  }, [onProgress]);
+  }, []);
 
   return (
     <div className="w-full">
@@ -74,9 +87,16 @@ export default function VidstackPlayerYoutube({
         src={src}
         title={title}
         poster={cover ?? undefined}
-        volume={0.25}
+        volume={volume}
+        onTimeUpdate={handleTimeUpdate}
         onPause={handleSaveProgress}
-        onEnded={handleSaveProgress}
+        onEnded={() => {
+          handleSaveProgress();
+          onEndedCb?.();
+        }}
+        onVolumeChange={(e) => {
+          localStorage.setItem("player-volume", String(e.volume));
+        }}
         playsInline
         className={`yt-fix ${className ?? ""}`}
       >

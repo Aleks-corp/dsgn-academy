@@ -242,3 +242,19 @@ export const deleteVideo = createAsyncThunk(
     }
   }
 );
+
+export const toggleLikeVideo = createAsyncThunk(
+  "videos/toggleLikeVideo",
+  async (videoId: string, thunkAPI) => {
+    try {
+      const response = await instance.patch(`/videos/like/${videoId}`);
+      return { videoId, action: response.data.action };
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        return thunkAPI.rejectWithValue(
+          error.response?.data.message ?? error.message
+        );
+      }
+    }
+  }
+);

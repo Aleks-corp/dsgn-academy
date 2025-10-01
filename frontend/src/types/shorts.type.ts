@@ -9,6 +9,12 @@ export interface IShort {
   files: { link: string; type: string };
   originalVideo?: string;
   free: boolean;
+  likedBy?: {
+    count: number;
+    isLiked: boolean;
+  };
+  bookmarked?: boolean;
+  watched?: { progress: number };
   publishedAt: string;
   createdAt: string;
   updatedAt: string;

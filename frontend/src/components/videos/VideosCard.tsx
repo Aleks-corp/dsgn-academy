@@ -35,7 +35,7 @@ export default function VideosCard({ video }: { video: IVideo }) {
             height={200}
             className="relative w-full h-auto object-cover rounded-2xl"
           />
-          {video.watched && video.watched?.progress !== 0 && (
+          {user && video.watched && video.watched?.progress !== 0 && (
             <div className="absolute bottom-0 left-0 w-full h-1.5">
               <div className="w-full h-0.5 bg-[#0F0F0F] opacity-20" />
               <div className="w-full h-1 bg-[#A8A8A8]">

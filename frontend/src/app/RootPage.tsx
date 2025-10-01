@@ -131,6 +131,7 @@ function RootPage({ children }: { children: React.ReactNode }) {
         className="fixed right-0 bottom-0 flex flex-col h-[calc(100%-81px)]"
       >
         <div
+          id="app-scroll-container"
           className={`w-full h-full overflow-hidden overflow-y-auto ${
             !isLg && isOpenAside ? "pointer-events-none" : ""
           }`}

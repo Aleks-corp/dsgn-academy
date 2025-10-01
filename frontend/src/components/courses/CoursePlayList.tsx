@@ -7,6 +7,7 @@ import { durationStringToString } from "@/lib/duration.utils";
 import { useWindowWidth } from "@/hooks/useWindowWidth";
 import SafeImage from "../SafeImage";
 import { ChevronLeft, ChevronRight, Play } from "lucide-react";
+import useScrollToTop from "@/hooks/useScrollToTop";
 // import { useDragScroll } from "@/hooks/useDragScroll";
 
 type Iprops = {
@@ -22,6 +23,7 @@ export default function CoursePlayList({
 }: Iprops) {
   const { width } = useWindowWidth();
   const scrollRef = useRef<HTMLDivElement | null>(null);
+  const scrollToTop = useScrollToTop();
 
   const scrollBy = (offset: number) => {
     if (scrollRef.current) {
@@ -39,7 +41,10 @@ export default function CoursePlayList({
           {course.videos.map((video, idx) => (
             <button
               type="button"
-              onClick={() => setSelectedVideoIndex(idx)}
+              onClick={() => {
+                setSelectedVideoIndex(idx);
+                scrollToTop();
+              }}
               key={course._id + idx}
               className="flex w-full text-start gap-2 cursor-pointer rounded-xl hover:bg-muted-background p-1.5 transition-all duration-300"
             >
@@ -66,6 +71,23 @@ export default function CoursePlayList({
                   height={120}
                   className="w-full h-full rounded-xl object-cover"
                 />
+                {video.watched && video.watched?.progress !== 0 && (
+                  <div className="absolute bottom-0 left-0 w-full h-1.5">
+                    <div className="w-full h-0.5 bg-[#0F0F0F] opacity-20" />
+                    <div className="w-full h-1 bg-[#A8A8A8]">
+                      <div
+                        className="h-1 bg-accent"
+                        style={{
+                          width: `${
+                            (video.watched.progress /
+                              parseInt(video.duration)) *
+                            100
+                          }%`,
+                        }}
+                      ></div>
+                    </div>
+                  </div>
+                )}
                 <div className="absolute bottom-1.5 right-1.5 px-1 py-[1px] bg-[#00000080] rounded-md backdrop-blur-sm text-white font-inter text-xs leading-5 tracking-tighter z-7">
                   {durationStringToString(video.duration)}
                 </div>
@@ -122,13 +144,14 @@ export default function CoursePlayList({
                 onClick={() => {
                   if (idx !== selectedVideoIndex) {
                     setSelectedVideoIndex(idx);
+                    scrollToTop();
                   }
                 }}
                 key={course._id + idx}
                 className="flex gap-2 cursor-pointer rounded-xl hover:bg-muted-background p-1.5 transition-all duration-300"
               >
                 <div className="relative flex flex-col max-w-[370px] min-w-[250px] p-2 rounded-3xl bg-white overflow-hidden hover:shadow-card-video transition-all duration-400">
-                  <div className="relative w-full h-full rounded-2xl">
+                  <div className="relative w-full h-full rounded-2xl overflow-hidden">
                     <SafeImage
                       src={video.cover}
                       alt={video.title}
@@ -136,6 +159,23 @@ export default function CoursePlayList({
                       height={120}
                       className="w-full h-auto rounded-xl object-cover"
                     />
+                    {video.watched && video.watched?.progress !== 0 && (
+                      <div className="absolute bottom-0 left-0 w-full h-1.5 z-5">
+                        <div className="w-full h-0.5 bg-[#0F0F0F] opacity-20" />
+                        <div className="w-full h-1 bg-[#A8A8A8]">
+                          <div
+                            className="h-1 bg-accent"
+                            style={{
+                              width: `${
+                                (video.watched.progress /
+                                  parseInt(video.duration)) *
+                                100
+                              }%`,
+                            }}
+                          ></div>
+                        </div>
+                      </div>
+                    )}
                     {selectedVideoIndex === idx && (
                       <div className="absolute bottom-0 right-0 w-24 h-full flex flex-col justify-center items-center rounded-r-2xl  bg-[#00000030] backdrop-blur-md z-2">
                         <Play
