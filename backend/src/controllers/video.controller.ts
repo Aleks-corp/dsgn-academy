@@ -128,10 +128,17 @@ export const getVideoById = async (
   const progress = user?.watchedVideos?.find(
     (w) => w.id.toString() === video._id.toString()
   );
+  const liked = video.likedBy?.some(
+    (uid) => uid.toString() === user?._id.toString()
+  );
   res.json({
     ...video.toObject(),
     bookmarked,
     watched: { progress: progress?.currentTime || 0 },
+    likedBy: {
+      count: video.likedBy?.length || 0,
+      isLiked: !!liked,
+    },
   });
 };
 

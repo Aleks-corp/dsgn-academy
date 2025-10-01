@@ -10,10 +10,7 @@ import {
 } from "../services/user.service.js";
 import type { IShort } from "../types/short.type.js";
 
-const getShortsList = async (
-  req: Request,
-  res: Response
-): Promise<Response> => {
+const getShortsList = async (req: Request, res: Response): Promise<void> => {
   const { limit, page, tags, tagsMode } = req.query;
   const filtersQuery: Record<string, unknown> = {};
 
@@ -38,8 +35,35 @@ const getShortsList = async (
       filtersQuery.limit = parsed;
     }
   }
-  const data = await shortService.listShorts(filtersQuery);
-  return res.json(data);
+  const user = req.user;
+
+  const {
+    shorts,
+    total,
+    page: newPage,
+    limit: newLimit,
+  } = await shortService.listShorts(filtersQuery);
+  const patchedShorts = shorts.map((short) => {
+    const bookmarked = user?.bookmarkedShorts?.some(
+      (b) => b.toString() === short._id.toString()
+    );
+
+    const progress = user?.watchedShorts?.find(
+      (w) => w.id.toString() === short._id.toString()
+    );
+    return {
+      ...short,
+      bookmarked: !!bookmarked,
+      watched: { progress: progress?.currentTime || 0 },
+    };
+  });
+  res.json({
+    shorts: patchedShorts,
+    total,
+    page: newPage,
+    limit: newLimit,
+    hasMore: (newPage - 1) * newLimit + shorts.length < total,
+  });
 };
 
 export const getShortsCounts = async (
@@ -54,9 +78,28 @@ export const getShortsCounts = async (
 };
 
 const getShortsById = async (req: Request, res: Response): Promise<void> => {
-  const doc = await shortService.getShortById(req.params.id);
-  if (!doc) throw HttpError(404, "NotFound");
-  res.json(doc);
+  const short = await shortService.getShortById(req.params.id);
+  if (!short) throw HttpError(404, "NotFound");
+
+  const user = req.user;
+  const bookmarked = user?.bookmarkedShorts?.some(
+    (b) => b.toString() === short._id.toString()
+  );
+  const progress = user?.watchedShorts?.find(
+    (w) => w.id.toString() === short._id.toString()
+  );
+  const liked = short.likedBy?.some(
+    (uid) => uid.toString() === user?._id.toString()
+  );
+  res.json({
+    ...short,
+    bookmarked: !!bookmarked,
+    watched: { progress: progress?.currentTime || 0 },
+    likedBy: {
+      count: short.likedBy?.length || 0,
+      isLiked: !!liked,
+    },
+  });
 };
 
 const createShorts = async (req: Request, res: Response): Promise<void> => {

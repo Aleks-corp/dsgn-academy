@@ -100,6 +100,9 @@ export const getCourseById = async (
   const bookmarked = user?.bookmarkedCourses?.some(
     (b) => b.toString() === course._id.toString()
   );
+  const liked = course.likedBy?.some(
+    (uid) => uid.toString() === user?._id.toString()
+  );
   const videos = course.videos.map((v) => {
     const progress = user?.watchedCourses?.find(
       (w) =>
@@ -112,7 +115,15 @@ export const getCourseById = async (
     };
   });
 
-  res.json({ ...course.toObject(), bookmarked, videos });
+  res.json({
+    ...course.toObject(),
+    bookmarked,
+    likedBy: {
+      count: course.likedBy?.length || 0,
+      isLiked: !!liked,
+    },
+    videos,
+  });
 };
 
 export const addCourse = async (req: Request, res: Response): Promise<void> => {

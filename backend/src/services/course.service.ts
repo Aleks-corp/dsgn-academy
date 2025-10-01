@@ -15,7 +15,7 @@ const getCoursesService = async (
   const { limit, page } = options;
   const skip = (page - 1) * limit;
   const [courses, total] = await Promise.all([
-    CourseModel.find(filter, "-createdAt -updatedAt -videos.url")
+    CourseModel.find(filter, "-createdAt -updatedAt -videos.url -likedBy")
       .sort({ publishedAt: -1, createdAt: -1 })
       .skip(skip)
       .limit(limit)
@@ -72,7 +72,10 @@ export const getBookmarkedCoursesService = async (
   const skip = (page - 1) * limit;
 
   const [courses, total] = await Promise.all([
-    CourseModel.find({ _id: { $in: courseIds } }, "-createdAt -updatedAt")
+    CourseModel.find(
+      { _id: { $in: courseIds } },
+      "-createdAt -updatedAt -videos.url -likedBy"
+    )
       .sort({ publishedAt: -1, _id: -1 })
       .skip(skip)
       .limit(limit)
@@ -99,7 +102,10 @@ export const getWatchedCoursesService = async (
   const ids = [...new Set(watched.map((w) => w.courseId))];
 
   const [courses, total] = await Promise.all([
-    CourseModel.find({ _id: { $in: ids } }, "-createdAt -updatedAt")
+    CourseModel.find(
+      { _id: { $in: ids } },
+      "-createdAt -updatedAt -videos.url -likedBy"
+    )
       .sort({ publishedAt: -1, _id: -1 })
       .skip(skip)
       .limit(limit)

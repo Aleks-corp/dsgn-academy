@@ -15,7 +15,10 @@ const getVideosService = async (
   const { limit, page } = options;
   const skip = (page - 1) * limit;
   const [videos, total] = await Promise.all([
-    VideoModel.find(filter, "-createdAt -updatedAt -video")
+    VideoModel.find(
+      filter,
+      "-createdAt -updatedAt -video -likedBy -favoritedBy -watchedBy"
+    )
       .sort({ publishedAt: -1, _id: -1 })
       .skip(skip)
       .limit(limit)
@@ -115,7 +118,10 @@ export const getBookmarkedVideosService = async (
   const skip = (page - 1) * limit;
 
   const [videos, total] = await Promise.all([
-    VideoModel.find({ _id: { $in: videoIds } }, "-createdAt -updatedAt -video")
+    VideoModel.find(
+      { _id: { $in: videoIds } },
+      "-createdAt -updatedAt -video -likedBy -favoritedBy -watchedBy"
+    )
       .sort({ publishedAt: -1, _id: -1 })
       .skip(skip)
       .limit(limit)
@@ -139,7 +145,10 @@ export const getWatchedVideosService = async (
   const ids = watched.map((w) => w.id);
 
   const [videos, total] = await Promise.all([
-    VideoModel.find({ _id: { $in: ids } }, "-createdAt -updatedAt -video")
+    VideoModel.find(
+      { _id: { $in: ids } },
+      "-createdAt -updatedAt -video -likedBy -favoritedBy -watchedBy"
+    )
       .sort({ publishedAt: -1, _id: -1 })
       .skip(skip)
       .limit(limit)
