@@ -127,6 +127,7 @@ export default function CoursesCard({
             {user && (
               <button
                 type="button"
+                aria-label="bookmark"
                 onClick={handleBookmarkClick}
                 className="flex items-center justify-center w-8 h-8 p-1.5 rounded-lg hover:bg-muted-background transition cursor-pointer"
               >

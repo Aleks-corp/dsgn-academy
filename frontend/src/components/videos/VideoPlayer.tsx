@@ -161,9 +161,16 @@ export default function VideoPlayer({
             {video.title}
           </h1>
           <div className="flex items-center justify-end gap-3">
+            {isAdmin && (
+              <Link href={`/da-admin/add/video/${videoId}`}>
+                <Edit />
+              </Link>
+            )}
             {user && (
               <>
                 <button
+                  type="button"
+                  aria-label="like"
                   onClick={() => {
                     dispatch(toggleLikeVideo(video._id));
                     dispatch(toggleVideoLiked(video._id));
@@ -194,6 +201,7 @@ export default function VideoPlayer({
                 </button>
                 <button
                   type="button"
+                  aria-label="bookmark"
                   onClick={() => {
                     dispatch(toggleBookmarkedVideo(video._id));
                     dispatch(toggleVideoBookMarked(video._id));
@@ -210,11 +218,6 @@ export default function VideoPlayer({
                   )}
                 </button>
               </>
-            )}
-            {isAdmin && (
-              <Link href={`/da-admin/add/video/${videoId}`}>
-                <Edit />
-              </Link>
             )}
             <a
               href={socialLinks.threads}

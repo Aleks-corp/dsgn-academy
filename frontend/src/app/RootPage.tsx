@@ -81,7 +81,7 @@ function RootPage({ children }: { children: React.ReactNode }) {
   return (
     <div className="relative w-screen h-screen">
       {/* Передай сеттер у Header — там уже є кнопка меню */}
-      <div className="fixed w-full h-20">
+      <div className="fixed w-full h-20 z-15">
         <Header isOpenAside={isOpenAside} setIsOpenAside={setIsOpenAside} />
       </div>
 
@@ -126,9 +126,9 @@ function RootPage({ children }: { children: React.ReactNode }) {
 
       {/* --- 8) Права частина: на lg звужується, на мобілі — завжди 100vw */}
       <motion.div
-        animate={{ width: isLg ? `calc(100vw - ${asideWidth}px)` : "100vw" }}
+        animate={{ paddingLeft: isLg ? `${asideWidth}px` : "0px" }}
         transition={{ duration: 0.35, ease: "easeInOut" }}
-        className="fixed right-0 bottom-0 flex flex-col h-[calc(100%-81px)]"
+        className="fixed right-0 bottom-0 flex flex-col w-full h-full pt-[81px] z-10"
       >
         <div
           id="app-scroll-container"

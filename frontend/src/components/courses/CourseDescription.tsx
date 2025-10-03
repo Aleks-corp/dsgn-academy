@@ -84,9 +84,16 @@ export default function CourseDescription({
           {course.title}
         </h1>
         <div className="flex items-center justify-end gap-3">
+          {isAdmin && (
+            <Link href={`/da-admin/add/course/${courseId}`}>
+              <Edit />
+            </Link>
+          )}
           {user && (
             <>
               <button
+                type="button"
+                aria-label="like"
                 onClick={() => {
                   dispatch(toggleLikeCourse(course._id));
                   dispatch(toggleCourseLiked(course._id));
@@ -115,6 +122,7 @@ export default function CourseDescription({
               </button>
               <button
                 type="button"
+                aria-label="bookmark"
                 onClick={() => {
                   dispatch(toggleBookmarkedCourse(course._id));
                   dispatch(toggleCourseBookMarked(course._id));
@@ -131,11 +139,6 @@ export default function CourseDescription({
                 )}
               </button>
             </>
-          )}
-          {isAdmin && (
-            <Link href={`/da-admin/add/course/${courseId}`}>
-              <Edit />
-            </Link>
           )}
           <a
             href={socialLinks.threads}
