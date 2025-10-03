@@ -9,12 +9,14 @@ export default function SafeImage({
   width,
   height,
   className,
+  priority,
 }: {
   src: string | null | undefined;
   alt?: string;
   width: number;
   height: number;
   className?: string;
+  priority?: boolean;
 }) {
   const [error, setError] = useState(false);
 
@@ -26,7 +28,7 @@ export default function SafeImage({
       height={height}
       className={`w-full h-full ${className}`}
       onError={() => setError(true)}
-      priority
+      priority={priority ? priority : false}
     />
   );
 }

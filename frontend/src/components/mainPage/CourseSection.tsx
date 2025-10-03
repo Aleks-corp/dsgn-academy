@@ -91,8 +91,9 @@ export default function CoursesSection() {
           <>
             <button
               type="button"
+              aria-label="scroll back"
               onClick={() => scrollBy(-350)}
-              className={`absolute top-1/2 -translate-y-1/2 -left-8 border-scroll cursor-pointer w-16 h-72 xl:h-80 z-150 rotate-0 rounded-3xl overflow-hidden ${
+              className={`absolute top-1/2 -translate-y-1/2 -left-8 border-scroll cursor-pointer w-16 h-72 xl:h-80 z-150 rotate-0 rounded-3xl overflow-hidden transition-opacity duration-100 ${
                 atStart ? "opacity-0 pointer-events-none" : "opacity-100"
               }`}
             >
@@ -103,8 +104,9 @@ export default function CoursesSection() {
 
             <button
               type="button"
+              aria-label="scroll forward"
               onClick={() => scrollBy(350)}
-              className={`absolute top-1/2 -translate-y-1/2 -right-8 border-scroll cursor-pointer w-16 h-72 xl:h-80 z-150 rotate-0 rounded-3xl overflow-hidden ${
+              className={`absolute top-1/2 -translate-y-1/2 -right-8 border-scroll cursor-pointer w-16 h-72 xl:h-80 z-150 rotate-0 rounded-3xl overflow-hidden transition-opacity duration-100 ${
                 atEnd ? "opacity-0 pointer-events-none" : "opacity-100"
               }`}
             >

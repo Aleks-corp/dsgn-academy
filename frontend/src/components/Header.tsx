@@ -82,6 +82,8 @@ export default function Header({ isOpenAside, setIsOpenAside }: Props) {
           className={`flex items-center gap-2 px-3 md:px-5 pt-4 pb-3 shrink-1`}
         >
           <button
+            type="button"
+            aria-label="menu"
             className="hidden w-10 h-10 md:flex items-center justify-center p-2 cursor-pointer"
             onClick={() => setIsOpenAside(!isOpenAside)}
           >
@@ -190,6 +192,8 @@ export default function Header({ isOpenAside, setIsOpenAside }: Props) {
       </div>
       <div className="md:hidden py-5 pl-1 pr-5 flex-1">
         <button
+          type="button"
+          aria-label="menu"
           className="w-10 h-10 flex items-center justify-center p-2 cursor-pointer"
           onClick={() => setIsOpenAside(!isOpenAside)}
         >

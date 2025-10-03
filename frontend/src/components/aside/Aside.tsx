@@ -243,13 +243,14 @@ export default function Aside({ selectedPage, setSelectedPage }: Props) {
                     selectedPage === c ? "bg-icon shadow-icon" : ""
                   }`}
                 >
-                  <Image
-                    src={`/icons/${c}.svg`}
-                    alt={c.charAt(0).toUpperCase() + c.slice(1)}
-                    width={40}
-                    height={40}
-                    className="object-contain w-auto h-5"
-                  />
+                  <div className="relative w-5 h-5">
+                    <Image
+                      src={`/icons/${c}.svg`}
+                      alt={c.charAt(0).toUpperCase() + c.slice(1)}
+                      fill
+                      className="object-contain"
+                    />
+                  </div>
                 </div>
               }
               count={categories.find((i) => i.category === c)?.count}
