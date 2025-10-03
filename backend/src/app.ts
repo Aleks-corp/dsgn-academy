@@ -6,6 +6,7 @@ import morgan from "morgan";
 import cors from "cors";
 import "dotenv/config";
 import cookieParser from "cookie-parser";
+import compression from "compression";
 
 import type { Err } from "./types/error.type.js";
 
@@ -43,6 +44,7 @@ app.use(
     credentials: true,
   })
 );
+app.use(compression());
 app.use(cookieParser());
 app.use(express.json()); // для application/json
 app.use(express.urlencoded({ extended: true })); // для application/x-www-form-urlencoded
