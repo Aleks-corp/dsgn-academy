@@ -44,6 +44,7 @@ function RootPage({ children }: { children: React.ReactNode }) {
       pathname === "/" ||
       pathname.endsWith("/command") ||
       pathname.endsWith("/videos") ||
+      pathname.endsWith("/bookmarks") ||
       pathname.endsWith("/shorts") ||
       pathname.endsWith("/courses") ||
       (pathname.startsWith("/profile") && isLoggedIn) ||
@@ -51,7 +52,6 @@ function RootPage({ children }: { children: React.ReactNode }) {
     );
   }, [pathname, isLoggedIn, isAdmin]);
 
-  // --- 4) синхронізація стану: на мобільному завжди закрито; на lg — як раніше
   useEffect(() => {
     if (!isLg) {
       setIsOpenAside(false);

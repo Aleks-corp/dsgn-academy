@@ -3,7 +3,7 @@
 import { useAppSelector } from "@/redux/hooks";
 import { selectVideoFilters } from "@/selectors/videos.selectors";
 import { useMemo, useCallback } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useDragScroll } from "@/hooks/useDragScroll";
 import { selectUser } from "@/redux/selectors/auth.selectors";
 import { BsBookmark } from "react-icons/bs";
@@ -17,10 +17,12 @@ export default function FilterSection() {
   const user = useAppSelector(selectUser);
   const router = useRouter();
   const searchParams = useSearchParams();
+  const pathname = usePathname();
   const scrollBind = useDragScroll();
 
   const activeFilter = searchParams.get("filter") || "";
   const isRecommended = searchParams.has("recommended");
+  const bookmarks = pathname === "/bookmarks";
 
   const btnClasses = useCallback(
     (isSelected: boolean) =>
@@ -34,7 +36,7 @@ export default function FilterSection() {
 
   const isDisplayReco =
     searchParams.get("category") === "framer" ||
-    searchParams.get("category") === "webflow"; //тимчасова заглушка поки не буде хоча б одного
+    searchParams.get("category") === "webflow";
 
   const items = useMemo(() => {
     const base = [ALL_LABEL];
@@ -52,22 +54,19 @@ export default function FilterSection() {
     const params = new URLSearchParams(window.location.search);
 
     if (label === BOOKMARKED_LABEL) {
-      router.push(`/profile/bookmarks`, { scroll: false });
+      router.push(`/bookmarks`, { scroll: false });
       return;
     }
 
     if (label === ALL_LABEL) {
-      // прибираємо ВСІ фільтри
       params.delete("filter");
       params.delete("recommended");
       params.delete("search");
     } else if (label === RECO_LABEL) {
-      // лишаємо всі інші параметри, додаємо recommended
       params.delete("filter");
       params.delete("search");
       params.set("recommended", "true");
     } else {
-      // конкретний фільтр
       params.set("filter", label);
       params.delete("recommended");
       params.delete("search");
@@ -86,8 +85,12 @@ export default function FilterSection() {
       >
         {items.map((label) => {
           const isSelected =
-            (label === ALL_LABEL && !activeFilter && !isRecommended) ||
-            (label === RECO_LABEL && isRecommended) ||
+            (label === ALL_LABEL &&
+              !activeFilter &&
+              !isRecommended &&
+              !bookmarks) ||
+            (label === RECO_LABEL && isRecommended && !bookmarks) ||
+            (label === BOOKMARKED_LABEL && bookmarks) ||
             (label !== ALL_LABEL &&
               label !== RECO_LABEL &&
               activeFilter === label);
@@ -99,6 +102,7 @@ export default function FilterSection() {
               onClick={() => handleSelect(label)}
               className={btnClasses(isSelected)}
               aria-pressed={isSelected}
+              aria-label="label"
             >
               {label === BOOKMARKED_LABEL ? (
                 <BsBookmark size={16} style={{ strokeWidth: 0.5 }} />
