@@ -1,55 +1,13 @@
-"use client";
+import VideoPage from "@/components/videos/VideoPage";
+import { getSeoMetadata } from "@/lib/page.metadata";
+import { PageProps } from "@/types/param.type";
 
-import { useEffect } from "react";
-import { useParams } from "next/navigation";
-import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { fetchVideoById } from "@/redux/videos/video.thunk";
-import {
-  selectIsLoadingVideos,
-  selectVideo,
-  selectVideosError,
-} from "@/redux/selectors/videos.selectors";
-
-import { clearVideo } from "@/redux/videos/videoSlice";
-import VideoPlayer from "@/components/videos/VideoPlayer";
-import RecommendedList from "@/components/Recommended";
-import NotFoundComponent from "@/components/notFound/NotFound";
-import { VideoCardSkeleton } from "@/components/skeleton/VideoCardSkeleton";
-import { useCanWatchVideo } from "@/hooks/useCanWatchVideo";
-
-function VideoPage() {
-  const dispatch = useAppDispatch();
-  const { id } = useParams();
-  const isLoading = useAppSelector(selectIsLoadingVideos);
-  const video = useAppSelector(selectVideo);
-  const canWatch = useCanWatchVideo();
-  const error = useAppSelector(selectVideosError);
-
-  useEffect(() => {
-    dispatch(fetchVideoById(id as string));
-    return () => {
-      dispatch(clearVideo());
-    };
-  }, [dispatch, id]);
-
-  if (isLoading) {
-    return <VideoCardSkeleton />;
-  }
-
-  if (error && !isLoading && !video) {
-    return <NotFoundComponent />;
-  }
-
-  if (!video) {
-    return null;
-  }
-
-  return (
-    <div className="flex flex-col lg:flex-row justify-center gap-8 smx-auto">
-      {video && <VideoPlayer canWatch={video.free || canWatch} video={video} />}
-
-      <RecommendedList />
-    </div>
-  );
+export async function generateMetadata({ params }: PageProps) {
+  const { id } = await params;
+  return getSeoMetadata("video", id);
 }
-export default VideoPage;
+
+export default async function Page({ params }: PageProps) {
+  const { id } = await params;
+  return <VideoPage id={id} />;
+}
