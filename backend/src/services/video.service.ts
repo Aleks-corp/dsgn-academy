@@ -110,10 +110,18 @@ export const deleteVideoByIdService = async (
   return VideoModel.findByIdAndDelete(id).exec();
 };
 
+export const checkBookmarkedVideosService = async (
+  videoIds: Types.ObjectId[]
+): Promise<{ cleanIds: Types.ObjectId[] }> => {
+  const cleanVideo = await VideoModel.find({ _id: { $in: videoIds } }, "_id");
+  const cleanIds = cleanVideo.map((v) => v._id);
+  return { cleanIds };
+};
+
 export const getBookmarkedVideosService = async (
   videoIds: Types.ObjectId[],
   options: { limit: number; page: number }
-): Promise<{ videos: IVideo[]; total: number; cleanIds: Types.ObjectId[] }> => {
+): Promise<{ videos: IVideo[]; total: number }> => {
   const { limit, page } = options;
   const skip = (page - 1) * limit;
 
@@ -129,10 +137,7 @@ export const getBookmarkedVideosService = async (
     VideoModel.countDocuments({ _id: { $in: videoIds } }),
   ]);
 
-  // чистимо ті id, яких вже немає в базі
-  const cleanIds = videos.map((v) => v._id);
-
-  return { videos, total, cleanIds };
+  return { videos, total };
 };
 
 export const getWatchedVideosService = async (
@@ -194,6 +199,7 @@ export default {
   addVideoService,
   updateVideoService,
   deleteVideoByIdService,
+  checkBookmarkedVideosService,
   getBookmarkedVideosService,
   getWatchedVideosService,
   toggleLikeVideoService,

@@ -20,6 +20,7 @@ const {
   addVideoService,
   updateVideoService,
   deleteVideoByIdService,
+  checkBookmarkedVideosService,
   getBookmarkedVideosService,
   getWatchedVideosService,
   toggleLikeVideoService,
@@ -175,20 +176,22 @@ export const getBookmarkedVideos = async (
   const { limit = "9", page = "1" } = req.query;
   const perPage = Math.max(1, Number(limit));
   const currentPage = Math.max(1, Number(page));
-  const videoIds = user.bookmarkedVideos || [];
+  let videoIds = user.bookmarkedVideos || [];
   if (videoIds.length === 0) {
     throw HttpError(404, "No videos found");
   }
-  const { videos, total, cleanIds } = await getBookmarkedVideosService(
-    videoIds,
-    {
-      limit: perPage,
-      page: currentPage,
+  if (currentPage === 1) {
+    const { cleanIds } = await checkBookmarkedVideosService(videoIds);
+    if (cleanIds.length !== (user.bookmarkedVideos?.length || 0)) {
+      await updateBookmarkedVideosService(cleanIds, user._id);
+      videoIds = cleanIds;
     }
-  );
-  if (cleanIds.length !== (user.bookmarkedVideos?.length || 0)) {
-    await updateBookmarkedVideosService(cleanIds, user._id);
   }
+  const { videos, total } = await getBookmarkedVideosService(videoIds, {
+    limit: perPage,
+    page: currentPage,
+  });
+
   if (!videos || videos.length === 0) {
     throw HttpError(404, "No videos found");
   }

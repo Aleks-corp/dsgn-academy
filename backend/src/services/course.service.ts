@@ -60,13 +60,23 @@ export const deleteCourseByIdService = async (
   return CourseModel.findByIdAndDelete(id).exec();
 };
 
+export const checkBookmarkedCoursesService = async (
+  courseIds: Types.ObjectId[]
+): Promise<{ cleanIds: Types.ObjectId[] }> => {
+  const cleanCourses = await CourseModel.find(
+    { _id: { $in: courseIds } },
+    "_id"
+  );
+  const cleanIds = cleanCourses.map((v) => v._id);
+  return { cleanIds };
+};
+
 export const getBookmarkedCoursesService = async (
   courseIds: (Types.ObjectId | string)[],
   options: { limit: number; page: number }
 ): Promise<{
   courses: ICourse[];
   total: number;
-  cleanIds: Types.ObjectId[];
 }> => {
   const { limit, page } = options;
   const skip = (page - 1) * limit;
@@ -83,9 +93,7 @@ export const getBookmarkedCoursesService = async (
     CourseModel.countDocuments({ _id: { $in: courseIds } }),
   ]);
 
-  const cleanIds = courses.map((c) => c._id);
-
-  return { courses, total, cleanIds };
+  return { courses, total };
 };
 
 export const getWatchedCoursesService = async (
@@ -147,6 +155,7 @@ export default {
   addCourseService,
   updateCourseService,
   deleteCourseByIdService,
+  checkBookmarkedCoursesService,
   getBookmarkedCoursesService,
   getWatchedCoursesService,
   toggleLikeCourseService,

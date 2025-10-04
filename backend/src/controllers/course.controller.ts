@@ -18,6 +18,7 @@ const {
   addCourseService,
   updateCourseService,
   deleteCourseByIdService,
+  checkBookmarkedCoursesService,
   getBookmarkedCoursesService,
   getWatchedCoursesService,
   toggleLikeCourseService,
@@ -170,17 +171,19 @@ export const getBookmarkedCourses = async (
   const { limit = "9", page = "1" } = req.query;
   const perPage = Math.max(1, Number(limit));
   const currentPage = Math.max(1, Number(page));
-  const courseIds = user.bookmarkedCourses || [];
+  let courseIds = user.bookmarkedCourses || [];
   if (courseIds.length === 0) throw HttpError(404, "No courses found");
-
-  const { courses, total, cleanIds } = await getBookmarkedCoursesService(
-    courseIds,
-    { limit: perPage, page: currentPage }
-  );
-
-  if (cleanIds.length !== (user.bookmarkedCourses?.length || 0)) {
-    await updateBookmarkedCoursesService(cleanIds, user._id);
+  if (currentPage === 1) {
+    const { cleanIds } = await checkBookmarkedCoursesService(courseIds);
+    if (cleanIds.length !== (user.bookmarkedVideos?.length || 0)) {
+      await updateBookmarkedCoursesService(cleanIds, user._id);
+      courseIds = cleanIds;
+    }
   }
+  const { courses, total } = await getBookmarkedCoursesService(courseIds, {
+    limit: perPage,
+    page: currentPage,
+  });
 
   res.json({
     courses: courses.map((c: ICourse) => ({
