@@ -213,7 +213,7 @@ export const toggleBookmarkCourse = async (
 
   const { action } = await toggleBookmarkedCourseService(userId, courseId);
 
-  res.json({ message: `Course ${action} bookmark` });
+  res.json({ message: `Course ${action}` });
 };
 
 export const getWatchedCourses = async (

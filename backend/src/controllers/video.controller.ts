@@ -304,7 +304,7 @@ export const toggleBookmarkedVideo = async (
 
   const { action } = await toggleBookmarkedVideoService(userId, videoId);
 
-  res.json({ message: `Video ${action} bookmark` });
+  res.json({ message: `Video ${action}` });
 };
 
 export const updateWatchedVideo = async (
