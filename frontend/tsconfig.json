@@ -36,7 +36,8 @@
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",
-    "src/redux/selectors"
+    "src/redux/selectors",
+    "next.config.mjs"
   ],
   "exclude": ["node_modules"]
 }

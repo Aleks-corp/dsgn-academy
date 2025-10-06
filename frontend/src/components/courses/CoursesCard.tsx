@@ -27,8 +27,11 @@ export default function CoursesCard({
   ) => {
     e.preventDefault();
     e.stopPropagation();
-    dispatch(toggleBookmarkedCourse(course._id));
-    dispatch(toggleCourseBookMarked(course._id));
+    dispatch(toggleBookmarkedCourse(course._id)).then((res) => {
+      if (res.meta.requestStatus === "fulfilled") {
+        dispatch(toggleCourseBookMarked(course._id));
+      }
+    });
   };
   const videosWatchedProgress = (course: ICourse) =>
     course.videos.reduce((acc, v) => {

@@ -163,6 +163,7 @@ const videoSlice = createSlice({
         state.videos[index].bookmarked = !state.videos[index].bookmarked;
       }
       if (state.bookmarkedVideo.length !== 0) {
+        state.totalHits = state.totalHits - 1;
         state.bookmarkedVideo = state.bookmarkedVideo.filter(
           (video) => video._id !== action.payload
         );

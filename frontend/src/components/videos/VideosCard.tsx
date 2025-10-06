@@ -20,8 +20,11 @@ export default function VideosCard({ video }: { video: IVideo }) {
   ) => {
     e.preventDefault();
     e.stopPropagation();
-    dispatch(toggleBookmarkedVideo(video._id));
-    dispatch(toggleVideoBookMarked(video._id));
+    dispatch(toggleBookmarkedVideo(video._id)).then((res) => {
+      if (res.meta.requestStatus === "fulfilled") {
+        dispatch(toggleVideoBookMarked(video._id));
+      }
+    });
   };
 
   return (

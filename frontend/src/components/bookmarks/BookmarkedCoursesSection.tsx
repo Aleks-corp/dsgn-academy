@@ -1,26 +1,21 @@
 "use client";
 
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { selectBookmarkedCourses } from "@/selectors/courses.selector";
+import {
+  selectBookmarkedCourses,
+  selectTotalHits,
+} from "@/selectors/courses.selector";
 import { fetchBookMarkedCourses } from "@/redux/courses/course.thunk";
 import { useEffect, useRef, useState } from "react";
 import CoursesCard from "../courses/CoursesCard";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { ICourse } from "@/types/courses.type";
 import { useWindowWidth } from "@/hooks/useWindowWidth";
-import { unwrapResult } from "@reduxjs/toolkit";
-
-interface CoursesPayload {
-  courses: ICourse[];
-  total: number;
-  page: number;
-}
 
 export default function BookmarkedCoursesSection() {
   const dispatch = useAppDispatch();
   const bookmarkedCourses = useAppSelector(selectBookmarkedCourses);
   const [isLoading, setIsLoading] = useState(false);
-  const [total, setTotal] = useState<number | null>(null);
+  const total = useAppSelector(selectTotalHits);
   const { width } = useWindowWidth();
 
   const limit =
@@ -36,12 +31,9 @@ export default function BookmarkedCoursesSection() {
 
   useEffect(() => {
     setIsLoading(true);
-    dispatch(fetchBookMarkedCourses({ page: 1, limit: limit }))
-      .then(unwrapResult)
-      .then((payload: CoursesPayload) => {
-        setIsLoading(false);
-        if (payload.total) setTotal(payload.total);
-      });
+    dispatch(fetchBookMarkedCourses({ page: 1, limit: limit })).finally(() =>
+      setIsLoading(false)
+    );
   }, [dispatch, limit]);
 
   const [atStart, setAtStart] = useState(true);
@@ -124,9 +116,15 @@ export default function BookmarkedCoursesSection() {
           className="flex gap-3 overflow-x-auto no-scrollbar scroll-smooth p-4"
           onScroll={(e) => handleScroll(e.currentTarget)}
         >
-          {bookmarkedCourses.map((course) => (
-            <CoursesCard course={course} path="main" key={course._id} />
-          ))}
+          {bookmarkedCourses.length !== 0 &&
+            bookmarkedCourses.map((course) => (
+              <CoursesCard course={course} path="main" key={course._id} />
+            ))}
+          {bookmarkedCourses.length === 0 && isLoading && (
+            <h3 className="font-medium text-sm leading-7 tracking-thinest text-muted mb-10">
+              Збережених курсів поки немає
+            </h3>
+          )}
         </div>
       </div>
     </section>

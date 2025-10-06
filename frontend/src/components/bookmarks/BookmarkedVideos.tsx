@@ -8,24 +8,17 @@ import { useEffect, useRef, useState } from "react";
 import {
   selectBookmarkedVideos,
   selectIsLoadingVideos,
-  selectVideosError,
-} from "@/redux/selectors/videos.selectors";
+  selectTotalHits,
+} from "@/selectors/videos.selectors";
 
 import { useWindowWidth } from "@/hooks/useWindowWidth";
-import NotFoundComponent from "@/components/notFound/NotFound";
-
-interface FetchVideosResponse {
-  total: number;
-  videos: unknown[];
-}
 
 function BookmarkedVideos() {
   const dispatch = useAppDispatch();
   const videos = useAppSelector(selectBookmarkedVideos);
   const isLoadingVideo = useAppSelector(selectIsLoadingVideos);
-  const error = useAppSelector(selectVideosError);
   const { width } = useWindowWidth();
-  const [total, setTotal] = useState<number | null>(null);
+  const total = useAppSelector(selectTotalHits);
   const [isLoading, setIsLoading] = useState(false);
   const loaderRef = useRef<HTMLDivElement | null>(null);
 
@@ -38,12 +31,8 @@ function BookmarkedVideos() {
   useEffect(() => {
     pageRef.current = 1;
     setIsLoading(true);
-    dispatch(fetchBookMarkedVideos({ page: 1, limit: initialLimit })).then(
-      (res) => {
-        const payload = (res as { payload?: FetchVideosResponse }).payload;
-        if (payload?.total) setTotal(payload.total);
-        setIsLoading(false);
-      }
+    dispatch(fetchBookMarkedVideos({ page: 1, limit: initialLimit })).finally(
+      () => setIsLoading(false)
     );
   }, [dispatch, initialLimit]);
 
@@ -77,10 +66,6 @@ function BookmarkedVideos() {
     };
   }, [dispatch, videos.length, total, loadMoreCount, isLoading]);
 
-  if (error && !isLoadingVideo && videos.length === 0) {
-    return <NotFoundComponent />;
-  }
-
   return (
     <div className="flex flex-col gap-8 w-full mx-auto">
       {videos.length !== 0 && (
@@ -89,6 +74,11 @@ function BookmarkedVideos() {
           isLoadingVideo={isLoadingVideo}
           isAddHeader={false}
         />
+      )}
+      {videos.length === 0 && !isLoading && (
+        <h3 className="font-medium text-sm leading-7 tracking-thinest text-muted ml-4">
+          Збережених відео поки немає
+        </h3>
       )}
       <div ref={loaderRef} className="h-10" />
     </div>

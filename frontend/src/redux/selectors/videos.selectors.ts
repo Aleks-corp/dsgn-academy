@@ -17,6 +17,8 @@ export const selectIsLoadingVideos = (state: State) => state.videos.isLoading;
 
 export const selectVideosError = (state: State) => state.videos.error;
 
+export const selectTotalHits = (state: State) => state.videos.totalHits;
+
 export const selectTotalVideos = (state: State) => state.videos.totalVideos;
 
 export const selectTotalFree = (state: State) => state.videos.totalFree;

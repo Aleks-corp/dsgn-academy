@@ -7,6 +7,8 @@ export const selectBookmarkedCourses = (state: State) =>
 
 export const selectTotalCourses = (state: State) => state.courses.totalCourses;
 
+export const selectTotalHits = (state: State) => state.courses.totalHits;
+
 export const selectCurrentFilter = (state: State) =>
   state.courses.currentFilter;
 

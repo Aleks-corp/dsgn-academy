@@ -136,6 +136,7 @@ const courseSlice = createSlice({
         state.courses[index].bookmarked = !state.courses[index].bookmarked;
       }
       if (state.bookmarkedCourses.length !== 0) {
+        state.totalHits = state.totalHits - 1;
         state.bookmarkedCourses = state.bookmarkedCourses.filter(
           (course) => course._id !== action.payload
         );

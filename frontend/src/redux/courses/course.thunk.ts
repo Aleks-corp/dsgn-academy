@@ -166,7 +166,7 @@ export const toggleBookmarkedCourse = createAsyncThunk(
   async (courseId: string, thunkAPI) => {
     try {
       const response = await instance.patch(`/courses/bookmarked/${courseId}`);
-      return { courseId, action: response.data.action };
+      return { courseId, message: response.data.message };
     } catch (error) {
       if (error instanceof AxiosError) {
         return thunkAPI.rejectWithValue(

@@ -103,7 +103,7 @@ export const toggleBookmarkedVideo = createAsyncThunk(
   async (videoId: string, thunkAPI) => {
     try {
       const response = await instance.patch(`/videos/bookmarked/${videoId}`);
-      return { videoId, action: response.data.action };
+      return { videoId, message: response.data.message };
     } catch (error) {
       if (error instanceof AxiosError) {
         return thunkAPI.rejectWithValue(

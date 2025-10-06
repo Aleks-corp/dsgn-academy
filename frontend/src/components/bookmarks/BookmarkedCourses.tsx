@@ -7,6 +7,7 @@ import { fetchBookMarkedCourses } from "@/redux/courses/course.thunk";
 import {
   selectBookmarkedCourses,
   selectIsLoadingCourses,
+  selectTotalHits,
 } from "@/selectors/courses.selector";
 import { useWindowWidth } from "@/hooks/useWindowWidth";
 
@@ -15,18 +16,13 @@ import NotFoundComponent from "@/components/notFound/NotFound";
 import { VideoCardsSkeleton } from "@/components/skeleton/VideoCardSkeleton";
 import { selectVideosError } from "@/redux/selectors/videos.selectors";
 
-interface FetchCourseResponse {
-  total: number;
-  courses: unknown[];
-}
-
 function BookmarkedCourses() {
   const dispatch = useAppDispatch();
   const courses = useAppSelector(selectBookmarkedCourses);
   const isLoadingVideo = useAppSelector(selectIsLoadingCourses);
   const error = useAppSelector(selectVideosError);
   const { width } = useWindowWidth();
-  const [total, setTotal] = useState<number | null>(null);
+  const total = useAppSelector(selectTotalHits);
   const [isLoading, setIsLoading] = useState(false);
   const loaderRef = useRef<HTMLDivElement | null>(null);
 
@@ -39,12 +35,8 @@ function BookmarkedCourses() {
   useEffect(() => {
     pageRef.current = 1;
     setIsLoading(true);
-    dispatch(fetchBookMarkedCourses({ page: 1, limit: initialLimit })).then(
-      (res) => {
-        const payload = (res as { payload?: FetchCourseResponse }).payload;
-        if (payload?.total) setTotal(payload.total);
-        setIsLoading(false);
-      }
+    dispatch(fetchBookMarkedCourses({ page: 1, limit: initialLimit })).finally(
+      () => setIsLoading(false)
     );
   }, [dispatch, initialLimit]);
 

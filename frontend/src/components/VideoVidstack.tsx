@@ -12,7 +12,6 @@ import {
   DefaultVideoLayout,
   defaultLayoutIcons,
 } from "@vidstack/react/player/layouts/default";
-
 import "@vidstack/react/player/styles/default/theme.css";
 import "@vidstack/react/player/styles/default/layouts/video.css";
 
@@ -80,7 +79,6 @@ export default function VidstackPlayer({
   useEffect(() => {
     return () => {
       const current = Math.floor(lastTime.current);
-      console.log("unmount");
       if (current > 0) {
         progressCb.current?.(current);
       }
