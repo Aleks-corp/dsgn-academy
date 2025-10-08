@@ -124,6 +124,9 @@ export default function Header({ isOpenAside, setIsOpenAside }: Props) {
         </div>
       </div>
       <div className="flex md:gap-4 py-5 pr-1 md:pr-5 pl-4">
+        {user?.subscription === "admin" && (
+          <NavLink rout="/stream" text="Stream" />
+        )}
         {!isExpanded && (
           <Link
             href="/command"
