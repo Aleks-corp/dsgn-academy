@@ -16,6 +16,7 @@ import videosRouter from "./routes/video.route.js";
 // import testRouter from "./routes/test.route.js";
 import adminRouter from "./routes/admin.route.js";
 import shortsRouter from "./routes/short.route.js";
+import streamRouter from "./routes/stream.route.js";
 
 const logPath = path.resolve("logs");
 
@@ -73,6 +74,7 @@ app.use("/courses", coursesRouter);
 app.use("/videos", videosRouter);
 app.use("/shorts", shortsRouter);
 // app.use("/testing", testRouter);
+app.use("/stream", streamRouter);
 app.use("/admin", adminRouter);
 
 app.get("/ping", (req, res) => {
