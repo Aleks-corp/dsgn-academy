@@ -10,6 +10,5 @@ const streamSchema = new Schema<IStream>(
   },
   { timestamps: true }
 );
-streamSchema.index({ _id: -1 });
 
 export default model<IStream>("stream", streamSchema);

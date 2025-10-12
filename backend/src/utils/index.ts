@@ -7,3 +7,4 @@ export { default as setSubDate } from "./setsubdate.utils.js";
 export { default as unsubscribeUser } from "./unsubscribe.utils.js";
 export { default as checkSubscriptionStatus } from "./checksub.utils.js";
 export { default as fetchVideoDataById } from "./addcover.utils.js";
+export { default as sendMailToUsers } from "./mailstream.utils.js";

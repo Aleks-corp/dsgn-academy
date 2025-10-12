@@ -13,6 +13,7 @@ const {
   updateUserSubscription,
   updateUserBlockStatus,
   checkUsersSubscription,
+  sentMailToUsers,
 } = adminController;
 
 const adminRouter = express.Router();
@@ -39,5 +40,7 @@ adminRouter.patch(
   validateBody(usersCheckSubscriptionSchema),
   checkUsersSubscription
 );
+
+adminRouter.post("/users/send-mail", sentMailToUsers);
 
 export default adminRouter;

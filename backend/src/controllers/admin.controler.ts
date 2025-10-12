@@ -2,11 +2,12 @@ import "dotenv/config";
 import type { Request, Response } from "express";
 import type { ObjectId } from "mongoose";
 import { ctrlWrapper } from "../decorators/index.js";
-import User from "../models/user.model.js";
+import { StreamModel, UserModel } from "../models/index.js";
 import {
   checkSubscriptionStatus,
   setSubDate,
   HttpError,
+  sendMailToUsers,
 } from "../utils/index.js";
 
 const getAllUser = async (req: Request, res: Response): Promise<void> => {
@@ -17,7 +18,7 @@ const getAllUser = async (req: Request, res: Response): Promise<void> => {
   const skip = (pageNumber - 1) * limitNumber;
   const query = filter ? { subscription: filter } : {};
 
-  const users = await User.find(
+  const users = await UserModel.find(
     query,
     "-password -token -verificationToken -verify -resetPasswordToken -resetPasswordExpires -createdAt -updatedAt",
     {
@@ -25,7 +26,7 @@ const getAllUser = async (req: Request, res: Response): Promise<void> => {
       limit: limitNumber,
     }
   );
-  const totalHits = await User.countDocuments(query);
+  const totalHits = await UserModel.countDocuments(query);
   res.json({ totalHits, users });
 };
 
@@ -38,9 +39,9 @@ const updateUsersSubscription = async (
   if (subscription === "free") {
     await Promise.all(
       usersId.map(async (_id: ObjectId) => {
-        const user = await User.findOne({ _id });
+        const user = await UserModel.findOne({ _id });
         if (!user) return;
-        await User.findByIdAndUpdate(
+        await UserModel.findByIdAndUpdate(
           user._id,
           {
             subscription,
@@ -57,7 +58,7 @@ const updateUsersSubscription = async (
   if (subscription === "premium") {
     await Promise.all(
       usersId.map(async (id: ObjectId) => {
-        const user = await User.findOne({ _id: id });
+        const user = await UserModel.findOne({ _id: id });
         if (!user) return;
         const newSubstart = user.substart ? user.substart : newDate;
         const newSubend = !user.subend
@@ -66,7 +67,7 @@ const updateUsersSubscription = async (
           ? setSubDate(newDate.getTime())
           : setSubDate(user.subend.getTime());
 
-        await User.findByIdAndUpdate(
+        await UserModel.findByIdAndUpdate(
           user._id,
           {
             subscription,
@@ -81,7 +82,7 @@ const updateUsersSubscription = async (
     );
   }
 
-  const updatedUsers = await User.find(
+  const updatedUsers = await UserModel.find(
     {},
     "-password -token -verificationToken -verify -resetPasswordToken -resetPasswordExpires -createdAt -updatedAt",
     {
@@ -89,7 +90,7 @@ const updateUsersSubscription = async (
       limit: 500,
     }
   );
-  const totalHits = await User.countDocuments({});
+  const totalHits = await UserModel.countDocuments({});
   res.json({ totalHits, users: updatedUsers });
 };
 
@@ -102,12 +103,12 @@ const updateUserSubscription = async (
   const newDate = new Date();
   const { _id } = newUser;
   const newSubscription = newUser.subscription;
-  const user = await User.findOne({ _id });
+  const user = await UserModel.findOne({ _id });
   if (!user) {
     throw HttpError(400, "Invalid user id");
   }
   if (newSubscription === "admin") {
-    const updatedUser = await User.findByIdAndUpdate(
+    const updatedUser = await UserModel.findByIdAndUpdate(
       _id,
       {
         subscription: newSubscription,
@@ -127,7 +128,7 @@ const updateUserSubscription = async (
     const newSubstart = user.substart ? user.substart : newDate;
     const newSubend = newUser.subend;
 
-    const updatedUser = await User.findByIdAndUpdate(
+    const updatedUser = await UserModel.findByIdAndUpdate(
       _id,
       {
         subscription: newSubscription,
@@ -148,7 +149,7 @@ const updateUserSubscription = async (
     const newSubstart = null;
     const newSubend = null;
 
-    const updatedUser = await User.findByIdAndUpdate(
+    const updatedUser = await UserModel.findByIdAndUpdate(
       _id,
       {
         subscription: newSubscription,
@@ -174,14 +175,14 @@ const checkUsersSubscription = async (
   const { usersId } = req.body;
   await Promise.all(
     usersId.map(async (_id: ObjectId) => {
-      const user = await User.findById(_id);
+      const user = await UserModel.findById(_id);
       if (!user) return;
       const updatedUser = await checkSubscriptionStatus(user);
       return updatedUser;
     })
   );
 
-  const updatedUsers = await User.find(
+  const updatedUsers = await UserModel.find(
     {},
     "-password -token -verificationToken -verify -resetPasswordToken -resetPasswordExpires -createdAt -updatedAt",
     {
@@ -189,7 +190,7 @@ const checkUsersSubscription = async (
       limit: 500,
     }
   );
-  const totalHits = await User.countDocuments({});
+  const totalHits = await UserModel.countDocuments({});
   res.json({ totalHits, users: updatedUsers });
 };
 
@@ -200,19 +201,19 @@ const updateUserBlockStatus = async (
   const { usersId } = req.body;
   await Promise.all(
     usersId.map(async (_id: ObjectId) => {
-      const user = await User.findById(_id);
+      const user = await UserModel.findById(_id);
       if (!user) {
         throw HttpError(404, "User not found");
       }
       const isBlocked = !user.isBlocked;
       const updateData = isBlocked ? { isBlocked, token: "" } : { isBlocked };
 
-      await User.findByIdAndUpdate(_id, updateData, {
+      await UserModel.findByIdAndUpdate(_id, updateData, {
         new: true,
       });
     })
   );
-  const updatedUsers = await User.find(
+  const updatedUsers = await UserModel.find(
     {},
     "-password -token -verificationToken -verify -resetPasswordToken -resetPasswordExpires -createdAt -updatedAt",
     {
@@ -220,8 +221,24 @@ const updateUserBlockStatus = async (
       limit: 500,
     }
   );
-  const totalHits = await User.countDocuments({});
+  const totalHits = await UserModel.countDocuments({});
   res.json({ totalHits, users: updatedUsers });
+};
+
+const sentMailToUsers = async (req: Request, res: Response): Promise<void> => {
+  const users = await UserModel.find({});
+  const stream = await StreamModel.findOne({});
+  await Promise.all(
+    users.map(async (user) => {
+      await checkSubscriptionStatus(user);
+      if (user.subscription === "admin") {
+        return;
+      } else if (stream) {
+        await sendMailToUsers({ user, stream });
+      }
+    })
+  );
+  res.json({ message: "Emails sent" });
 };
 
 export default {
@@ -230,4 +247,5 @@ export default {
   updateUsersSubscription: ctrlWrapper(updateUsersSubscription),
   checkUsersSubscription: ctrlWrapper(checkUsersSubscription),
   updateUserBlockStatus: ctrlWrapper(updateUserBlockStatus),
+  sentMailToUsers: ctrlWrapper(sentMailToUsers),
 };
