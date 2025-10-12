@@ -11,7 +11,6 @@ import Link from "next/link";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { selectIsAdmin, selectUser } from "@/redux/selectors/auth.selectors";
 import { useParams } from "next/navigation";
-import moment from "moment";
 import {
   toggleBookmarkedCourse,
   toggleLikeCourse,
@@ -21,6 +20,7 @@ import {
   toggleCourseLiked,
 } from "@/redux/courses/courseSlice";
 import { BsBookmark, BsBookmarkFill } from "react-icons/bs";
+import dayjs from "dayjs";
 
 export default function CourseDescription({
   course,
@@ -170,8 +170,7 @@ export default function CourseDescription({
       </div>
       {isAdmin && course.publishedAt && (
         <p className="my-4 font-bold">
-          Date -{" "}
-          {moment(new Date(course.publishedAt)).format("DD-MM-YYYY_HH:mm")}
+          Date - {dayjs(course.publishedAt).format("DD-MM-YYYY_HH:mm")}
         </p>
       )}
       {selectedVideoIndex === 0 && (

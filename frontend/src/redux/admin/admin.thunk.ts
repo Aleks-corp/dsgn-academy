@@ -96,3 +96,17 @@ export const sendMessageSpt = createAsyncThunk(
     }
   }
 );
+
+export const sendMailToAll = createAsyncThunk(
+  "admin/sendmailtoall",
+  async (_, thunkAPI) => {
+    try {
+      const response = await instance.post(`/admin/users/send-mail`);
+      return response.data;
+    } catch (e) {
+      if (e instanceof Error) {
+        return thunkAPI.rejectWithValue(e.message);
+      }
+    }
+  }
+);

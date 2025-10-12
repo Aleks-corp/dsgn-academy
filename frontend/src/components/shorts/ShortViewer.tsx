@@ -97,7 +97,7 @@ export default function ShortsViewer({ initialId }: Props) {
     <div
       ref={containerRef}
       onClick={onBackdropClick}
-      className="fixed inset-0 z-50 bg-black h-full tabx:bg-background backdrop-blur-sm flex items-center justify-center pb-5 md:py-0"
+      className="fixed inset-0 z-[9999] bg-black h-full tabx:bg-background backdrop-blur-sm flex items-center justify-center pb-5 md:py-0"
     >
       <ViewNavButtons
         onPrev={() => slider.current?.prev()}

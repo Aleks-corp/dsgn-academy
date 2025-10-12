@@ -86,6 +86,15 @@ const config: Config = {
         btns: { scroll: "var(--box-shadow-btn-scroll)" },
         select: "var(--box-shadow-select)",
       },
+      animation: {
+        marquee: "scroll 25s linear infinite",
+      },
+      keyframes: {
+        scroll: {
+          "0%": { transform: "translateX(0%)" },
+          "100%": { transform: "translateX(-25%)" },
+        },
+      },
     },
   },
 };

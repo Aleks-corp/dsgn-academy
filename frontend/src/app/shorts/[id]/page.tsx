@@ -11,6 +11,7 @@ import {
   selectShorts,
   selectShortsError,
 } from "@/redux/selectors/shorts.selector";
+import { createPortal } from "react-dom";
 
 export default function ShortFullPage() {
   const { id } = useParams<{ id: string }>();
@@ -28,8 +29,7 @@ export default function ShortFullPage() {
     );
 
   return (
-    <div className="h-dvh w-dvw overflow-hidden">
-      <ShortsViewer initialId={id} />
-    </div>
+    typeof window !== "undefined" &&
+    createPortal(<ShortsViewer initialId={id} />, document.body)
   );
 }

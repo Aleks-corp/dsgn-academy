@@ -103,6 +103,10 @@ body {
     linear-gradient(180deg, #e5e5e5 0%, #e2e2e2 100%);
 }
 
+.bg-banner {
+  background: linear-gradient(90deg, #0170fd 0%, #d57cd3 100%);
+}
+
 .circle,
 .circle:after {
   border-radius: 50%;

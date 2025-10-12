@@ -37,7 +37,7 @@ function VideoStreamPage() {
   }
 
   return (
-    <div className="flex flex-col lg:flex-row justify-center gap-8 smx-auto">
+    <div className="flex flex-col lg:flex-row justify-center lg:gap-8 smx-auto">
       <div className="flex flex-col max-w-[calc((100vh-160px)/9*16)] w-full">
         <div className="flex py-4 w-full">
           <h1 className=" text-2xl font-bold leading-7 text-start">
@@ -58,7 +58,7 @@ function VideoStreamPage() {
         </div>
       </div>
       <div className="w-full xl:w-96">
-        <div className="bg-white rounded-xl shadow-md overflow-hidden h-[600px] max-h-[calc(100vh-160px)] flex flex-col mt-[60px]">
+        <div className="bg-white rounded-xl shadow-md overflow-hidden h-[600px] max-h-[calc(100vh-160px)] flex flex-col lg:mt-[60px]">
           {/* <div className="px-4 py-3 bg-gray-50 border-b border-gray-200">
             <h3 className="font-semibold text-gray-900">Live Chat</h3>
           </div> */}

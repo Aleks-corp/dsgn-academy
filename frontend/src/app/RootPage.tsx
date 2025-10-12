@@ -23,6 +23,7 @@ import AdminAside from "@/components/aside/AdminAside";
 import { useSelectedPage } from "../hooks/useAside";
 import Loader from "../components/loaders/LoaderCircle";
 import useIsLg from "../hooks/useScreenWidth";
+import StreamBanner from "@/components/StreamBanner";
 // import LenisProvider from "./LenisProvider";
 
 function RootPage({ children }: { children: React.ReactNode }) {
@@ -34,6 +35,8 @@ function RootPage({ children }: { children: React.ReactNode }) {
   const isLg = useIsLg();
 
   const { selectedPage, setSelectedPage } = useSelectedPage();
+
+  const [isOpenBanner, setIsOpenBanner] = useState(true);
 
   // --- 2) за замовчуванням закрито; відкривати будемо в ефекті залежно від isLg
   const [isOpenAside, setIsOpenAside] = useState(false);
@@ -80,8 +83,11 @@ function RootPage({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="relative w-screen h-screen">
-      {/* Передай сеттер у Header — там уже є кнопка меню */}
-      <div className="fixed w-full h-20 z-15">
+      <div className={`fixed w-full ${isOpenBanner ? "h-30" : "h-20"} z-20`}>
+        {isAdmin && // показуємо банер тільки адміну
+          isOpenBanner && (
+            <StreamBanner setIsOpen={() => setIsOpenBanner(false)} />
+          )}
         <Header isOpenAside={isOpenAside} setIsOpenAside={setIsOpenAside} />
       </div>
 
@@ -104,7 +110,9 @@ function RootPage({ children }: { children: React.ReactNode }) {
         initial={false}
         animate={{ x: isOpenAside ? 0 : -264 }}
         transition={{ duration: 0.35, ease: "easeInOut" }}
-        className="fixed top-20 bottom-0 left-0 z-30 bg-background border-r border-border w-[264px] overflow-y-auto overscroll-contain"
+        className={`fixed ${
+          isOpenBanner ? "top-30" : "top-20"
+        } bottom-0 left-0 z-30 bg-background border-r border-border w-[264px] overflow-y-auto overscroll-contain`}
       >
         {pathname.startsWith("/da-admin") && isLoggedIn && isAdmin ? (
           <AdminAside
@@ -128,7 +136,9 @@ function RootPage({ children }: { children: React.ReactNode }) {
       <motion.div
         animate={{ paddingLeft: isLg ? `${asideWidth}px` : "0px" }}
         transition={{ duration: 0.35, ease: "easeInOut" }}
-        className="fixed right-0 bottom-0 flex flex-col w-full h-full pt-[81px] z-10"
+        className={`fixed right-0 bottom-0 flex flex-col w-full h-full ${
+          isOpenBanner ? "pt-[121px]" : "pt-[81px]"
+        } z-10`}
       >
         <div
           id="app-scroll-container"
@@ -137,7 +147,7 @@ function RootPage({ children }: { children: React.ReactNode }) {
           }`}
         >
           {/* <LenisProvider> */}
-          <main className="relative w-full mx-auto px-3 md:pt-4 lg:px-5 mb-5">
+          <main className="w-full mx-auto px-3 md:pt-4 lg:px-5 mb-5">
             {children}
           </main>
           {/* </LenisProvider> */}

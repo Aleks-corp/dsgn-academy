@@ -11,12 +11,12 @@ import { FaXTwitter } from "react-icons/fa6";
 import toast from "react-hot-toast";
 import { PiHeart, PiHeartFill, PiThreadsLogoFill } from "react-icons/pi";
 import { ChevronUp, Edit } from "lucide-react";
+import dayjs from "dayjs";
 import { IVideo } from "@/types/videos.type";
 import { useWindowWidth } from "@/hooks/useWindowWidth";
 import Restricted from "../Restricted";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import moment from "moment";
 import VidstackPlayer from "../VideoVidstack";
 import VidstackPlayerYoutube from "../VideoVidstackYoutube";
 import getInitialTime from "@/lib/getInitialTime";
@@ -250,8 +250,7 @@ export default function VideoPlayer({
         <div className="mt-5 text-sm text-[#131313] leading-5">
           {isAdmin && video.publishedAt && (
             <p className="my-4 font-bold">
-              Date -{" "}
-              {moment(new Date(video.publishedAt)).format("DD-MM-YYYY_HH:mm")}
+              Date - {dayjs(video.publishedAt).format("DD-MM-YYYY_HH:mm")}
             </p>
           )}
           <p

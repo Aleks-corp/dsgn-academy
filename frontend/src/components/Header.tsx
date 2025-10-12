@@ -76,7 +76,7 @@ export default function Header({ isOpenAside, setIsOpenAside }: Props) {
   }, [doNavigate]);
 
   return (
-    <header className="relative w-full max-h-[80px] flex items-center lg:justify-between bg-background border-b border-border z-50">
+    <header className="relative w-full max-h-[80px] flex items-center lg:justify-between bg-background border-b border-border">
       <div className="w-full lg:w-auto flex items-center justify-between md:justify-normal">
         <div
           className={`flex items-center gap-2 px-3 md:px-5 pt-4 pb-3 shrink-1`}
@@ -124,9 +124,6 @@ export default function Header({ isOpenAside, setIsOpenAside }: Props) {
         </div>
       </div>
       <div className="flex md:gap-4 py-5 pr-1 md:pr-5 pl-4">
-        {user?.subscription === "admin" && (
-          <NavLink rout="/stream" text="Stream" />
-        )}
         {!isExpanded && (
           <Link
             href="/command"
