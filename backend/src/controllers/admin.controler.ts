@@ -230,11 +230,11 @@ const sentMailToUsers = async (req: Request, res: Response): Promise<void> => {
   const stream = await StreamModel.findOne({});
   await Promise.all(
     users.map(async (user) => {
-      await checkSubscriptionStatus(user);
       if (user.subscription === "admin") {
         return;
       } else if (stream) {
-        await sendMailToUsers({ user, stream });
+        const updatedUser = await checkSubscriptionStatus(user);
+        await sendMailToUsers({ user: updatedUser, stream });
       }
     })
   );
