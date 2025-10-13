@@ -226,19 +226,46 @@ const updateUserBlockStatus = async (
 };
 
 const sentMailToUsers = async (req: Request, res: Response): Promise<void> => {
+  const BATCH_SIZE = 50; // по 50 за раз
+  const PAUSE_MS = 30000; // 30 секунд між пачками (збільши якщо ще буде рвати)
   const users = await UserModel.find({});
   const stream = await StreamModel.findOne({});
-  await Promise.all(
-    users.map(async (user) => {
-      if (user.subscription === "admin") {
-        return;
-      } else if (stream) {
-        const updatedUser = await checkSubscriptionStatus(user);
-        await sendMailToUsers({ user: updatedUser, stream });
-      }
-    })
-  );
-  res.json({ message: "Emails sent" });
+  const sent: string[] = [];
+  const failed: string[] = [];
+  if (!stream) {
+    res.status(400).json({ message: "Stream not found" });
+    return;
+  }
+  for (let i = 0; i < users.length; i += BATCH_SIZE) {
+    const batch = users.slice(i, i + BATCH_SIZE);
+
+    await Promise.all(
+      batch.map(async (user) => {
+        if (user.subscription === "admin") return;
+        try {
+          // const updatedUser = await checkSubscriptionStatus(user);
+          await sendMailToUsers({ user, stream });
+          sent.push(user.email);
+        } catch (e) {
+          failed.push(user.email);
+          if (e instanceof Error) {
+            console.log("❌ Error:", user.email, e.message);
+          }
+        }
+      })
+    );
+
+    if (i + BATCH_SIZE < users.length) {
+      console.log(`⌛ Waiting ${PAUSE_MS / 1000}s before next batch...`);
+      await new Promise((resolve) => setTimeout(resolve, PAUSE_MS));
+    }
+  }
+  res.json({
+    message: "Emails sent",
+    sent: sent.length,
+    failed: failed.length,
+    failedEmails: failed,
+  });
 };
 
 export default {
