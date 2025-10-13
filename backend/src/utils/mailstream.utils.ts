@@ -35,7 +35,7 @@ const sendMailToUsers = async ({
     },
   });
 
-  const subject = "Онлайн транcляція від DSGN Academy";
+  const subject = "Новий онлайн-ефір від DSGN Academy";
 
   let html: string;
 
