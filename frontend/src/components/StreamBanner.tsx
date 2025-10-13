@@ -7,6 +7,9 @@ import { selectUser } from "@/selectors/auth.selectors";
 import { IStream } from "@/types/stream.type";
 import dayjs from "dayjs";
 import "dayjs/locale/uk";
+import utc from "dayjs/plugin/utc";
+
+dayjs.extend(utc);
 
 function StreamBanner({ setIsOpen }: { setIsOpen: () => void }) {
   const user = useAppSelector(selectUser);
@@ -37,28 +40,32 @@ function StreamBanner({ setIsOpen }: { setIsOpen: () => void }) {
               {/* ✅ 3. Дублюємо текст для створення безшовного ефекту */}
               <span className="mx-10">
                 Онлайн-ефір {stream.title} -{" "}
-                {dayjs(stream.startStreamAt)
+                {dayjs
+                  .utc(stream.startStreamAt)
                   .locale("uk")
                   .format("dddd (DD.MM), HH:mm")}{" "}
                 🔒 Лише для підписників
               </span>
               <span className="mx-10">
                 Онлайн-ефір {stream.title} -{" "}
-                {dayjs(stream.startStreamAt)
+                {dayjs
+                  .utc(stream.startStreamAt)
                   .locale("uk")
                   .format("dddd (DD.MM), HH:mm")}{" "}
                 🔒 Лише для підписників
               </span>
               <span className="mx-10">
                 Онлайн-ефір {stream.title} -{" "}
-                {dayjs(stream.startStreamAt)
+                {dayjs
+                  .utc(stream.startStreamAt)
                   .locale("uk")
                   .format("dddd (DD.MM), HH:mm")}{" "}
                 🔒 Лише для підписників
               </span>{" "}
               <span className="mx-10">
                 Онлайн-ефір {stream.title} -{" "}
-                {dayjs(stream.startStreamAt)
+                {dayjs
+                  .utc(stream.startStreamAt)
                   .locale("uk")
                   .format("dddd (DD.MM), HH:mm")}{" "}
                 🔒 Лише для підписників

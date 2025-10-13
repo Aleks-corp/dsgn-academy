@@ -84,10 +84,9 @@ function RootPage({ children }: { children: React.ReactNode }) {
   return (
     <div className="relative w-screen h-screen">
       <div className={`fixed w-full ${isOpenBanner ? "h-30" : "h-20"} z-20`}>
-        {isAdmin && // показуємо банер тільки адміну
-          isOpenBanner && (
-            <StreamBanner setIsOpen={() => setIsOpenBanner(false)} />
-          )}
+        {isOpenBanner && (
+          <StreamBanner setIsOpen={() => setIsOpenBanner(false)} />
+        )}
         <Header isOpenAside={isOpenAside} setIsOpenAside={setIsOpenAside} />
       </div>
 
@@ -99,7 +98,9 @@ function RootPage({ children }: { children: React.ReactNode }) {
           animate={{ opacity: 0.65 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
-          className="fixed top-20 left-0 right-0 bottom-0 z-20 bg-black"
+          className={`fixed ${
+            isOpenBanner ? "top-30" : "top-20"
+          } left-0 right-0 bottom-0 z-20 bg-black`}
         />
       )}
 
