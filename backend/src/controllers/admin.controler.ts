@@ -226,8 +226,9 @@ const updateUserBlockStatus = async (
 };
 
 const sentMailToUsers = async (req: Request, res: Response): Promise<void> => {
-  const BATCH_SIZE = 50; // по 50 за раз
+  const BATCH_SIZE = 100; // по 100 за раз
   const PAUSE_MS = 30000; // 30 секунд між пачками (збільши якщо ще буде рвати)
+  const START_INDEX: number = req.body.startIndex || 0;
   const users = await UserModel.find({});
   const stream = await StreamModel.findOne({});
   const sent: string[] = [];
@@ -236,12 +237,14 @@ const sentMailToUsers = async (req: Request, res: Response): Promise<void> => {
     res.status(400).json({ message: "Stream not found" });
     return;
   }
-  for (let i = 0; i < users.length; i += BATCH_SIZE) {
-    const batch = users.slice(i, i + BATCH_SIZE);
+  const usersToSend = users.slice(START_INDEX);
+  for (let i = 0; i < usersToSend.length; i += BATCH_SIZE) {
+    const batch = usersToSend.slice(i, i + BATCH_SIZE);
 
     await Promise.all(
       batch.map(async (user) => {
-        if (user.subscription === "admin") return;
+        if (user.subscription === "admin" || user.subscription === "tester")
+          return;
         try {
           // const updatedUser = await checkSubscriptionStatus(user);
           await sendMailToUsers({ user, stream });
@@ -255,7 +258,7 @@ const sentMailToUsers = async (req: Request, res: Response): Promise<void> => {
       })
     );
 
-    if (i + BATCH_SIZE < users.length) {
+    if (i + BATCH_SIZE < usersToSend.length) {
       console.log(`⌛ Waiting ${PAUSE_MS / 1000}s before next batch...`);
       await new Promise((resolve) => setTimeout(resolve, PAUSE_MS));
     }
@@ -264,6 +267,41 @@ const sentMailToUsers = async (req: Request, res: Response): Promise<void> => {
     message: "Emails sent",
     sent: sent.length,
     failed: failed.length,
+    sentEmails: sent,
+    failedEmails: failed,
+  });
+};
+const sendMailToSelectedUsers = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const { usersIds } = req.body;
+  const stream = await StreamModel.findOne({});
+  const sent: string[] = [];
+  const failed: string[] = [];
+  if (!stream) {
+    res.status(400).json({ message: "Stream not found" });
+    return;
+  }
+  for (const _id of usersIds) {
+    const user = await UserModel.findOne({ _id });
+    if (!user) continue;
+    try {
+      await sendMailToUsers({ user, stream });
+      sent.push(user.email);
+      await new Promise((r) => setTimeout(r, 3000)); // 3-10 секунд, якщо лімітить
+    } catch (e) {
+      failed.push(user.email);
+      if (e instanceof Error) {
+        console.log("❌ Error:", user.email, e.message);
+      }
+    }
+  }
+  res.json({
+    message: "Emails sent",
+    sent: sent.length,
+    failed: failed.length,
+    sentEmails: sent,
     failedEmails: failed,
   });
 };
@@ -275,4 +313,5 @@ export default {
   checkUsersSubscription: ctrlWrapper(checkUsersSubscription),
   updateUserBlockStatus: ctrlWrapper(updateUserBlockStatus),
   sentMailToUsers: ctrlWrapper(sentMailToUsers),
+  sendMailToSelectedUsers: ctrlWrapper(sendMailToSelectedUsers),
 };

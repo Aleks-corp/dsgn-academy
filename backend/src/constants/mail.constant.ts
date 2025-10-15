@@ -1,4 +1,4 @@
 export const SMTP = {
-  HOST: "smtp.ukr.net",
+  HOST: "mail.privateemail.com",
   PORT: 465,
 };

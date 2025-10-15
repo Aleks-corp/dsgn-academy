@@ -14,6 +14,7 @@ const {
   updateUserBlockStatus,
   checkUsersSubscription,
   sentMailToUsers,
+  sendMailToSelectedUsers,
 } = adminController;
 
 const adminRouter = express.Router();
@@ -42,5 +43,6 @@ adminRouter.patch(
 );
 
 adminRouter.post("/users/send-mail", sentMailToUsers);
+adminRouter.post("/users/send-selected-mail", sendMailToSelectedUsers);
 
 export default adminRouter;
