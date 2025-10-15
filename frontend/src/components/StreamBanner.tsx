@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, SetStateAction, Dispatch } from "react";
 import Link from "next/link";
 import { X } from "lucide-react";
 import { fetchStreamData } from "@/lib/api/getStreamData";
@@ -7,13 +7,20 @@ import { selectUser } from "@/selectors/auth.selectors";
 import { IStream } from "@/types/stream.type";
 import dayjs from "dayjs";
 import "dayjs/locale/uk";
+import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 
 dayjs.extend(utc);
+dayjs.extend(timezone);
 
-function StreamBanner({ setIsOpen }: { setIsOpen: () => void }) {
+function StreamBanner({
+  setIsOpen,
+}: {
+  setIsOpen: Dispatch<SetStateAction<boolean>>;
+}) {
   const user = useAppSelector(selectUser);
   const [stream, setStream] = useState<IStream | null>(null);
+
   const handlefetchStreamData = async () => {
     try {
       const res: { data: IStream; status: number } = await fetchStreamData();
@@ -26,9 +33,21 @@ function StreamBanner({ setIsOpen }: { setIsOpen: () => void }) {
   };
 
   useEffect(() => {
+    if (!stream) {
+      return;
+    }
+    const streamStartTimeInKyiv = dayjs.tz(stream.startStreamAt, "Europe/Kiev");
+    const bannerCloseTime = streamStartTimeInKyiv.add(24, "hour");
+    const nowInKyiv = dayjs().tz("Europe/Kyiv");
+    if (nowInKyiv.isAfter(bannerCloseTime)) {
+      setIsOpen(false);
+    }
+  }, [setIsOpen, stream]);
+
+  useEffect(() => {
     handlefetchStreamData();
   }, []);
-  //   const [isOpen, setIsOpen] = useState<boolean>(false);
+
   return (
     <div className="flex items-center w-full h-10 bg-banner">
       {stream && (
@@ -85,7 +104,7 @@ function StreamBanner({ setIsOpen }: { setIsOpen: () => void }) {
             </Link>
             <button
               type="button"
-              onClick={setIsOpen}
+              onClick={() => setIsOpen(false)}
               className="cursor-pointer"
             >
               <X />

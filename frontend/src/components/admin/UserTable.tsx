@@ -174,6 +174,17 @@ const UsersTable = ({
     );
   };
 
+  const handleGlobalCheckboxChange = (ids: string[], checked: boolean) => {
+    setUpdateUsers((prev) => {
+      if (checked) {
+        const newIds = ids.filter((id) => !prev.includes(id));
+        return [...prev, ...newIds];
+      } else {
+        return prev.filter((userId) => !ids.includes(userId));
+      }
+    });
+  };
+
   const COLUMNS: ColumnConfig[] = [
     {
       id: "name",
@@ -303,7 +314,16 @@ const UsersTable = ({
                   <input
                     type="checkbox"
                     className="size-4 rounded border-gray-300 text-muted-foreground"
-                    disabled
+                    checked={
+                      paginatedUsers.length > 0 &&
+                      paginatedUsers.every((u) => updateUsers.includes(u._id))
+                    }
+                    onChange={(e) =>
+                      handleGlobalCheckboxChange(
+                        paginatedUsers.map((u) => u._id),
+                        e.target.checked
+                      )
+                    }
                   />
                 </th>
                 {COLUMNS.map((col) => (

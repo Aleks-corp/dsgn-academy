@@ -7,6 +7,7 @@ import {
   patchUsers,
   banUsers,
   patchCheckSub,
+  sendMailToSelected,
 } from "@/redux/admin/admin.thunk";
 import {
   selectAdminUsers,
@@ -19,6 +20,7 @@ import Loader from "@/components/loaders/Loader";
 
 import UsersTable from "@/components/admin/UserTable";
 import Button from "@/components/buttons/Button";
+import toast from "react-hot-toast";
 
 const UsersPage = () => {
   const dispatch = useAppDispatch();
@@ -31,11 +33,57 @@ const UsersPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [updateUsers, setUpdateUsers] = useState<string[]>([]);
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const USERS_PER_PAGE = 50;
 
   useEffect(() => {
     dispatch(getAllUsers({}));
   }, [dispatch]);
+
+  const handleSend = async () => {
+    setIsLoading(true);
+    const res = await dispatch(sendMailToSelected({ usersIds: updateUsers }));
+    if (res?.payload.message === "Emails sent") {
+      const sent: number = res.payload.sent || 0;
+      const failed: number = res.payload.failed || 0;
+      const sentEmails: string[] = res.payload.sentEmails || [];
+      const failedEmails: string[] = res.payload.failedEmails || [];
+      console.log("SentEmails:", sentEmails);
+      console.log("FailedEmails:", failedEmails);
+
+      // Тостер на 2 хвилини
+      toast.success(
+        `✅ Відправлено: ${sent}\n❌ Не відправлено: ${failed}${
+          failed > 0 ? `\nДеталі у консолі.` : ""
+        }`,
+        {
+          duration: 120000,
+          style: {
+            whiteSpace: "pre-line",
+          },
+        }
+      );
+      if (failed > 0) {
+        setUpdateUsers(failedEmails);
+      } else {
+        setUpdateUsers([]);
+      }
+
+      if (failed > 0) {
+        alert(
+          `Відправлено: ${sent}\nНе відправлено: ${failed}\n\nНе доставлені листи:\n${failedEmails.join(
+            ", "
+          )}`
+        );
+      }
+    } else {
+      toast.error("Помилка відправки листів", { duration: 10000 });
+      alert("Сталася помилка під час відправки листів.");
+    }
+
+    setIsLoading(false);
+  };
 
   return (
     <div className="mx-auto w-full px-4 py-6">
@@ -162,6 +210,23 @@ const UsersPage = () => {
                   text="Ban | Unban"
                   onClick={() => dispatch(banUsers({ usersId: updateUsers }))}
                   className="bg-red-700"
+                  style="accent"
+                />
+              ) : (
+                <button
+                  type="button"
+                  className="btn-gradient inline-flex items-center justify-center shadow-btn rounded-lg px-3 py-2"
+                  disabled
+                >
+                  <Loader />
+                </button>
+              )}
+              {!isLoading ? (
+                <Button
+                  type="button"
+                  text="Send Mails"
+                  onClick={handleSend}
+                  className="bg-green-700"
                   style="accent"
                 />
               ) : (

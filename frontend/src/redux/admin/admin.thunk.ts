@@ -99,9 +99,27 @@ export const sendMessageSpt = createAsyncThunk(
 
 export const sendMailToAll = createAsyncThunk(
   "admin/sendmailtoall",
-  async (_, thunkAPI) => {
+  async ({ startIndex }: { startIndex: number }, thunkAPI) => {
     try {
-      const response = await instance.post(`/admin/users/send-mail`);
+      const response = await instance.post(`/admin/users/send-mail`, {
+        startIndex,
+      });
+      return response.data;
+    } catch (e) {
+      if (e instanceof Error) {
+        return thunkAPI.rejectWithValue(e.message);
+      }
+    }
+  }
+);
+
+export const sendMailToSelected = createAsyncThunk(
+  "admin/sendmailtoselected",
+  async ({ usersIds }: { usersIds: string[] }, thunkAPI) => {
+    try {
+      const response = await instance.post(`/admin/users/send-selected-mail`, {
+        usersIds,
+      });
       return response.data;
     } catch (e) {
       if (e instanceof Error) {

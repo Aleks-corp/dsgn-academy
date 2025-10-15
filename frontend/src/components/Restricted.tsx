@@ -32,7 +32,7 @@ export default function Restricted({
           <br /> а ще й внесок у розвиток українського контенту.
         </p>
         <NavLink rout="/check-subscription" text="Придбати преміум" />
-        {originalUrl ? (
+        {originalUrl && !originalUrl?.includes("dsgn.academy") ? (
           <button
             type="button"
             onClick={() => setOriginal(!original)}

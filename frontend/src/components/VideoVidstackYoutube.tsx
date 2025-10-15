@@ -72,7 +72,6 @@ export default function VidstackPlayerYoutube({
   useEffect(() => {
     return () => {
       const current = Math.floor(lastTime.current);
-      console.log("unmount");
       if (current > 0) {
         progressCb.current?.(current);
       }

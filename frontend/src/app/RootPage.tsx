@@ -36,10 +36,10 @@ function RootPage({ children }: { children: React.ReactNode }) {
 
   const { selectedPage, setSelectedPage } = useSelectedPage();
 
-  const [isOpenBanner, setIsOpenBanner] = useState(true);
+  const [isOpenBanner, setIsOpenBanner] = useState(false);
 
   // --- 2) за замовчуванням закрито; відкривати будемо в ефекті залежно від isLg
-  const [isOpenAside, setIsOpenAside] = useState(false);
+  const [isOpenAside, setIsOpenAside] = useState(true);
 
   // --- 3) визначаємо коли асайд має бути відкритий на lg+
   const computeShouldOpen = useCallback(() => {
@@ -84,9 +84,7 @@ function RootPage({ children }: { children: React.ReactNode }) {
   return (
     <div className="relative w-screen h-screen">
       <div className={`fixed w-full ${isOpenBanner ? "h-30" : "h-20"} z-20`}>
-        {isOpenBanner && (
-          <StreamBanner setIsOpen={() => setIsOpenBanner(false)} />
-        )}
+        {isOpenBanner && <StreamBanner setIsOpen={setIsOpenBanner} />}
         <Header isOpenAside={isOpenAside} setIsOpenAside={setIsOpenAside} />
       </div>
 
