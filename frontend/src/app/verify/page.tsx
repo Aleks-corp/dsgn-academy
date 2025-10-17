@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
+import { useSearchParams } from "next/navigation";
 import { verifyUser } from "@/redux/auth/auth.thunk";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import {
@@ -9,10 +11,8 @@ import {
   selectUserError,
 } from "@/selectors/auth.selectors";
 import Loader from "@/components/loaders/LoaderCircle";
-import { useSearchParams } from "next/navigation";
 import NavLink from "@/components/links/Link";
 import NotFoundComponent from "@/components/notFound/NotFound";
-import Image from "next/image";
 
 const VerifyPage = () => {
   const dispatch = useAppDispatch();

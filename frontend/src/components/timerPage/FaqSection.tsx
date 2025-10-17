@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { ChevronUp } from "lucide-react";
 import { FAQ } from "@/constants/faq.constant";
+import MaskIcon from "../MaskIcon";
 
 export default function FaqSection() {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
@@ -31,9 +31,9 @@ export default function FaqSection() {
                   {item.question}
                 </p>
               </div>
-              <ChevronUp
-                width={24}
-                className={`transition-transform duration-300 ${
+              <MaskIcon
+                src="/icons/nav-icons/chevron-up.svg"
+                className={`w-6 h-6 transition-transform duration-300 ${
                   isOpen ? "rotate-0" : "rotate-180"
                 }`}
               />

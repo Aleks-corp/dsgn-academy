@@ -1,6 +1,6 @@
-import Image from "next/image";
-import NavLink from "./links/Link";
 import { SetStateAction } from "react";
+import Image from "next/image";
+import NavLink from "@/components/links/Link";
 
 export default function Restricted({
   originalUrl,

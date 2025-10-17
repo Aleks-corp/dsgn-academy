@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Volume2, VolumeX, Play, Pause } from "lucide-react";
 import { IShort } from "@/types/shorts.type";
+import MaskIcon from "@/components/MaskIcon";
 
 type VideoPlayerProps = {
   short: IShort;
@@ -107,9 +107,15 @@ export default function VideoPlayer({
       {showPlayIcon && (
         <div className="absolute inset-0 flex items-center justify-center bg-black/30 animate-fade">
           {playing ? (
-            <Play size={64} className="text-white" />
+            <MaskIcon
+              src="/icons/media-icons/play.svg"
+              className="w-16 h-16 text-white"
+            />
           ) : (
-            <Pause size={64} className="text-white cursor-pointer" />
+            <MaskIcon
+              src="/icons/media-icons/pause.svg"
+              className="w-16 h-16 text-white"
+            />
           )}
         </div>
       )}
@@ -119,7 +125,17 @@ export default function VideoPlayer({
         onClick={() => setMuted(!muted)}
         className="absolute top-3 right-3 z-10 rounded-full bg-black/50 p-2 text-white cursor-pointer"
       >
-        {muted ? <VolumeX size={20} /> : <Volume2 size={20} />}
+        {muted ? (
+          <MaskIcon
+            src="/icons/media-icons/volume-slash.svg"
+            className="w-6 h-6"
+          />
+        ) : (
+          <MaskIcon
+            src="/icons/media-icons/volume-high.svg"
+            className="w-6 h-6"
+          />
+        )}
       </button>
       <div className="pointer-events-none absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-black/60 to-transparent " />
       <div className="absolute top-3 left-3 right-3 text-white drop-shadow md:left-5 md:right-5">

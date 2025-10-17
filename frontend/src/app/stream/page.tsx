@@ -1,6 +1,7 @@
 "use client";
-import { fetchStreamData } from "@/lib/api/getStreamData";
+
 import { useEffect, useState } from "react";
+import { fetchStreamData } from "@/lib/api/getStreamData";
 
 type IStreamData = { videoId: string; title: string };
 

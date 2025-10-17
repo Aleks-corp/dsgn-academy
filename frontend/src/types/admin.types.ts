@@ -28,7 +28,6 @@ export type ColumnState = "full" | "collapsed" | "hidden";
 export type ColumnConfig = {
   id: ColumnId;
   label: string;
-  icon: React.ReactNode;
   render: (u: IUser) => React.ReactNode;
   sortKey?: keyof UserList | "";
 };

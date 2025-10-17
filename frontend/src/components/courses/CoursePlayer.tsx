@@ -1,19 +1,18 @@
 "use client";
 
 import { SetStateAction, Dispatch, useState } from "react";
-
-import SafeImage from "@/components/SafeImage";
-import { ICourseVideo } from "@/types/courses.type";
-import Restricted from "../Restricted";
-import VidstackPlayer from "../VideoVidstack";
-import VidstackPlayerYoutube from "../VideoVidstackYoutube";
-import getInitialTime from "@/lib/getInitialTime";
-import { updateWatchedCourse } from "@/redux/courses/course.thunk";
-import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { selectUser } from "@/redux/selectors/auth.selectors";
-import { setCourseVideoProgress } from "@/redux/courses/courseSlice";
 import { useRouter } from "next/navigation";
-import Button from "../buttons/Button";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { updateWatchedCourse } from "@/redux/courses/course.thunk";
+import { setCourseVideoProgress } from "@/redux/courses/courseSlice";
+import { selectUser } from "@/selectors/auth.selectors";
+import getInitialTime from "@/lib/getInitialTime";
+import { ICourseVideo } from "@/types/courses.type";
+import SafeImage from "@/components/SafeImage";
+import Restricted from "@/components/Restricted";
+import VidstackPlayer from "@/components/VideoVidstack";
+import VidstackPlayerYoutube from "@/components/VideoVidstackYoutube";
+import Button from "@/components/buttons/Button";
 
 export default function CoursePlayer({
   selectedVideo,

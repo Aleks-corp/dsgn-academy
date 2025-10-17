@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { clearBookmarkedShorts } from "@/redux/shorts/shortsSlice";
 import { clearBookmarkedVideos } from "@/redux/videos/videoSlice";
 import { clearBookmarkedCourses } from "@/redux/courses/courseSlice";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
@@ -23,7 +22,6 @@ function ProfileBookmarkPage() {
     return () => {
       dispatch(clearBookmarkedVideos());
       dispatch(clearBookmarkedCourses());
-      dispatch(clearBookmarkedShorts());
     };
   }, [dispatch]);
 

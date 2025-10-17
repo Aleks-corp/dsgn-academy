@@ -1,9 +1,10 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { Menu } from "lucide-react";
-import { useAppSelector } from "@/redux/hooks";
+import Image from "next/image";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useAppSelector } from "@/redux/hooks";
 import {
   selectIsAdmin,
   selectIsLoggedIn,
@@ -13,8 +14,7 @@ import {
 import IconInput from "@/components/form&inputs/InputIcon";
 import NavLink from "@/components/links/Link";
 import Logo from "@/components/Logo";
-import Image from "next/image";
-import Link from "next/link";
+import MaskIcon from "./MaskIcon";
 
 type Props = {
   isOpenAside: boolean;
@@ -87,7 +87,7 @@ export default function Header({ isOpenAside, setIsOpenAside }: Props) {
             className="hidden w-10 h-10 md:flex items-center justify-center p-2 cursor-pointer"
             onClick={() => setIsOpenAside(!isOpenAside)}
           >
-            <Menu />
+            <MaskIcon src="/icons/nav-icons/menu.svg" className="w-6 h-6" />
           </button>
           <Logo />
         </div>
@@ -197,7 +197,7 @@ export default function Header({ isOpenAside, setIsOpenAside }: Props) {
           className="w-10 h-10 flex items-center justify-center p-2 cursor-pointer"
           onClick={() => setIsOpenAside(!isOpenAside)}
         >
-          <Menu />
+          <MaskIcon src="/icons/nav-icons/menu.svg" className="w-6 h-6" />
         </button>
       </div>
     </header>

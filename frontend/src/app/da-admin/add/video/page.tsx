@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
-import { Eye, Pencil, RefreshCcw } from "lucide-react";
 import toast from "react-hot-toast";
 import Datetime from "react-datetime";
 import "react-datetime/css/react-datetime.css";
@@ -22,6 +21,7 @@ import Button from "@/components/buttons/Button";
 import Loader from "@/components/loaders/Loader";
 import SwitchName from "@/components/form&inputs/SwitchName";
 import VidstackPlayer from "@/components/VideoVidstack";
+import MaskIcon from "@/components/MaskIcon";
 
 export interface IData {
   name: string;
@@ -242,14 +242,20 @@ function AddVideoPage() {
                 onClick={() => setSwitchEditTitle(false)}
                 className="cursor-pointer"
               >
-                <Eye size={18} />
+                <MaskIcon
+                  src="/icons/menu-icons/eye.svg"
+                  className="w-4 h-4 text-muted"
+                />
               </button>
             ) : (
               <button
                 onClick={() => setSwitchEditTitle(true)}
                 className="cursor-pointer"
               >
-                <Pencil size={18} />
+                <MaskIcon
+                  src="/icons/nav-icons/edit-pencil.svg"
+                  className="w-4 h-4 text-muted"
+                />
               </button>
             )}
           </div>
@@ -324,14 +330,20 @@ function AddVideoPage() {
                 onClick={() => setSwitchEditDesc(false)}
                 className="cursor-pointer"
               >
-                <Eye size={18} />
+                <MaskIcon
+                  src="/icons/menu-icons/eye.svg"
+                  className="w-4 h-4 text-muted"
+                />
               </button>
             ) : (
               <button
                 onClick={() => setSwitchEditDesc(true)}
                 className="cursor-pointer"
               >
-                <Pencil size={18} />
+                <MaskIcon
+                  src="/icons/nav-icons/edit-pencil.svg"
+                  className="w-4 h-4 text-muted"
+                />
               </button>
             )}
           </div>
@@ -358,7 +370,16 @@ function AddVideoPage() {
         <div className="flex justify-end mb-6">
           <Button
             text={!isLoading ? "Очистити" : ""}
-            icon={isLoading ? <Loader /> : <RefreshCcw size={20} />}
+            icon={
+              isLoading ? (
+                <Loader />
+              ) : (
+                <MaskIcon
+                  src="/icons/nav-icons/refresh-ccw.svg"
+                  className="w-4 h-4"
+                />
+              )
+            }
             type="submit"
             onClick={reset}
           />

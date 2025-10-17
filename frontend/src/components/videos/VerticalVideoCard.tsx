@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { IVideo } from "@/types/videos.type";
-import SafeImage from "../SafeImage";
 import { durationStringToString } from "@/lib/duration.utils";
+import SafeImage from "@/components/SafeImage";
 
 export default function HorizontalVideoCard({ video }: { video: IVideo }) {
   return (

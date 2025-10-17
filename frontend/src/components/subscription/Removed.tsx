@@ -2,9 +2,9 @@
 
 import { formatDateToDDMMYYYY } from "@/lib/date.utils";
 import { IUser } from "@/types/users.type";
-import SubCard from "../SubCard";
 import { premiumDescription } from "@/constants/sub.desc.constants";
-import NavLink from "../links/Link";
+import SubCard from "@/components/SubCard";
+import NavLink from "@/components/links/Link";
 
 export default function RemovedSubProfile({ profile }: { profile: IUser }) {
   return (

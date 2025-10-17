@@ -37,11 +37,11 @@ export default function AdminAside({ selectedPage, setSelectedPage }: Props) {
               >
                 <MaskIcon
                   src="/icons/menu-icons/analitic.svg"
-                  className={
+                  className={`w-5 h-5 ${
                     selectedPage === "analitics"
                       ? "text-foreground"
                       : "text-muted"
-                  }
+                  }`}
                 />
               </div>
             }
@@ -70,11 +70,11 @@ export default function AdminAside({ selectedPage, setSelectedPage }: Props) {
               >
                 <MaskIcon
                   src="/icons/menu-icons/media-video.svg"
-                  className={
+                  className={`w-5 h-5 ${
                     selectedPage === "add-video"
                       ? "text-foreground"
                       : "text-muted"
-                  }
+                  }`}
                 />
               </div>
             }
@@ -103,11 +103,11 @@ export default function AdminAside({ selectedPage, setSelectedPage }: Props) {
               >
                 <MaskIcon
                   src="/icons/menu-icons/media-course.svg"
-                  className={
+                  className={`w-5 h-5 ${
                     selectedPage === "add-course"
                       ? "text-foreground"
                       : "text-muted"
-                  }
+                  }`}
                 />
               </div>
             }
@@ -136,11 +136,11 @@ export default function AdminAside({ selectedPage, setSelectedPage }: Props) {
               >
                 <MaskIcon
                   src="/icons/menu-icons/media-short.svg"
-                  className={
+                  className={`w-5 h-5 ${
                     selectedPage === "add-short"
                       ? "text-foreground"
                       : "text-muted"
-                  }
+                  }`}
                 />
               </div>
             }
@@ -167,9 +167,9 @@ export default function AdminAside({ selectedPage, setSelectedPage }: Props) {
               >
                 <MaskIcon
                   src="/icons/menu-icons/group.svg"
-                  className={
+                  className={`w-5 h-5 ${
                     selectedPage === "users" ? "text-foreground" : "text-muted"
-                  }
+                  }`}
                 />
               </div>
             }

@@ -2,16 +2,15 @@
 
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Eye, EyeClosed } from "lucide-react";
 import { useForm, SubmitHandler } from "react-hook-form";
-
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useAppDispatch } from "@/redux/hooks";
 import { setNewPassword } from "@/redux/auth/auth.thunk";
-import InputWithIcon from "@/components/form&inputs/FormInput";
 import { resetPassSchema } from "@/schemas/users.schemas";
+import InputWithIcon from "@/components/form&inputs/FormInput";
 import ButtonBlack from "@/components/buttons/ButtonsBlack";
 import LinkInline from "@/components/links/LinkInline";
+import MaskIcon from "@/components/MaskIcon";
 
 type FormValues = {
   password: string;
@@ -104,7 +103,17 @@ export default function ResetForm() {
               tabIndex={-1}
               onClick={() => setShowPass(!showPass)}
             >
-              {showPass ? <Eye size={20} /> : <EyeClosed size={20} />}
+              {showPass ? (
+                <MaskIcon
+                  src="/icons/menu-icons/eye.svg"
+                  className="w-5 h-5 text-muted"
+                />
+              ) : (
+                <MaskIcon
+                  src="/icons/menu-icons/eye-closed.svg"
+                  className="w-5 h-5 text-muted"
+                />
+              )}
             </button>
           </div>
           {errors?.password && (
@@ -129,7 +138,17 @@ export default function ResetForm() {
               tabIndex={-1}
               onClick={() => setShowConfPass(!showConfPass)}
             >
-              {showConfPass ? <Eye size={20} /> : <EyeClosed size={20} />}
+              {showConfPass ? (
+                <MaskIcon
+                  src="/icons/menu-icons/eye.svg"
+                  className="w-5 h-5 text-muted"
+                />
+              ) : (
+                <MaskIcon
+                  src="/icons/menu-icons/eye-closed.svg"
+                  className="w-5 h-5 text-muted"
+                />
+              )}
             </button>
           </div>
           {errors?.confpass && (

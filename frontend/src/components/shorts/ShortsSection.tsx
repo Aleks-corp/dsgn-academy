@@ -1,8 +1,8 @@
 "use client";
 
-import ShortsCard from "../shorts/ShortsCard";
-import { VideoCardsSkeleton } from "../skeleton/VideoCardSkeleton";
 import { IShort } from "@/types/shorts.type";
+import ShortsCard from "@/components/shorts/ShortsCard";
+import { VideoCardsSkeleton } from "@/components/skeleton/VideoCardSkeleton";
 
 export default function ShortsSection({
   shorts,

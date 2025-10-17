@@ -2,9 +2,9 @@
 
 import { formatDateToDDMMYYYY } from "@/lib/date.utils";
 import { IUser } from "@/types/users.type";
-import SubCard from "../SubCard";
-import NavLink from "../links/Link";
 import { testerDescription } from "@/constants/sub.desc.constants";
+import SubCard from "@/components/SubCard";
+import NavLink from "@/components/links/Link";
 
 export default function TestSubProfile({ profile }: { profile: IUser }) {
   return (

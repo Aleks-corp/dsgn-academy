@@ -1,25 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-
 import Image from "next/image";
-import { selectIsAdmin, selectUser } from "@/redux/selectors/auth.selectors";
-import Button from "@/components/buttons/Button";
-import { FaTelegramPlane } from "react-icons/fa";
-import { FaXTwitter } from "react-icons/fa6";
 import toast from "react-hot-toast";
-import { PiHeart, PiHeartFill, PiThreadsLogoFill } from "react-icons/pi";
-import { ChevronUp, Edit } from "lucide-react";
 import dayjs from "dayjs";
-import { IVideo } from "@/types/videos.type";
-import { useWindowWidth } from "@/hooks/useWindowWidth";
-import Restricted from "../Restricted";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import VidstackPlayer from "../VideoVidstack";
-import VidstackPlayerYoutube from "../VideoVidstackYoutube";
-import getInitialTime from "@/lib/getInitialTime";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import {
   toggleBookmarkedVideo,
   toggleLikeVideo,
@@ -30,7 +17,15 @@ import {
   toggleVideoBookMarked,
   toggleVideoLiked,
 } from "@/redux/videos/videoSlice";
-import { BsBookmark, BsBookmarkFill } from "react-icons/bs";
+import { selectIsAdmin, selectUser } from "@/selectors/auth.selectors";
+import { IVideo } from "@/types/videos.type";
+import { useWindowWidth } from "@/hooks/useWindowWidth";
+import getInitialTime from "@/lib/getInitialTime";
+import Button from "@/components/buttons/Button";
+import Restricted from "@/components/Restricted";
+import VidstackPlayer from "@/components/VideoVidstack";
+import VidstackPlayerYoutube from "@/components/VideoVidstackYoutube";
+import MaskIcon from "@/components/MaskIcon";
 
 export default function VideoPlayer({
   video,
@@ -163,7 +158,10 @@ export default function VideoPlayer({
           <div className="flex items-center justify-end gap-3">
             {isAdmin && (
               <Link href={`/da-admin/add/video/${videoId}`}>
-                <Edit />
+                <MaskIcon
+                  src="/icons/nav-icons/edit.svg"
+                  className="w-6 h-6 text-foreground"
+                />
               </Link>
             )}
             {user && (
@@ -178,13 +176,15 @@ export default function VideoPlayer({
                   className="text-muted hover:opacity-80 min-w-10 h-10 px-2.5 flex justify-center items-center rounded-[10px] border-1 border-border cursor-pointer"
                 >
                   {video.likedBy?.isLiked ? (
-                    <PiHeartFill
-                      size={24}
-                      strokeWidth={1.5}
-                      color="var(--foreground)"
+                    <MaskIcon
+                      src="/icons/menu-icons/heart-fill.svg"
+                      className="w-6 h-6 text-foreground"
                     />
                   ) : (
-                    <PiHeart size={24} />
+                    <MaskIcon
+                      src="/icons/menu-icons/heart.svg"
+                      className="w-6 h-6 text-foreground"
+                    />
                   )}
 
                   {video.likedBy?.count !== 0 && (
@@ -192,7 +192,7 @@ export default function VideoPlayer({
                       className={`font-inter flex justify-center items-center ml-2 ${
                         video.likedBy?.isLiked
                           ? "text-foreground"
-                          : "text-muted"
+                          : "text-foreground"
                       } font-medium text-sm`}
                     >
                       {video.likedBy?.count}
@@ -209,11 +209,14 @@ export default function VideoPlayer({
                   className="text-black hover:opacity-80 w-10 h-10 flex justify-center items-center rounded-[10px] border-1 border-border cursor-pointer"
                 >
                   {video.bookmarked ? (
-                    <BsBookmarkFill size={20} />
+                    <MaskIcon
+                      src="/icons/menu-icons/bookmark-fill.svg"
+                      className="w-6 h-6 text-foreground"
+                    />
                   ) : (
-                    <BsBookmark
-                      // style={{ strokeWidth: 0.5 }}
-                      size={20}
+                    <MaskIcon
+                      src="/icons/menu-icons/bookmark.svg"
+                      className="w-6 h-6 text-foreground"
                     />
                   )}
                 </button>
@@ -225,7 +228,10 @@ export default function VideoPlayer({
               rel="noopener noreferrer"
               className="text-black hover:opacity-80 w-10 h-10 flex justify-center items-center rounded-[10px] border-1 border-border"
             >
-              <PiThreadsLogoFill size={20} />
+              <MaskIcon
+                src="/icons/social-icons/threads.svg"
+                className="w-5 h-5"
+              />
             </a>
             <a
               href={socialLinks.twitter}
@@ -233,7 +239,10 @@ export default function VideoPlayer({
               rel="noopener noreferrer"
               className="text-black hover:opacity-80 w-10 h-10 flex justify-center items-center rounded-[10px] border-1 border-border"
             >
-              <FaXTwitter size={20} />
+              <MaskIcon
+                src="/icons/social-icons/twitter.svg"
+                className="w-5 h-5"
+              />
             </a>
             <a
               href={socialLinks.telegram}
@@ -241,7 +250,10 @@ export default function VideoPlayer({
               rel="noopener noreferrer"
               className="text-black hover:opacity-80 w-10 h-10 flex justify-center items-center rounded-[10px] border-1 border-border"
             >
-              <FaTelegramPlane size={20} />
+              <MaskIcon
+                src="/icons/social-icons/telegram.svg"
+                className="w-6 h-6"
+              />
             </a>
             {/* кнопка поділитись */}
             <Button type="button" text="Поділитись" onClick={handleShare} />
@@ -287,7 +299,10 @@ export default function VideoPlayer({
                       !expanded ? "rotate-180" : "rotate-0"
                     } transition-transform duration-300`}
                   >
-                    <ChevronUp />
+                    <MaskIcon
+                      src="/icons/nav-icons/chevron-up.svg"
+                      className="w-6 h-6"
+                    />
                   </div>
                 </button>
               </div>

@@ -5,17 +5,13 @@ import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { useKeenSlider } from "keen-slider/react";
 import "keen-slider/keen-slider.min.css";
-
-import ViewNavButtons from "./ViewerNavButtons";
 import { useCanWatchVideo } from "@/hooks/useCanWatchVideo";
-import RestrictedShort from "../RestrictedShort";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import {
-  selectShorts,
-  selectTotalShorts,
-} from "@/redux/selectors/shorts.selector";
 import { fetchShorts } from "@/redux/shorts/shorts.thunk";
-import VideoPlayer from "./ShortVideo";
+import { selectShorts, selectTotalShorts } from "@/selectors/shorts.selector";
+import RestrictedShort from "@/components/RestrictedShort";
+import VideoPlayer from "@/components/shorts/ShortVideo";
+import ViewNavButtons from "@/components/shorts/ViewerNavButtons";
 
 type Props = {
   initialId: string;

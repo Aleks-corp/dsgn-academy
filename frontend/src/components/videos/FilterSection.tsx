@@ -6,7 +6,7 @@ import { useMemo, useCallback } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useDragScroll } from "@/hooks/useDragScroll";
 import { selectUser } from "@/redux/selectors/auth.selectors";
-import { BsBookmark } from "react-icons/bs";
+import MaskIcon from "@/components/MaskIcon";
 
 const ALL_LABEL = "Всі відео";
 const RECO_LABEL = "Рекомендовано";
@@ -105,7 +105,10 @@ export default function FilterSection() {
               aria-label="label"
             >
               {label === BOOKMARKED_LABEL ? (
-                <BsBookmark size={16} style={{ strokeWidth: 0.5 }} />
+                <MaskIcon
+                  src="/icons/menu-icons/bookmark.svg"
+                  className="w-4 h-4"
+                />
               ) : (
                 label
               )}

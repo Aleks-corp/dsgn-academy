@@ -9,13 +9,13 @@ import {
   selectTotalVideos,
   selectVideoCategories,
 } from "@/selectors/videos.selectors";
+import { selectSubscription } from "@/selectors/auth.selectors";
 import { selectTotalCourses } from "@/selectors/courses.selector";
 import { selectTotalShorts } from "@/selectors/shorts.selector";
 import { fetchVideosCount } from "@/redux/videos/video.thunk";
 import { fetchCoursesCount } from "@/redux/courses/course.thunk";
-import { selectSubscription } from "@/redux/selectors/auth.selectors";
 import { fetchShortsCount } from "@/redux/shorts/shorts.thunk";
-import { categoriesConstant } from "@/constants/categories.constant";
+import { asideCategoriesConstant } from "@/constants/categories.constant";
 import NavLinkIcon from "@/components/links/LinkWithIcon";
 import MaskIcon from "@/components/MaskIcon";
 
@@ -40,17 +40,14 @@ export default function Aside({ selectedPage, setSelectedPage }: Props) {
     category?: string;
   }) => {
     if (options.all) {
-      // всі відео → пусто
       dispatch(fetchVideosCount(""));
       return;
     }
     if (options.free) {
-      // безкоштовні
       dispatch(fetchVideosCount("free"));
       return;
     }
     if (options.category) {
-      // конкретна категорія
       dispatch(fetchVideosCount(options.category));
       return;
     }
@@ -60,12 +57,7 @@ export default function Aside({ selectedPage, setSelectedPage }: Props) {
   const shortsCount = useAppSelector(selectTotalShorts);
   const freeCount = useAppSelector(selectTotalFree);
   const categories = useAppSelector(selectVideoCategories);
-  const fullCategories = categoriesConstant.concat(
-    categories.map((c) => c.category)
-  );
-  const filteredCategories = fullCategories.filter(
-    (c, i) => fullCategories.indexOf(c) === i
-  );
+
   return (
     <aside className="flex flex-col items-center gap-3 w-full p-5 h-[calc(100%-80px)] transition-all">
       <div className="md:hidden flex w-full ">
@@ -106,11 +98,11 @@ export default function Aside({ selectedPage, setSelectedPage }: Props) {
               >
                 <MaskIcon
                   src="/icons/menu-icons/grid.svg"
-                  className={
+                  className={`w-5 h-5 ${
                     selectedPage === "all-videos"
                       ? "text-foreground"
                       : "text-muted"
-                  }
+                  }`}
                 />
               </div>
             }
@@ -140,11 +132,11 @@ export default function Aside({ selectedPage, setSelectedPage }: Props) {
               >
                 <MaskIcon
                   src="/icons/menu-icons/layer.svg"
-                  className={
+                  className={`w-5 h-5 ${
                     selectedPage === "courses"
                       ? "text-foreground"
                       : "text-muted"
-                  }
+                  }`}
                 />
               </div>
             }
@@ -175,11 +167,11 @@ export default function Aside({ selectedPage, setSelectedPage }: Props) {
               >
                 <MaskIcon
                   src="/icons/menu-icons/settings.svg"
-                  className={
+                  className={`w-5 h-5 ${
                     selectedPage === "free-videos"
                       ? "text-foreground"
                       : "text-muted"
-                  }
+                  }`}
                 />
               </div>
             }
@@ -207,9 +199,9 @@ export default function Aside({ selectedPage, setSelectedPage }: Props) {
               >
                 <MaskIcon
                   src="/icons/menu-icons/zap.svg"
-                  className={
+                  className={`w-5 h-5 ${
                     selectedPage === "shorts" ? "text-foreground" : "text-muted"
-                  }
+                  }`}
                 />
               </div>
             }
@@ -221,7 +213,7 @@ export default function Aside({ selectedPage, setSelectedPage }: Props) {
         <p className="p-2.5 font-inter font-medium text-xs text-muted leading-4 tracking-thin">
           Категорії
         </p>
-        {filteredCategories.map((c, i) => (
+        {asideCategoriesConstant.map((c, i) => (
           <button
             key={i}
             type="button"

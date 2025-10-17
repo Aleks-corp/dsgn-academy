@@ -1,13 +1,13 @@
 "use client";
 
 import { withUserGuard } from "@/guards/WithUserGuard";
+import { userSubscriptionConst } from "@/constants/user.constants";
+import { useAppSelector } from "@/redux/hooks";
+import { selectUser } from "@/selectors/auth.selectors";
 import FreeSubProfile from "@/components/subscription/Free";
 import PremiumSubProfile from "@/components/subscription/Premium";
 import RemovedSubProfile from "@/components/subscription/Removed";
 import TestSubProfile from "@/components/subscription/Tester";
-import { userSubscriptionConst } from "@/constants/user.constants";
-import { useAppSelector } from "@/redux/hooks";
-import { selectUser } from "@/redux/selectors/auth.selectors";
 
 function ProfileSubPage() {
   const profile = useAppSelector(selectUser);

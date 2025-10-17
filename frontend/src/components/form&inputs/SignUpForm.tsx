@@ -5,16 +5,15 @@ import { signIn } from "next-auth/react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
-import { Eye, EyeClosed } from "lucide-react";
 import { useForm, SubmitHandler } from "react-hook-form";
-
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useAppDispatch } from "@/redux/hooks";
 import { signUp } from "@/redux/auth/auth.thunk";
-import InputWithIcon from "@/components/form&inputs/FormInput";
 import { regSchema } from "@/schemas/users.schemas";
+import InputWithIcon from "@/components/form&inputs/FormInput";
 import ButtonBlack from "@/components/buttons/ButtonsBlack";
 import LinkInline from "@/components/links/LinkInline";
+import MaskIcon from "@/components/MaskIcon";
 
 type FormValues = {
   name: string;
@@ -198,9 +197,15 @@ export default function SignUpForm() {
               onClick={() => setShowPass(!showPass)}
             >
               {showPass ? (
-                <Eye size={20} color="#7b7b7b" />
+                <MaskIcon
+                  src="/icons/menu-icons/eye.svg"
+                  className="w-5 h-5 text-muted"
+                />
               ) : (
-                <EyeClosed size={20} color="#7b7b7b" />
+                <MaskIcon
+                  src="/icons/menu-icons/eye-closed.svg"
+                  className="w-5 h-5 text-muted"
+                />
               )}
             </button>
           </div>
@@ -227,9 +232,15 @@ export default function SignUpForm() {
               onClick={() => setShowConfPass(!showConfPass)}
             >
               {showConfPass ? (
-                <Eye size={20} color="#7b7b7b" />
+                <MaskIcon
+                  src="/icons/menu-icons/eye.svg"
+                  className="w-5 h-5 text-muted"
+                />
               ) : (
-                <EyeClosed size={20} color="#7b7b7b" />
+                <MaskIcon
+                  src="/icons/menu-icons/eye-closed.svg"
+                  className="w-5 h-5 text-muted"
+                />
               )}
             </button>
           </div>

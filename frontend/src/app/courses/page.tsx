@@ -3,19 +3,17 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { useSearchParams } from "next/navigation";
-
 import { fetchCourses } from "@/redux/courses/course.thunk";
+import { clearCourses } from "@/redux/courses/courseSlice";
 import {
   selectCourses,
+  selectCoursesError,
   selectIsLoadingCourses,
 } from "@/selectors/courses.selector";
 import { useWindowWidth } from "@/hooks/useWindowWidth";
-
 import CoursesSection from "@/components/courses/CoursesSection";
 import NotFoundComponent from "@/components/notFound/NotFound";
 import { VideoCardsSkeleton } from "@/components/skeleton/VideoCardSkeleton";
-import { selectVideosError } from "@/redux/selectors/videos.selectors";
-import { clearCourses } from "@/redux/courses/courseSlice";
 
 interface FetchCourseResponse {
   total: number;
@@ -27,7 +25,7 @@ function CoursesPage() {
   const searchParams = useSearchParams();
   const courses = useAppSelector(selectCourses);
   const isLoadingVideo = useAppSelector(selectIsLoadingCourses);
-  const error = useAppSelector(selectVideosError);
+  const error = useAppSelector(selectCoursesError);
   const { width } = useWindowWidth();
   const [total, setTotal] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);

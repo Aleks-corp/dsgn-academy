@@ -5,18 +5,16 @@ import { signIn as signInWith } from "next-auth/react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useSearchParams } from "next/navigation";
-import { Eye, EyeClosed } from "lucide-react";
 import { useForm, SubmitHandler } from "react-hook-form";
-
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { resendVerifyUser, signIn } from "@/redux/auth/auth.thunk";
-import InputWithIcon from "@/components/form&inputs/FormInput";
+import { selectIsLogining } from "@/selectors/auth.selectors";
 import { loginSchema } from "@/schemas/users.schemas";
-
-import { selectIsLogining } from "@/redux/selectors/auth.selectors";
+import InputWithIcon from "@/components/form&inputs/FormInput";
 import ButtonBlack from "@/components/buttons/ButtonsBlack";
 import LinkInline from "@/components/links/LinkInline";
+import MaskIcon from "@/components/MaskIcon";
 
 type FormValues = {
   email: string;
@@ -215,9 +213,15 @@ export default function SignInForm() {
               onClick={() => setShowPass(!showPass)}
             >
               {showPass ? (
-                <Eye size={20} color="#7b7b7b" />
+                <MaskIcon
+                  src="/icons/menu-icons/eye.svg"
+                  className="w-5 h-5 text-muted"
+                />
               ) : (
-                <EyeClosed size={20} color="#7b7b7b" />
+                <MaskIcon
+                  src="/icons/menu-icons/eye-closed.svg"
+                  className="w-5 h-5 text-muted"
+                />
               )}
             </button>
           </div>

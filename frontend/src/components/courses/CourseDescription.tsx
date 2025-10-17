@@ -1,16 +1,13 @@
-import Button from "@/components/buttons/Button";
-import { FaTelegramPlane } from "react-icons/fa";
-import { FaXTwitter } from "react-icons/fa6";
-import toast from "react-hot-toast";
-import { PiHeart, PiHeartFill, PiThreadsLogoFill } from "react-icons/pi";
-import { ChevronUp, Edit } from "lucide-react";
+"use client";
+
 import { useState } from "react";
-import type { ICourse } from "@/types/courses.type";
-import { useWindowWidth } from "@/hooks/useWindowWidth";
+import toast from "react-hot-toast";
+import dayjs from "dayjs";
 import Link from "next/link";
+import { useParams } from "next/navigation";
+import { useWindowWidth } from "@/hooks/useWindowWidth";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { selectIsAdmin, selectUser } from "@/redux/selectors/auth.selectors";
-import { useParams } from "next/navigation";
 import {
   toggleBookmarkedCourse,
   toggleLikeCourse,
@@ -19,8 +16,9 @@ import {
   toggleCourseBookMarked,
   toggleCourseLiked,
 } from "@/redux/courses/courseSlice";
-import { BsBookmark, BsBookmarkFill } from "react-icons/bs";
-import dayjs from "dayjs";
+import type { ICourse } from "@/types/courses.type";
+import Button from "@/components/buttons/Button";
+import MaskIcon from "@/components/MaskIcon";
 
 export default function CourseDescription({
   course,
@@ -86,7 +84,10 @@ export default function CourseDescription({
         <div className="flex items-center justify-end gap-3">
           {isAdmin && (
             <Link href={`/da-admin/add/course/${courseId}`}>
-              <Edit />
+              <MaskIcon
+                src="/icons/nav-icons/edit.svg"
+                className="w-6 h-6 text-foreground"
+              />
             </Link>
           )}
           {user && (
@@ -101,19 +102,23 @@ export default function CourseDescription({
                 className="text-muted hover:opacity-80 min-w-10 h-10 px-2.5 flex justify-center items-center rounded-[10px] border-1 border-border cursor-pointer"
               >
                 {course.likedBy?.isLiked ? (
-                  <PiHeartFill
-                    size={24}
-                    strokeWidth={1.5}
-                    color="var(--foreground)"
+                  <MaskIcon
+                    src="/icons/menu-icons/heart-fill.svg"
+                    className="w-6 h-6 text-foreground"
                   />
                 ) : (
-                  <PiHeart size={24} />
+                  <MaskIcon
+                    src="/icons/menu-icons/heart.svg"
+                    className="w-6 h-6 text-foreground"
+                  />
                 )}
 
                 {course.likedBy?.count !== 0 && (
                   <p
                     className={`font-inter flex justify-center items-center ml-2 ${
-                      course.likedBy?.isLiked ? "text-foreground" : "text-muted"
+                      course.likedBy?.isLiked
+                        ? "text-foreground"
+                        : "text-foreground"
                     } font-medium text-sm`}
                   >
                     {course.likedBy?.count}
@@ -130,11 +135,14 @@ export default function CourseDescription({
                 className="text-black hover:opacity-80 w-10 h-10 flex justify-center items-center rounded-[10px] border-1 border-border cursor-pointer"
               >
                 {course.bookmarked ? (
-                  <BsBookmarkFill size={20} />
+                  <MaskIcon
+                    src="/icons/menu-icons/bookmark-fill.svg"
+                    className="w-6 h-6 text-foreground"
+                  />
                 ) : (
-                  <BsBookmark
-                    // style={{ strokeWidth: 0.5 }}
-                    size={20}
+                  <MaskIcon
+                    src="/icons/menu-icons/bookmark.svg"
+                    className="w-6 h-6 text-foreground"
                   />
                 )}
               </button>
@@ -146,7 +154,10 @@ export default function CourseDescription({
             rel="noopener noreferrer"
             className="text-black hover:opacity-80 w-10 h-10 flex justify-center items-center rounded-[10px] border-1 border-border"
           >
-            <PiThreadsLogoFill size={20} />
+            <MaskIcon
+              src="/icons/social-icons/threads.svg"
+              className="w-5 h-5"
+            />
           </a>
           <a
             href={socialLinks.twitter}
@@ -154,7 +165,10 @@ export default function CourseDescription({
             rel="noopener noreferrer"
             className="text-black hover:opacity-80 w-10 h-10 flex justify-center items-center rounded-[10px] border-1 border-border"
           >
-            <FaXTwitter size={20} />
+            <MaskIcon
+              src="/icons/social-icons/twitter.svg"
+              className="w-5 h-5"
+            />
           </a>
           <a
             href={socialLinks.telegram}
@@ -162,7 +176,10 @@ export default function CourseDescription({
             rel="noopener noreferrer"
             className="text-black hover:opacity-80 w-10 h-10 flex justify-center items-center rounded-[10px] border-1 border-border"
           >
-            <FaTelegramPlane size={20} />
+            <MaskIcon
+              src="/icons/social-icons/telegram.svg"
+              className="w-6 h-6"
+            />
           </a>
           {/* кнопка поділитись */}
           <Button type="button" text="Поділитись" onClick={handleShare} />
@@ -221,7 +238,10 @@ export default function CourseDescription({
                     !expanded ? "rotate-180" : "rotate-0"
                   } transition-transform duration-300`}
                 >
-                  <ChevronUp />
+                  <MaskIcon
+                    src="/icons/nav-icons/chevron-up.svg"
+                    className="w-6 h-6"
+                  />
                 </div>
               </button>
             </div>

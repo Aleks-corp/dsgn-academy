@@ -1,17 +1,11 @@
 "use client";
 
-// import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
-// import { fetchAround } from "@/lib/api/fetchShorts";
-import ShortsViewer from "@/components/shorts/ShortViewer";
-// import type { IShort } from "@/types/shorts.type";
-import Loader from "@/components/loaders/LoaderCircle";
-import { useAppSelector } from "@/redux/hooks";
-import {
-  selectShorts,
-  selectShortsError,
-} from "@/redux/selectors/shorts.selector";
 import { createPortal } from "react-dom";
+import { useParams } from "next/navigation";
+import { useAppSelector } from "@/redux/hooks";
+import { selectShorts, selectShortsError } from "@/selectors/shorts.selector";
+import ShortsViewer from "@/components/shorts/ShortViewer";
+import Loader from "@/components/loaders/LoaderCircle";
 
 export default function ShortFullPage() {
   const { id } = useParams<{ id: string }>();

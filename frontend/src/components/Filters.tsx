@@ -1,9 +1,8 @@
 "use client";
 
-import { useAppSelector } from "@/redux/hooks";
-
-import { selectVideoFilters } from "@/selectors/videos.selectors";
 import { useMemo, useCallback } from "react";
+import { useAppSelector } from "@/redux/hooks";
+import { selectVideoFilters } from "@/selectors/videos.selectors";
 
 const ALL_LABEL = "Всі відео";
 

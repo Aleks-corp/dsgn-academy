@@ -4,12 +4,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { IVideo } from "@/types/videos.type";
 import { durationStringToString } from "@/lib/duration.utils";
-import SafeImage from "../SafeImage";
-import { BsBookmark, BsBookmarkFill } from "react-icons/bs";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { toggleBookmarkedVideo } from "@/redux/videos/video.thunk";
 import { toggleVideoBookMarked } from "@/redux/videos/videoSlice";
 import { selectUser } from "@/redux/selectors/auth.selectors";
+import SafeImage from "@/components/SafeImage";
+import MaskIcon from "@/components/MaskIcon";
 
 export default function VideosCard({ video }: { video: IVideo }) {
   const dispatch = useAppDispatch();
@@ -104,12 +104,14 @@ export default function VideosCard({ video }: { video: IVideo }) {
                 className="flex items-center justify-center w-8 h-8 p-1.5 rounded-lg hover:bg-muted-background transition cursor-pointer"
               >
                 {video.bookmarked ? (
-                  <BsBookmarkFill size={16} color="var(--foreground)" />
+                  <MaskIcon
+                    src="/icons/menu-icons/bookmark-fill.svg"
+                    className="w-4 h-4 text-foreground"
+                  />
                 ) : (
-                  <BsBookmark
-                    style={{ strokeWidth: 0.5 }}
-                    size={16}
-                    color="var(--muted)"
+                  <MaskIcon
+                    src="/icons/menu-icons/bookmark.svg"
+                    className="w-4 h-4 text-muted"
                   />
                 )}
               </button>

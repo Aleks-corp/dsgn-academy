@@ -1,14 +1,16 @@
+"use client";
+
 import { useState, useEffect, SetStateAction, Dispatch } from "react";
 import Link from "next/link";
-import { X } from "lucide-react";
+import dayjs from "dayjs";
+import timezone from "dayjs/plugin/timezone";
+import utc from "dayjs/plugin/utc";
+import "dayjs/locale/uk";
 import { fetchStreamData } from "@/lib/api/getStreamData";
 import { useAppSelector } from "@/redux/hooks";
 import { selectUser } from "@/selectors/auth.selectors";
 import { IStream } from "@/types/stream.type";
-import dayjs from "dayjs";
-import "dayjs/locale/uk";
-import timezone from "dayjs/plugin/timezone";
-import utc from "dayjs/plugin/utc";
+import MaskIcon from "@/components/MaskIcon";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -107,7 +109,7 @@ function StreamBanner({
               onClick={() => setIsOpen(false)}
               className="cursor-pointer"
             >
-              <X />
+              <MaskIcon src="/icons/nav-icons/xmark.svg" className="w-5 h-5" />
             </button>
           </div>
         </div>

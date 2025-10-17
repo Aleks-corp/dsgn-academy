@@ -1,7 +1,7 @@
 "use client";
 
 import { SetStateAction, useEffect, useRef, useState } from "react";
-
+import { useAppSelector } from "@/redux/hooks";
 import { selectAdminUsers } from "@/selectors/admin.selectors";
 import moment from "moment";
 import {
@@ -10,24 +10,6 @@ import {
   ColumnState,
   UserList,
 } from "@/types/admin.types";
-
-import {
-  RiUserLine,
-  RiMailLine,
-  RiVipCrownLine,
-  RiShieldCheckLine,
-  RiBillLine,
-  RiCalendarCheckLine,
-  RiHashtag,
-  RiPlayLine,
-  RiStopLine,
-  RiTimerLine,
-  RiPhoneLine,
-  RiMoneyDollarCircleLine,
-  RiTimeLine,
-  RiForbidLine,
-} from "react-icons/ri";
-import { useAppSelector } from "@/redux/hooks";
 
 const UsersTable = ({
   currentPage,
@@ -189,90 +171,76 @@ const UsersTable = ({
     {
       id: "name",
       label: "Name",
-      icon: <RiUserLine size="1.5em" />,
       render: (u) => u.name,
       sortKey: "name",
     },
     {
       id: "email",
       label: "Email",
-      icon: <RiMailLine size="1.5em" />,
       render: (u) => u.email,
       sortKey: "email",
     },
     {
       id: "subscription",
       label: "Subscription",
-      icon: <RiVipCrownLine size="1.5em" />,
       render: (u) => u.subscription,
       sortKey: "subscription",
     },
     {
       id: "status",
       label: "Status",
-      icon: <RiShieldCheckLine size="1.5em" />,
       render: (u) => u.status,
     },
     {
       id: "lastPayedStatus",
       label: "LastPaid Status",
-      icon: <RiBillLine size="1.5em" />,
       render: (u) => u.lastPayedStatus,
     },
     {
       id: "lastPayedDate",
       label: "LastPaid Date",
-      icon: <RiCalendarCheckLine size="1.5em" />,
       render: (u) =>
         u.lastPayedDate && moment(u.lastPayedDate).format("DD-MM-YYYY"),
     },
     {
       id: "orderReference",
       label: "Order Ref",
-      icon: <RiHashtag size="1.5em" />,
       render: (u) => u.orderReference,
     },
     {
       id: "substart",
       label: "Sub Start",
-      icon: <RiPlayLine size="1.5em" />,
       render: (u) => u.substart && moment(u.substart).format("DD-MM-YYYY"),
     },
     {
       id: "subend",
       label: "Sub End",
-      icon: <RiStopLine size="1.5em" />,
       render: (u) => u.subend && moment(u.subend).format("DD-MM-YYYY"),
     },
     {
       id: "regularDateEnd",
       label: "Sub Until",
-      icon: <RiTimerLine size="1.5em" />,
       render: (u) =>
         u.regularDateEnd && moment(u.regularDateEnd).format("DD-MM-YYYY"),
     },
     {
       id: "phone",
       label: "Phone",
-      icon: <RiPhoneLine size="1.5em" />,
       render: (u) => u.phone,
     },
     {
       id: "amount",
       label: "Amount",
-      icon: <RiMoneyDollarCircleLine size="1.5em" />,
       render: (u) => u.amount,
     },
     {
       id: "mode",
       label: "Period",
-      icon: <RiTimeLine size="1.5em" />,
       render: (u) => u.mode,
     },
     {
       id: "isBlocked",
       label: "Banned",
-      icon: <RiForbidLine size="1.5em" />,
       render: (u) => (u.isBlocked ? "BAN" : ""),
     },
   ];
@@ -339,7 +307,6 @@ const UsersTable = ({
                     }}
                   >
                     <div className="flex items-center gap-2">
-                      {col.icon}
                       {colState[col.id] !== "collapsed" && (
                         <span>{col.label}</span>
                       )}

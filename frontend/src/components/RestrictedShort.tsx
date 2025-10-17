@@ -1,5 +1,5 @@
 import Image from "next/image";
-import NavLink from "./links/Link";
+import NavLink from "@/components/links/Link";
 
 export default function RestrictedShort() {
   return (

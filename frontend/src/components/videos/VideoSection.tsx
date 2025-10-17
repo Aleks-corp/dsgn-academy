@@ -1,9 +1,9 @@
 "use client";
 
-import VideosCard from "../videos/VideosCard";
 import { useWindowWidth } from "@/hooks/useWindowWidth";
 import { IVideo } from "@/types/videos.type";
-import { VideoCardsSkeleton } from "../skeleton/VideoCardSkeleton";
+import { VideoCardsSkeleton } from "@/components/skeleton/VideoCardSkeleton";
+import VideosCard from "@/components/videos/VideosCard";
 
 export default function VideosSection({
   videos,

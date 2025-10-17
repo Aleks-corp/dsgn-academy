@@ -1,27 +1,26 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { useSearchParams } from "next/navigation";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import {
   fetchShorts,
   fetchShortsCount,
   fetchTopShortTags,
 } from "@/redux/shorts/shorts.thunk";
+import { clearShorts } from "@/redux/shorts/shortsSlice";
 import {
   selectIsLoadingShorts,
   selectShorts,
   selectShortsError,
   selectShortsTopTags,
   selectTotalShorts,
-} from "@/redux/selectors/shorts.selector";
-
+} from "@/selectors/shorts.selector";
+import { useWindowWidth } from "@/hooks/useWindowWidth";
 import InProgressComponent from "@/components/notFound/InProgress";
 import FilterShortsSection from "@/components/shorts/FilterSection";
 import ShortsSection from "@/components/shorts/ShortsSection";
-import { useWindowWidth } from "@/hooks/useWindowWidth";
-import { useSearchParams } from "next/navigation";
 import NotFoundComponent from "@/components/notFound/NotFound";
-import { clearShorts } from "@/redux/shorts/shortsSlice";
 
 export default function ShortsPage() {
   const dispatch = useAppDispatch();

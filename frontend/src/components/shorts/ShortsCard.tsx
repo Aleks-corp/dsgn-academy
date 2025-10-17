@@ -3,8 +3,8 @@
 import Image from "next/image";
 import Link from "next/link";
 import { durationStringToString } from "@/lib/duration.utils";
-import SafeImage from "../SafeImage";
 import { IShort } from "@/types/shorts.type";
+import SafeImage from "@/components/SafeImage";
 
 export default function ShortsCard({ short }: { short: IShort }) {
   return (

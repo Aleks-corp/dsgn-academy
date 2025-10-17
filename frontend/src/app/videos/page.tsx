@@ -1,22 +1,20 @@
 "use client";
 
-import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { useSearchParams } from "next/navigation";
-
-import VideosSection from "@/components/videos/VideoSection";
-import FilterSection from "@/components/videos/FilterSection";
-import { fetchVideos } from "@/redux/videos/video.thunk";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { fetchVideos } from "@/redux/videos/video.thunk";
+import { clearVideos } from "@/redux/videos/videoSlice";
 import {
   selectIsLoadingVideos,
   selectVideos,
   selectVideosError,
-} from "@/redux/selectors/videos.selectors";
-
+} from "@/selectors/videos.selectors";
 import { useWindowWidth } from "@/hooks/useWindowWidth";
+import VideosSection from "@/components/videos/VideoSection";
+import FilterSection from "@/components/videos/FilterSection";
 import NotFoundComponent from "@/components/notFound/NotFound";
 import InProgressComponent from "@/components/notFound/InProgress";
-import { clearVideos } from "@/redux/videos/videoSlice";
 
 interface FetchVideosResponse {
   total: number;

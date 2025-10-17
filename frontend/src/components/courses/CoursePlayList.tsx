@@ -5,10 +5,9 @@ import Image from "next/image";
 import type { ICourse } from "@/types/courses.type";
 import { durationStringToString } from "@/lib/duration.utils";
 import { useWindowWidth } from "@/hooks/useWindowWidth";
-import SafeImage from "../SafeImage";
-import { ChevronLeft, ChevronRight, Play } from "lucide-react";
 import useScrollToTop from "@/hooks/useScrollToTop";
-// import { useDragScroll } from "@/hooks/useDragScroll";
+import SafeImage from "@/components/SafeImage";
+import MaskIcon from "@/components/MaskIcon";
 
 type Iprops = {
   course: ICourse;
@@ -30,7 +29,7 @@ export default function CoursePlayList({
       scrollRef.current.scrollBy({ left: offset, behavior: "smooth" });
     }
   };
-  // const scrollBind = useDragScroll();
+
   if (width >= 1024) {
     return (
       <div className="w-full lg:min-w-[300px] lg:max-w-[350px] xl:max-w-[400px] xxl:max-w-[460px]">
@@ -51,12 +50,9 @@ export default function CoursePlayList({
               <div className="flex items-center">
                 <p className="flex justify-center items-center text-muted font-medium text-xs leading-[14px] tracking-thiner">
                   {selectedVideoIndex === idx ? (
-                    <Play
-                      size={14}
-                      strokeWidth={1.5}
-                      absoluteStrokeWidth
-                      color="#7b7b7b"
-                      fill="#7b7b7b"
+                    <MaskIcon
+                      src="/icons/media-icons/play-fill.svg"
+                      className="w-3.5 h-3.5 text-muted"
                     />
                   ) : (
                     idx + 1
@@ -117,7 +113,10 @@ export default function CoursePlayList({
         className="absolute top-1/2 -translate-y-1/2 -left-10 border-scroll cursor-pointer w-16 h-52 xl:h-80 z-150 rotate-0 rounded-3xl overflow-hidden"
       >
         <div className="absolute right-0.5 top-1/2 -translate-y-1/2 z-110 p-2 w-10 h-10 btn-scroll shadow-btns-scroll rounded-full">
-          <ChevronLeft size={24} />
+          <MaskIcon
+            src="/icons/nav-icons/chevron-left.svg"
+            className="w-6 h-6"
+          />
         </div>
       </button>
 
@@ -129,7 +128,10 @@ export default function CoursePlayList({
         <div
           className={`absolute left-0.5 top-1/2 -translate-y-1/2 z-110 p-2 w-10 h-10 btn-scroll shadow-btns-scroll rounded-full`}
         >
-          <ChevronRight size={24} />
+          <MaskIcon
+            src="/icons/nav-icons/chevron-right.svg"
+            className="w-6 h-6"
+          />
         </div>
       </button>
       <div
@@ -178,11 +180,9 @@ export default function CoursePlayList({
                     )}
                     {selectedVideoIndex === idx && (
                       <div className="absolute bottom-0 right-0 w-24 h-full flex flex-col justify-center items-center rounded-r-2xl  bg-[#00000030] backdrop-blur-md z-2">
-                        <Play
-                          size={24}
-                          strokeWidth={1.5}
-                          absoluteStrokeWidth
-                          color="#ffffff"
+                        <MaskIcon
+                          src="/icons/media-icons/play.svg"
+                          className="w-6 h-6 text-white"
                         />
                       </div>
                     )}

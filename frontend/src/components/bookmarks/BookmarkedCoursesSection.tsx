@@ -1,15 +1,15 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import {
   selectBookmarkedCourses,
   selectTotalHits,
 } from "@/selectors/courses.selector";
 import { fetchBookMarkedCourses } from "@/redux/courses/course.thunk";
-import { useEffect, useRef, useState } from "react";
-import CoursesCard from "../courses/CoursesCard";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useWindowWidth } from "@/hooks/useWindowWidth";
+import CoursesCard from "@/components/courses/CoursesCard";
+import MaskIcon from "@/components/MaskIcon";
 
 export default function BookmarkedCoursesSection() {
   const dispatch = useAppDispatch();
@@ -90,7 +90,10 @@ export default function BookmarkedCoursesSection() {
               }`}
             >
               <div className="absolute right-0.5 top-1/2 -translate-y-1/2 z-110 p-2 w-10 h-10 btn-scroll shadow-btns-scroll rounded-full">
-                <ChevronLeft size={24} />
+                <MaskIcon
+                  src="/icons/nav-icons/chevron-left.svg"
+                  className="w-6 h-6"
+                />
               </div>
             </button>
 
@@ -105,7 +108,10 @@ export default function BookmarkedCoursesSection() {
               <div
                 className={`absolute left-0.5 top-1/2 -translate-y-1/2 z-110 p-2 w-10 h-10 btn-scroll shadow-btns-scroll rounded-full`}
               >
-                <ChevronRight size={24} />
+                <MaskIcon
+                  src="/icons/nav-icons/chevron-right.svg"
+                  className="w-6 h-6"
+                />
               </div>
             </button>
           </>

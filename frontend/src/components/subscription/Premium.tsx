@@ -1,11 +1,11 @@
 "use client";
 
+import Link from "next/link";
 import { formatDateToDDMMYYYY } from "@/lib/date.utils";
 import { IUser } from "@/types/users.type";
-import SubCard from "../SubCard";
 import { premiumDescription } from "@/constants/sub.desc.constants";
-import Button from "../buttons/Button";
-import Link from "next/link";
+import SubCard from "@/components/SubCard";
+import Button from "@/components/buttons/Button";
 
 export default function PremiumSubProfile({ profile }: { profile: IUser }) {
   return (

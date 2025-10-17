@@ -1,23 +1,23 @@
 "use client";
 
-import { changeName, signOut } from "@/redux/auth/auth.thunk";
+import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { changeName, signOut } from "@/redux/auth/auth.thunk";
+import { setNewName } from "@/redux/auth/authSlice";
 import { motion, AnimatePresence } from "framer-motion";
+import toast from "react-hot-toast";
 import { withUserGuard } from "@/guards/WithUserGuard";
 // import Image from "next/image";
 // import Button from "@/components/buttons/Button";
-import { selectUser } from "@/redux/selectors/auth.selectors";
-import { Pencil, X } from "lucide-react";
+import { selectUser } from "@/selectors/auth.selectors";
 import {
   userSubscriptionConst,
   userSubscriptionConstText,
 } from "@/constants/user.constants";
 import { formatDateToDDMMYYYY } from "@/lib/date.utils";
-import { useState } from "react";
 import Input from "@/components/form&inputs/Input";
 import Button from "@/components/buttons/Button";
-import toast from "react-hot-toast";
-import { setNewName } from "@/redux/auth/authSlice";
+import MaskIcon from "@/components/MaskIcon";
 
 function ProfilePage() {
   const dispatch = useAppDispatch();
@@ -111,11 +111,9 @@ function ProfilePage() {
                       onClick={() => setVisibleEdit(false)}
                       className="w-10 h-10 flex justify-center items-center cursor-pointer"
                     >
-                      <X
-                        size={20}
-                        strokeWidth={1.5}
-                        absoluteStrokeWidth
-                        color="#7b7b7b"
+                      <MaskIcon
+                        src="icons/nav-icons/xmark.svg"
+                        className="w-5 h-5 text-muted"
                       />
                     </button>
                   </div>
@@ -137,11 +135,9 @@ function ProfilePage() {
                     onClick={() => setVisibleEdit(true)}
                     className="w-10 h-10 flex justify-center items-center cursor-pointer"
                   >
-                    <Pencil
-                      size={14}
-                      strokeWidth={1.5}
-                      absoluteStrokeWidth
-                      color="#7b7b7b"
+                    <MaskIcon
+                      src="icons/nav-icons/edit-pencil.svg"
+                      className="w-4 h-4 text-muted"
                     />
                   </button>
                 </motion.div>

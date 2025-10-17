@@ -1,32 +1,28 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { clearCourse } from "@/redux/courses/courseSlice";
 import { fetchCourseById } from "@/redux/courses/course.thunk";
 import {
   selectIsLoadingCourses,
   selectCourse,
+  selectCoursesError,
 } from "@/selectors/courses.selector";
-
+import { useCanWatchVideo } from "@/hooks/useCanWatchVideo";
 import NotFoundComponent from "@/components/notFound/NotFound";
-
 import { VideoCardSkeleton } from "@/components/skeleton/VideoCardSkeleton";
 import CoursePlayer from "@/components/courses/CoursePlayer";
 import RecommendedList from "@/components/Recommended";
 import CoursePlayList from "@/components/courses/CoursePlayList";
-
 import CourseDescription from "@/components/courses/CourseDescription";
-import { useCanWatchVideo } from "@/hooks/useCanWatchVideo";
-import { selectVideosError } from "@/redux/selectors/videos.selectors";
 
 function CoursePage({ id }: { id: string }) {
   const dispatch = useAppDispatch();
   const isLoading = useAppSelector(selectIsLoadingCourses);
   const course = useAppSelector(selectCourse);
   const canWatch = useCanWatchVideo();
-  const error = useAppSelector(selectVideosError);
+  const error = useAppSelector(selectCoursesError);
   const [selectedVideoIndex, setSelectedVideoIndex] = useState(0);
 
   useEffect(() => {

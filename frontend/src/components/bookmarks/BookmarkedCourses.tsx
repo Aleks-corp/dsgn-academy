@@ -2,25 +2,23 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-
 import { fetchBookMarkedCourses } from "@/redux/courses/course.thunk";
 import {
   selectBookmarkedCourses,
+  selectCoursesError,
   selectIsLoadingCourses,
   selectTotalHits,
 } from "@/selectors/courses.selector";
 import { useWindowWidth } from "@/hooks/useWindowWidth";
-
 import CoursesSection from "@/components/courses/CoursesSection";
 import NotFoundComponent from "@/components/notFound/NotFound";
 import { VideoCardsSkeleton } from "@/components/skeleton/VideoCardSkeleton";
-import { selectVideosError } from "@/redux/selectors/videos.selectors";
 
 function BookmarkedCourses() {
   const dispatch = useAppDispatch();
   const courses = useAppSelector(selectBookmarkedCourses);
   const isLoadingVideo = useAppSelector(selectIsLoadingCourses);
-  const error = useAppSelector(selectVideosError);
+  const error = useAppSelector(selectCoursesError);
   const { width } = useWindowWidth();
   const total = useAppSelector(selectTotalHits);
   const [isLoading, setIsLoading] = useState(false);

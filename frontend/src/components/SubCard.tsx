@@ -1,5 +1,5 @@
 import { subDuration } from "@/constants/sub.desc.constants";
-import { Check, X } from "lucide-react";
+import MaskIcon from "@/components/MaskIcon";
 
 interface ICard {
   title: string;
@@ -122,19 +122,21 @@ export default function SubCard({
                   key={idx}
                   className="flex gap-2 items-center text-[#A3A3A3]"
                 >
-                  <X
-                    size={16}
-                    strokeWidth={1.5}
-                    absoluteStrokeWidth
-                    color="#A3A3A3"
+                  <MaskIcon
+                    src="/icons/nav-icons/xmark.svg"
+                    className="w-4 h-4 text-[#A3A3A3]"
                   />
+
                   {i}
                 </li>
               );
             }
             return (
               <li key={idx} className="flex gap-2 items-center">
-                <Check size={16} strokeWidth={1.5} absoluteStrokeWidth />
+                <MaskIcon
+                  src="/icons/nav-icons/check.svg"
+                  className="w-4 h-4"
+                />
                 {i}
               </li>
             );

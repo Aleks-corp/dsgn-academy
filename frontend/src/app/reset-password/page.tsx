@@ -1,5 +1,3 @@
-"use client";
-
 import Image from "next/image";
 import ResetForm from "@/components/form&inputs/ResetForm";
 

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { useWindowWidth } from "@/hooks/useWindowWidth";
 import {
   fetchShorts,
   fetchShortsCount,
@@ -13,11 +14,10 @@ import {
   selectShortsError,
   selectShortsTopTags,
   selectTotalShorts,
-} from "@/redux/selectors/shorts.selector";
+} from "@/selectors/shorts.selector";
 
 import InProgressComponent from "@/components/notFound/InProgress";
 import ShortsSection from "@/components/shorts/ShortsSection";
-import { useWindowWidth } from "@/hooks/useWindowWidth";
 import NotFoundComponent from "@/components/notFound/NotFound";
 
 export default function BookmarkedShorts() {

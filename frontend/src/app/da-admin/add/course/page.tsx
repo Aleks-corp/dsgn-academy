@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
-import { X, Pencil, Eye, RefreshCcw } from "lucide-react";
 import toast from "react-hot-toast";
 import Datetime from "react-datetime";
 import "react-datetime/css/react-datetime.css";
@@ -19,6 +18,7 @@ import Input from "@/components/form&inputs/Input";
 import Button from "@/components/buttons/Button";
 import Loader from "@/components/loaders/Loader";
 import VidstackPlayer from "@/components/VideoVidstack";
+import MaskIcon from "@/components/MaskIcon";
 
 export interface IData {
   name: string;
@@ -239,7 +239,10 @@ function AddCourseVideoForm() {
                     onClick={() => handleRemoveVideo(v.url)}
                     className="text-red-500 hover:text-red-700 cursor-pointer"
                   >
-                    <X size={18} />
+                    <MaskIcon
+                      src="/icons/nav-icons/xmark.svg"
+                      className="w-4 h-4"
+                    />
                   </button>
                 </li>
               ))}
@@ -256,14 +259,20 @@ function AddCourseVideoForm() {
                 onClick={() => setIsEditingTitle(false)}
                 className="cursor-pointer"
               >
-                <Eye size={18} />
+                <MaskIcon
+                  src="/icons/menu-icons/eye.svg"
+                  className="w-4 h-4 text-muted"
+                />
               </button>
             ) : (
               <button
                 onClick={() => setIsEditingTitle(true)}
                 className="cursor-pointer"
               >
-                <Pencil size={18} />
+                <MaskIcon
+                  src="/icons/nav-icons/edit-pencil.svg"
+                  className="w-4 h-4 text-muted"
+                />
               </button>
             )}
           </div>
@@ -293,14 +302,20 @@ function AddCourseVideoForm() {
                 onClick={() => setIsEditingDescription(false)}
                 className="cursor-pointer"
               >
-                <Eye size={18} />
+                <MaskIcon
+                  src="/icons/menu-icons/eye.svg"
+                  className="w-4 h-4 text-muted"
+                />
               </button>
             ) : (
               <button
                 onClick={() => setIsEditingDescription(true)}
                 className="cursor-pointer"
               >
-                <Pencil size={18} />
+                <MaskIcon
+                  src="/icons/nav-icons/edit-pencil.svg"
+                  className="w-4 h-4 text-muted"
+                />
               </button>
             )}
           </div>
@@ -351,7 +366,16 @@ function AddCourseVideoForm() {
         <div className="flex justify-end mb-6">
           <Button
             text={!isLoading ? "Очистити" : ""}
-            icon={isLoading ? <Loader /> : <RefreshCcw size={20} />}
+            icon={
+              isLoading ? (
+                <Loader />
+              ) : (
+                <MaskIcon
+                  src="/icons/nav-icons/refresh-ccw.svg"
+                  className="w-4 h-4"
+                />
+              )
+            }
             type="submit"
             onClick={reset}
           />
@@ -442,14 +466,20 @@ function AddCourseVideoForm() {
                     onClick={() => setIsEditingSelectedTitle(false)}
                     className="cursor-pointer"
                   >
-                    <Eye size={18} />
+                    <MaskIcon
+                      src="/icons/menu-icons/eye.svg"
+                      className="w-4 h-4 text-muted"
+                    />
                   </button>
                 ) : (
                   <button
                     onClick={() => setIsEditingSelectedTitle(true)}
                     className="cursor-pointer"
                   >
-                    <Pencil size={18} />
+                    <MaskIcon
+                      src="/icons/nav-icons/edit-pencil.svg"
+                      className="w-4 h-4 text-muted"
+                    />
                   </button>
                 )}
               </div>
@@ -485,14 +515,20 @@ function AddCourseVideoForm() {
                     onClick={() => setIsEditingSelectedDescription(false)}
                     className="cursor-pointer"
                   >
-                    <Eye size={18} />
+                    <MaskIcon
+                      src="/icons/menu-icons/eye.svg"
+                      className="w-4 h-4 text-muted"
+                    />
                   </button>
                 ) : (
                   <button
                     onClick={() => setIsEditingSelectedDescription(true)}
                     className="cursor-pointer"
                   >
-                    <Pencil size={18} />
+                    <MaskIcon
+                      src="/icons/nav-icons/edit-pencil.svg"
+                      className="w-4 h-4 text-muted"
+                    />
                   </button>
                 )}
               </div>

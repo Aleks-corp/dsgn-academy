@@ -6,8 +6,8 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useAppDispatch } from "@/redux/hooks";
 import { forgotPassword } from "@/redux/auth/auth.thunk";
-import InputWithIcon from "@/components/form&inputs/FormInput";
 import { forgotPassSchema } from "@/schemas/users.schemas";
+import InputWithIcon from "@/components/form&inputs/FormInput";
 import LinkInline from "@/components/links/LinkInline";
 import ButtonBlack from "@/components/buttons/ButtonsBlack";
 

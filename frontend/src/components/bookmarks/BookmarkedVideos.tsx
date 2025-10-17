@@ -1,17 +1,15 @@
 "use client";
 
-import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-
-import VideosSection from "@/components/videos/VideoSection";
-import { fetchBookMarkedVideos } from "@/redux/videos/video.thunk";
 import { useEffect, useRef, useState } from "react";
+import { useAppDispatch, useAppSelector } from "@/redux/hooks";
+import { fetchBookMarkedVideos } from "@/redux/videos/video.thunk";
 import {
   selectBookmarkedVideos,
   selectIsLoadingVideos,
   selectTotalHits,
 } from "@/selectors/videos.selectors";
-
 import { useWindowWidth } from "@/hooks/useWindowWidth";
+import VideosSection from "@/components/videos/VideoSection";
 
 function BookmarkedVideos() {
   const dispatch = useAppDispatch();

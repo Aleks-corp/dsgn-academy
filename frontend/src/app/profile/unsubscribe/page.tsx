@@ -4,10 +4,10 @@ import { withUserGuard } from "@/guards/WithUserGuard";
 import { unsubscribe } from "@/redux/auth/auth.thunk";
 import { useAppDispatch } from "@/redux/hooks";
 import { useState } from "react";
-import { Check } from "lucide-react";
 import Button from "@/components/buttons/Button";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import MaskIcon from "@/components/MaskIcon";
 
 const reasons = [
   "Я рідко користуюся сервісом",
@@ -77,9 +77,9 @@ function UnsubscribePage() {
                   className={`w-5 h-5 flex items-center justify-center rounded-md bg-muted-background shadow-select`}
                 >
                   {selected === reason && (
-                    <Check
-                      size={16}
-                      className={`text-muted transition-opacity duration-200 ${
+                    <MaskIcon
+                      src="icons/nav-icons/check.svg"
+                      className={`w-4 h-4 text-muted transition-opacity duration-200 ${
                         selected === reason ? "opacity-100" : "opacity-0"
                       }`}
                     />

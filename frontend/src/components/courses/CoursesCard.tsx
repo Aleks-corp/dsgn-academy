@@ -3,14 +3,13 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ICourse } from "@/types/courses.type";
-import { ListVideo } from "lucide-react";
-import SafeImage from "../SafeImage";
 import { categoriesConst } from "@/constants/categories.constant";
-import { BsBookmark, BsBookmarkFill } from "react-icons/bs";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
-import { selectUser } from "@/redux/selectors/auth.selectors";
+import { selectUser } from "@/selectors/auth.selectors";
 import { toggleBookmarkedCourse } from "@/redux/courses/course.thunk";
 import { toggleCourseBookMarked } from "@/redux/courses/courseSlice";
+import SafeImage from "@/components/SafeImage";
+import MaskIcon from "@/components/MaskIcon";
 
 export default function CoursesCard({
   course,
@@ -81,11 +80,9 @@ export default function CoursesCard({
             <p className="flex justify-center items-center text-white font-medium text-2xl leading-8 tracking-tighter">
               {course.videos.length}
             </p>
-            <ListVideo
-              size={24}
-              strokeWidth={2}
-              absoluteStrokeWidth
-              color="#ffffff"
+            <MaskIcon
+              src="/icons/media-icons/playlist.svg"
+              className="w-6 h-6 text-white"
             />
           </div>
           <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 bg-[#E6E6E6] w-[77%] h-[77%] z-0 rounded-2xl" />
@@ -135,12 +132,14 @@ export default function CoursesCard({
                 className="flex items-center justify-center w-8 h-8 p-1.5 rounded-lg hover:bg-muted-background transition cursor-pointer"
               >
                 {course.bookmarked ? (
-                  <BsBookmarkFill size={16} color="var(--foreground)" />
+                  <MaskIcon
+                    src="/icons/menu-icons/bookmark-fill.svg"
+                    className="w-4 h-4 text-foreground"
+                  />
                 ) : (
-                  <BsBookmark
-                    style={{ strokeWidth: 0.5 }}
-                    size={16}
-                    color="var(--muted)"
+                  <MaskIcon
+                    src="/icons/menu-icons/bookmark.svg"
+                    className="w-4 h-4 text-muted"
                   />
                 )}
               </button>

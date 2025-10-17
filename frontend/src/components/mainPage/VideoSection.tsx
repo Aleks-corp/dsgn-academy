@@ -2,8 +2,8 @@
 
 import { useAppSelector } from "@/redux/hooks";
 import { selectVideos } from "@/selectors/videos.selectors";
-import VideosCard from "../videos/VideosCard";
 import { useWindowWidth } from "@/hooks/useWindowWidth";
+import VideosCard from "@/components/videos/VideosCard";
 
 export default function VideosSection() {
   const videos = useAppSelector(selectVideos);

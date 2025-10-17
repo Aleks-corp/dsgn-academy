@@ -1,5 +1,3 @@
-"use client";
-
 import Image from "next/image";
 import ForgotForm from "@/components/form&inputs/ForgotForm";
 

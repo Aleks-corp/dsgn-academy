@@ -35,11 +35,11 @@ export default function ProfileAside({ selectedPage, setSelectedPage }: Props) {
               >
                 <MaskIcon
                   src="/icons/menu-icons/user.svg"
-                  className={
+                  className={`w-5 h-5 ${
                     selectedPage === "profile"
                       ? "text-foreground"
                       : "text-muted"
-                  }
+                  }`}
                 />
               </div>
             }
@@ -68,11 +68,11 @@ export default function ProfileAside({ selectedPage, setSelectedPage }: Props) {
               >
                 <MaskIcon
                   src="/icons/menu-icons/sec.svg"
-                  className={
+                  className={`w-5 h-5 ${
                     selectedPage === "security"
                       ? "text-foreground"
                       : "text-muted"
-                  }
+                  }`}
                 />
               </div>
             }
@@ -103,11 +103,11 @@ export default function ProfileAside({ selectedPage, setSelectedPage }: Props) {
               >
                 <MaskIcon
                   src="/icons/menu-icons/pay.svg"
-                  className={
+                  className={`w-5 h-5 ${
                     selectedPage === "subscription"
                       ? "text-foreground"
                       : "text-muted"
-                  }
+                  }`}
                 />
               </div>
             }
@@ -138,11 +138,11 @@ export default function ProfileAside({ selectedPage, setSelectedPage }: Props) {
               >
                 <MaskIcon
                   src="/icons/menu-icons/bookmark.svg"
-                  className={
+                  className={`w-5 h-5 ${
                     selectedPage === "bookmarks"
                       ? "text-foreground"
                       : "text-muted"
-                  }
+                  }`}
                 />
               </div>
             }

@@ -1,8 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import { useAppSelector } from "@/redux/hooks";
 import { selectVideoFilters } from "@/selectors/videos.selectors";
-import { useState } from "react";
 
 export default function FilterSection() {
   const filters = useAppSelector(selectVideoFilters);

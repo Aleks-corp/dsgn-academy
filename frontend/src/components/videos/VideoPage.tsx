@@ -3,18 +3,17 @@
 import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import { fetchVideoById } from "@/redux/videos/video.thunk";
+import { clearVideo } from "@/redux/videos/videoSlice";
 import {
   selectIsLoadingVideos,
   selectVideo,
   selectVideosError,
-} from "@/redux/selectors/videos.selectors";
-
-import { clearVideo } from "@/redux/videos/videoSlice";
+} from "@/selectors/videos.selectors";
+import { useCanWatchVideo } from "@/hooks/useCanWatchVideo";
 import VideoPlayer from "@/components/videos/VideoPlayer";
 import RecommendedList from "@/components/Recommended";
 import NotFoundComponent from "@/components/notFound/NotFound";
 import { VideoCardSkeleton } from "@/components/skeleton/VideoCardSkeleton";
-import { useCanWatchVideo } from "@/hooks/useCanWatchVideo";
 
 function VideoPage({ id }: { id: string }) {
   const dispatch = useAppDispatch();

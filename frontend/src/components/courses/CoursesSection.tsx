@@ -1,8 +1,8 @@
 "use client";
 
 import { useWindowWidth } from "@/hooks/useWindowWidth";
-import CoursesCard from "./CoursesCard";
 import { ICourse } from "@/types/courses.type";
+import CoursesCard from "@/components/courses/CoursesCard";
 
 export default function CoursesSection({
   courses,
