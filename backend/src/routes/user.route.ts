@@ -3,7 +3,7 @@ import multer from "multer";
 import { userController } from "../controllers/index.js";
 import { usersSchemas } from "../schemas/index.js";
 import { validateBody } from "../decorators/index.js";
-import { authenticateUser } from "../middlewares/index.js";
+import { authenticateUser, uploadFile } from "../middlewares/index.js";
 
 const {
   usersRegSchema,
@@ -33,6 +33,7 @@ const {
   changeName,
   callSupport,
   reportSupport,
+  messageToSupport,
 } = userController;
 
 const upload = multer();
@@ -73,6 +74,8 @@ usersRouter.post(
 
 usersRouter.get("/callsupport", authenticateUser, callSupport);
 usersRouter.post("/callsupport", authenticateUser, reportSupport);
+
+usersRouter.post("/support", uploadFile.single("file"), messageToSupport);
 
 usersRouter.post("/create-payment", authenticateUser, createPayment);
 usersRouter.post("/payment-webhook", paymentWebhook);

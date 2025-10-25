@@ -4,5 +4,5 @@ export { default as isValidId } from "./isValidId.js";
 export { default as authenticateToken } from "./authenticateToken.js";
 export { default as authenticateUser } from "./authenticateUser.js";
 export { default as authenticateAdmin } from "./isAdmin.js";
-// export { default as upload } from "./upload";
+export { default as uploadFile } from "./upload.js";
 // export { default as checkIfUserBlocked } from "./isBlockedUser";

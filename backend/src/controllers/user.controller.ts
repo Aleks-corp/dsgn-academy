@@ -1,4 +1,5 @@
 import "dotenv/config";
+import fs from "fs/promises";
 import type { Request, Response } from "express";
 import type { Types } from "mongoose";
 
@@ -23,6 +24,7 @@ import {
   callSupportService,
   reportSupportService,
 } from "../services/user.service.js";
+import sendMessageToSupport from "../utils/messageToSpt.js";
 
 const { FRONT_SERVER, FRONT_WEB_SERVER } = process.env;
 
@@ -322,6 +324,20 @@ const reportSupport = async (req: Request, res: Response): Promise<void> => {
   res.json("sent");
 };
 
+const messageToSupport = async (req: Request, res: Response): Promise<void> => {
+  const { message, email } = req.body;
+  const file = req.file;
+
+  if (!email || !message) {
+    res.status(400).json({ message: "Email та повідомлення обовʼязкові!" });
+    return;
+  }
+  await sendMessageToSupport({ email, message, file });
+  res.json({ message: "Звернення відправлено. Дякуємо!" });
+
+  if (file) await fs.unlink(file.path);
+};
+
 export default {
   register: ctrlWrapper(register),
   login: ctrlWrapper(login),
@@ -341,4 +357,5 @@ export default {
   changeName: ctrlWrapper(changeName),
   callSupport: ctrlWrapper(callSupport),
   reportSupport: ctrlWrapper(reportSupport),
+  messageToSupport: ctrlWrapper(messageToSupport),
 };

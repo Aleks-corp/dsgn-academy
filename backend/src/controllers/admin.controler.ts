@@ -271,6 +271,7 @@ const sentMailToUsers = async (req: Request, res: Response): Promise<void> => {
     failedEmails: failed,
   });
 };
+
 const sendMailToSelectedUsers = async (
   req: Request,
   res: Response
