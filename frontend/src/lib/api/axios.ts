@@ -16,3 +16,7 @@ export const setToken = (token: string) => {
 export const delToken = () => {
   instance.defaults.headers.common["Authorization"] = "";
 };
+
+export const instanceFormData = axios.create({
+  baseURL: host,
+});

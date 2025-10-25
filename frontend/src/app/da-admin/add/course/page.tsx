@@ -226,6 +226,7 @@ function AddCourseVideoForm() {
               <Image src="/icons/vimeo.svg" width={16} height={16} alt="Logo" />
             }
             onClick={handleAddVideo}
+            disabled={!videoInput.trim()}
           />
         </div>
         <div className="mb-6">
@@ -357,6 +358,8 @@ function AddCourseVideoForm() {
               required: true,
               value: publishedAt ? publishedAt : "",
             }}
+            timeFormat="HH:mm"
+            dateFormat="DD.MM.YYYY"
             onChange={(e) => setPublishedAt(e.toString())}
             value={publishedAt !== "" ? new Date(publishedAt) : ""}
           />

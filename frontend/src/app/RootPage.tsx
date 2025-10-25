@@ -24,6 +24,7 @@ import { useSelectedPage } from "../hooks/useAside";
 import Loader from "../components/loaders/LoaderCircle";
 import useIsLg from "../hooks/useScreenWidth";
 import StreamBanner from "@/components/StreamBanner";
+import SupportContainer from "@/components/support/SupportContainer";
 // import LenisProvider from "./LenisProvider";
 
 function RootPage({ children }: { children: React.ReactNode }) {
@@ -87,6 +88,7 @@ function RootPage({ children }: { children: React.ReactNode }) {
         {isOpenBanner && <StreamBanner setIsOpen={setIsOpenBanner} />}
         <Header isOpenAside={isOpenAside} setIsOpenAside={setIsOpenAside} />
       </div>
+      <SupportContainer />
 
       {/* --- 6) Оверлей для мобіли (від lg і нижче) --- */}
       {!isLg && isOpenAside && (

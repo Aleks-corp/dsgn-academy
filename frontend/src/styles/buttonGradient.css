@@ -68,3 +68,9 @@
 .btn-gradient:active::before {
   opacity: 0.6;
 }
+
+.btn-gradient-send {
+  background: linear-gradient(180deg, #e5e5e5 0%, #e2e2e2 100%);
+  box-shadow: 0 3px 4px -1px rgba(0, 0, 0, 0.15),
+    0 1px 0 0 rgba(255, 255, 255, 0.33) inset, 0 0 0 1px #d4d4d4;
+}

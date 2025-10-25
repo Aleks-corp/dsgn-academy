@@ -218,6 +218,7 @@ function AddVideoPage() {
               <Image src="/icons/vimeo.svg" width={16} height={16} alt="Logo" />
             }
             onClick={handlefetchVideoData}
+            disabled={!video.trim()}
           />
         </div>
         <div className="flex gap-4 mb-3 w-full">
@@ -480,6 +481,8 @@ function AddVideoPage() {
               required: true,
               value: publishedAt ? publishedAt : "",
             }}
+            timeFormat="HH:mm"
+            dateFormat="DD.MM.YYYY"
             onChange={(e) => setPublishedAt(e.toString())}
             value={publishedAt !== "" ? new Date(publishedAt) : ""}
           />

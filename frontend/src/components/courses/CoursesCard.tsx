@@ -116,7 +116,7 @@ export default function CoursesCard({
           </div>
         </div>
 
-        <div className="px-3 pt-6 py-1 flex-1 flex flex-col gap-1">
+        <div className="pl-3 pr-2 pt-6 py-1 flex-1 flex flex-col gap-1">
           <p className="font-medium text-[15px] leading-[18px] tracking-thin line-clamp-2">
             {course.title}
           </p>
@@ -129,12 +129,12 @@ export default function CoursesCard({
                 type="button"
                 aria-label="bookmark"
                 onClick={handleBookmarkClick}
-                className="flex items-center justify-center w-8 h-8 p-1.5 rounded-lg hover:bg-muted-background transition cursor-pointer"
+                className="flex items-center justify-center w-7 h-7 p-1.5 rounded-lg hover:bg-muted-background transition cursor-pointer"
               >
                 {course.bookmarked ? (
                   <MaskIcon
                     src="/icons/menu-icons/bookmark-fill.svg"
-                    className="w-4 h-4 text-foreground"
+                    className="w-5 h-5 text-foreground"
                   />
                 ) : (
                   <MaskIcon
