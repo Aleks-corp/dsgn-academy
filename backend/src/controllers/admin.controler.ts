@@ -290,7 +290,7 @@ const sendMailToSelectedUsers = async (
     try {
       await sendMailToUsers({ user, stream });
       sent.push(user.email);
-      await new Promise((r) => setTimeout(r, 1000)); // 3-10 секунд, якщо лімітить
+      await new Promise((r) => setTimeout(r, 100)); // 3-10 секунд, якщо лімітить
     } catch (e) {
       failed.push(user.email);
       if (e instanceof Error) {
