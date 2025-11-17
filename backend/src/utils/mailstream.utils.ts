@@ -62,8 +62,7 @@ const sendMailToUsers = async ({
         style="
           background-color: #f7f7f7;
           border-radius: 24px;
-          padding: 34px 68px;
-          border-radius: 32px;
+          padding: 24px 32px;
         "
       >
         <tr>
@@ -94,10 +93,20 @@ const sendMailToUsers = async ({
         <tr>
           <td style="font-size: 18px; line-height: 28px; color: #222222">
             Привіт, ${user.name} 💙<br /><br />
-            Ми готуємо новий онлайн-ефір — “${stream.title}”.<br />
+            Ми готуємо новий онлайн-ефір — “${stream.title}”.<br /><br />
+            <div style="text-align: center; width: 100%;">
+            <img
+            src="https://img.youtube.com/vi/${stream.videoId}/maxresdefault.jpg"
+            alt="YouTube stream preview"
+            style="display: inline-block;
+            width: 100%;
+            max-width: 480px;
+            height: auto;
+            border-radius: 14px;"
+            /></div><br />
 
-            🎬 <pre style="font-family: inherit; font-size: 16px; background: none; border: none; padding: 0; margin: 0; color: #222; line-height: 1.6; white-space: pre-line;">
-            ${stream.description}
+            <pre style="font-family: inherit; font-size: 16px; background: none; border: none; padding: 0; margin: 0; color: #222; line-height: 1.6; white-space: pre-line;">
+            🎬  ${stream.description}
             </pre>
             <br/>
 
@@ -179,8 +188,7 @@ const sendMailToUsers = async ({
         style="
           background-color: #f7f7f7;
           border-radius: 24px;
-          padding: 34px 68px;
-          border-radius: 32px;
+          padding: 24px 32px;
         "
       >
         <tr>
@@ -211,10 +219,20 @@ const sendMailToUsers = async ({
         <tr>
           <td style="font-size: 18px; line-height: 28px; color: #222222">
             Привіт, ${user.name} 💙<br /><br />
-            Ми готуємо новий онлайн-ефір — “${stream.title}”.<br />
+            Ми готуємо новий онлайн-ефір — “${stream.title}”.<br /><br />
+            <div style="text-align: center; width: 100%;">
+            <img
+            src="https://img.youtube.com/vi/${stream.videoId}/maxresdefault.jpg"
+            alt="YouTube stream preview"
+            style="display: inline-block;
+            width: 100%;
+            max-width: 480px;
+            height: auto;
+            border-radius: 14px;"
+            /></div><br />
             
-            🎬 <pre style="font-family: inherit; font-size: 16px; background: none; border: none; padding: 0; margin: 0; color: #222; line-height: 1.6; white-space: pre-line;">
-            ${stream.description}
+            <pre style="font-family: inherit; font-size: 16px; background: none; border: none; padding: 0; margin: 0; color: #222; line-height: 1.6; white-space: pre-line;">
+            🎬  ${stream.description}
             </pre>
             <br/>
 
