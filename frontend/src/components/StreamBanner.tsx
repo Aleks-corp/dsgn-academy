@@ -1,12 +1,10 @@
 "use client";
 
-import { useState, useEffect, SetStateAction, Dispatch } from "react";
 import Link from "next/link";
 import dayjs from "dayjs";
 import timezone from "dayjs/plugin/timezone";
 import utc from "dayjs/plugin/utc";
 import "dayjs/locale/uk";
-import { fetchStreamData } from "@/lib/api/getStreamData";
 import { useAppSelector } from "@/redux/hooks";
 import { selectUser } from "@/selectors/auth.selectors";
 import { IStream } from "@/types/stream.type";
@@ -16,39 +14,13 @@ dayjs.extend(utc);
 dayjs.extend(timezone);
 
 function StreamBanner({
+  stream,
   setIsOpen,
 }: {
-  setIsOpen: Dispatch<SetStateAction<boolean>>;
+  stream: IStream | null;
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const user = useAppSelector(selectUser);
-  const [stream, setStream] = useState<IStream | null>(null);
-
-  const handlefetchStreamData = async () => {
-    try {
-      const res: { data: IStream; status: number } = await fetchStreamData();
-      if (res.status === 200) {
-        setStream(res.data);
-      }
-    } catch (error) {
-      console.info(error);
-    }
-  };
-
-  useEffect(() => {
-    if (!stream) {
-      return;
-    }
-    const streamStartTimeInKyiv = dayjs.tz(stream.startStreamAt, "Europe/Kiev");
-    const bannerCloseTime = streamStartTimeInKyiv.add(24, "hour");
-    const nowInKyiv = dayjs().tz("Europe/Kyiv");
-    if (nowInKyiv.isAfter(bannerCloseTime)) {
-      setIsOpen(false);
-    }
-  }, [setIsOpen, stream]);
-
-  useEffect(() => {
-    handlefetchStreamData();
-  }, []);
 
   return (
     <div className="flex items-center w-full h-10 bg-banner">

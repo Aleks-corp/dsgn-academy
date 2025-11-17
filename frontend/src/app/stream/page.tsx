@@ -2,11 +2,16 @@
 
 import { useEffect, useState } from "react";
 import { fetchStreamData } from "@/lib/api/getStreamData";
+import MaskIcon from "@/components/MaskIcon";
+import { useWindowWidth } from "@/hooks/useWindowWidth";
 
-type IStreamData = { videoId: string; title: string };
+type IStreamData = { videoId: string; title: string; description: string };
 
 function VideoStreamPage() {
   const [streamData, setStreamData] = useState<IStreamData | null>(null);
+  const [expanded, setExpanded] = useState(false);
+
+  const { width } = useWindowWidth();
 
   const handlefetchStreamData = async () => {
     try {
@@ -56,6 +61,37 @@ function VideoStreamPage() {
             allowFullScreen={true}
             className="w-full h-full"
           ></iframe>
+        </div>{" "}
+        <div>
+          <p
+            className={`whitespace-pre-line transition-all duration-300 ${
+              expanded || width >= 1024 ? "line-clamp-none" : "line-clamp-2"
+            }`}
+          >
+            {streamData.description}
+          </p>
+          {streamData.description &&
+            streamData.description.length > 120 &&
+            width < 1024 && (
+              <div className="w-full flex justify-center translate-y-3">
+                <button
+                  type="button"
+                  onClick={() => setExpanded((prev) => !prev)}
+                  className="flex justify-center items-center w-10 h-10 text-muted bg-white font-medium rounded-full hover:text-muted-background cursor-pointer transition-all duration-300 shadow-icon"
+                >
+                  <div
+                    className={` ${
+                      !expanded ? "rotate-180" : "rotate-0"
+                    } transition-transform duration-300`}
+                  >
+                    <MaskIcon
+                      src="/icons/nav-icons/chevron-up.svg"
+                      className="w-6 h-6"
+                    />
+                  </div>
+                </button>
+              </div>
+            )}
         </div>
       </div>
       <div className="w-full xl:w-96">

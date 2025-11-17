@@ -25,6 +25,7 @@ import Loader from "../components/loaders/LoaderCircle";
 import useIsLg from "../hooks/useScreenWidth";
 import StreamBanner from "@/components/StreamBanner";
 import SupportContainer from "@/components/support/SupportContainer";
+import { useStreamData } from "@/hooks/useStreamData";
 // import LenisProvider from "./LenisProvider";
 
 function RootPage({ children }: { children: React.ReactNode }) {
@@ -34,10 +35,9 @@ function RootPage({ children }: { children: React.ReactNode }) {
   const isAdmin = useAppSelector(selectIsAdmin);
   const pathname = usePathname();
   const isLg = useIsLg();
+  const { isOpenBanner, stream, setIsOpenBanner } = useStreamData();
 
   const { selectedPage, setSelectedPage } = useSelectedPage();
-
-  const [isOpenBanner, setIsOpenBanner] = useState(false);
 
   // --- 2) за замовчуванням закрито; відкривати будемо в ефекті залежно від isLg
   const [isOpenAside, setIsOpenAside] = useState(true);
@@ -85,7 +85,9 @@ function RootPage({ children }: { children: React.ReactNode }) {
   return (
     <div className="relative w-screen h-screen">
       <div className={`fixed w-full ${isOpenBanner ? "h-30" : "h-20"} z-20`}>
-        {isOpenBanner && <StreamBanner setIsOpen={setIsOpenBanner} />}
+        {isOpenBanner && (
+          <StreamBanner stream={stream} setIsOpen={setIsOpenBanner} />
+        )}
         <Header isOpenAside={isOpenAside} setIsOpenAside={setIsOpenAside} />
       </div>
       <SupportContainer />
