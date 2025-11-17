@@ -95,8 +95,6 @@ const sendMailToUsers = async ({
           <td style="font-size: 18px; line-height: 28px; color: #222222">
             Привіт, ${user.name} 💙<br /><br />
             Ми готуємо новий онлайн-ефір — “${stream.title}”.<br />
-            Поговоримо про те, як штучний інтелект допомагає прискорити роботу,
-            створювати дизайн-рішення та автоматизувати рутину.<br /><br />
 
             🎬 <pre style="font-family: inherit; font-size: 16px; background: none; border: none; padding: 0; margin: 0; color: #222; line-height: 1.6; white-space: pre-line;">
             ${stream.description}
@@ -214,9 +212,7 @@ const sendMailToUsers = async ({
           <td style="font-size: 18px; line-height: 28px; color: #222222">
             Привіт, ${user.name} 💙<br /><br />
             Ми готуємо новий онлайн-ефір — “${stream.title}”.<br />
-            Поговоримо про те, як штучний інтелект допомагає прискорити роботу,
-            створювати дизайн-рішення та автоматизувати рутину.<br /><br />
-
+            
             🎬 <pre style="font-family: inherit; font-size: 16px; background: none; border: none; padding: 0; margin: 0; color: #222; line-height: 1.6; white-space: pre-line;">
             ${stream.description}
             </pre>
