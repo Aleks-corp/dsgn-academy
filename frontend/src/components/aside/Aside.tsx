@@ -59,7 +59,7 @@ export default function Aside({ selectedPage, setSelectedPage }: Props) {
   const categories = useAppSelector(selectVideoCategories);
 
   return (
-    <aside className="flex flex-col items-center justify-between gap-3 w-full p-5 h-[calc(100dvh-80px)] transition-all">
+    <aside className="flex flex-col items-center justify-between gap-3 w-full p-5 h-[calc(100dvh-120px)] transition-all">
       <div className="flex flex-col gap-3 w-full items-center">
         <div className="md:hidden flex w-full ">
           {(sub === "free" || !sub) && (
