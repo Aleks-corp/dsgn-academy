@@ -26,13 +26,10 @@ function StreamBanner({
     <div className="flex items-center w-full h-10 bg-banner">
       {stream && (
         <div className="flex justify-between items-center w-full text-white text-sm font-medium leading-4 tracking-thin">
-          {/* ✅ 1. Створюємо "маску" - контейнер, що приховає все зайве */}
           <div className="relative flex overflow-x-hidden flex-grow">
-            {/* ✅ 2. Це блок, який буде анімуватися */}
             <div className="animate-marquee whitespace-nowrap pointer-events-none">
-              {/* ✅ 3. Дублюємо текст для створення безшовного ефекту */}
               <span className="mx-10">
-                Онлайн-ефір {stream.title} -{" "}
+                Онлайн-ефір: {stream.title}, ⚠️ Оновлена дата ефіру: -{" "}
                 {dayjs
                   .utc(stream.startStreamAt)
                   .locale("uk")
@@ -40,7 +37,7 @@ function StreamBanner({
                 🔒 Лише для підписників
               </span>
               <span className="mx-10">
-                Онлайн-ефір {stream.title} -{" "}
+                Онлайн-ефір: {stream.title}, ⚠️ Оновлена дата ефіру: -{" "}
                 {dayjs
                   .utc(stream.startStreamAt)
                   .locale("uk")
@@ -48,7 +45,7 @@ function StreamBanner({
                 🔒 Лише для підписників
               </span>
               <span className="mx-10">
-                Онлайн-ефір {stream.title} -{" "}
+                Онлайн-ефір: {stream.title}, ⚠️ Оновлена дата ефіру: -{" "}
                 {dayjs
                   .utc(stream.startStreamAt)
                   .locale("uk")
@@ -56,7 +53,7 @@ function StreamBanner({
                 🔒 Лише для підписників
               </span>{" "}
               <span className="mx-10">
-                Онлайн-ефір {stream.title} -{" "}
+                Онлайн-ефір: {stream.title}, ⚠️ Оновлена дата ефіру: -{" "}
                 {dayjs
                   .utc(stream.startStreamAt)
                   .locale("uk")
