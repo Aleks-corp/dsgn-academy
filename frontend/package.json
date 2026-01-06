@@ -14,7 +14,7 @@
     "@next/third-parties": "^15.5.0",
     "@reduxjs/toolkit": "^2.8.2",
     "@vidstack/react": "^1.12.13",
-    "axios": "^1.11.0",
+    "axios": "^1.13.2",
     "dayjs": "^1.11.18",
     "framer-motion": "^12.23.12",
     "keen-slider": "^6.8.6",

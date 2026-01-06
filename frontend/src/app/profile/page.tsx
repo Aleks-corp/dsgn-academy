@@ -112,7 +112,7 @@ function ProfilePage() {
                       className="w-10 h-10 flex justify-center items-center cursor-pointer"
                     >
                       <MaskIcon
-                        src="icons/nav-icons/xmark.svg"
+                        src="/icons/nav-icons/xmark.svg"
                         className="w-5 h-5 text-muted"
                       />
                     </button>

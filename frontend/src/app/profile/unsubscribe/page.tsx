@@ -78,7 +78,7 @@ function UnsubscribePage() {
                 >
                   {selected === reason && (
                     <MaskIcon
-                      src="icons/nav-icons/check.svg"
+                      src="/icons/nav-icons/check.svg"
                       className={`w-4 h-4 text-muted transition-opacity duration-200 ${
                         selected === reason ? "opacity-100" : "opacity-0"
                       }`}
