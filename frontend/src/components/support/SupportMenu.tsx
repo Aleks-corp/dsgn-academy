@@ -279,7 +279,7 @@ function SupportMenu({
           className="w-full mt-2"
           onClick={() => {
             setIsSupportOpen(false);
-            router.push("/faq");
+            router.push("/about?tab=faq");
           }}
         />
       )}

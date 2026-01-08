@@ -126,7 +126,7 @@ export default function Header({ isOpenAside, setIsOpenAside }: Props) {
       <div className="flex md:gap-4 py-5 pr-1 md:pr-5 pl-4">
         {!isExpanded && (
           <Link
-            href="/command"
+            href="/about?tab=command"
             className="hidden md:flex whitespace-nowrap items-center text-[#727272] font-inter font-medium text-[13px] leading-5 tracking-thin hover:text-foreground transition-colors duration-300 mr-4"
             passHref
           >
