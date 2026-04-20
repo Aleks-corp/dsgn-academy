@@ -24,6 +24,8 @@ export interface IData {
 export default async function fetchVideoDataById(
   id: string,
 ): Promise<IData | undefined> {
+  console.log("VIMEO_TOKEN exists:", !!VIMEO_TOKEN);
+  console.log("VIMEO_TOKEN value:", VIMEO_TOKEN?.slice(0, 6) + "...");
   // const id = url.replace("https://vimeo.com/", "");
   try {
     const response = await axios(`https://api.vimeo.com/videos/${id}`, {
