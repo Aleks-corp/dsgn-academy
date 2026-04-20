@@ -6,6 +6,14 @@ import app from "./app.js";
 
 const { DB_HOST = "", PORT = 3000 } = process.env;
 
+process.on("unhandledRejection", (reason) => {
+  console.error("Unhandled Rejection:", reason);
+});
+
+process.on("uncaughtException", (error) => {
+  console.error("Uncaught Exception:", error);
+});
+
 mongoose
   .connect(DB_HOST)
   .then(() => {

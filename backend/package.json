@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "engines": {
-    "node": ">=18.0.0 <20.20.0"
+    "node": ">=18.0.0 <=24.11.1"
   },
   "scripts": {
     "start": "node dist/index.js",
@@ -49,6 +49,6 @@
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^7.2.1",
     "tsx": "^4.20.3",
-    "typescript": "^5.8.3"
+    "typescript": "^5.9.3"
   }
 }
