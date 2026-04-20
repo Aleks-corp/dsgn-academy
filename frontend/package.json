@@ -32,7 +32,6 @@
     "react-redux": "^9.2.0",
     "redux": "^5.0.1",
     "redux-persist": "^6.0.0",
-    "typescript": "^5.9.3",
     "yup": "^1.7.0"
   },
   "devDependencies": {
@@ -43,6 +42,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "15.5.15",
-    "tailwindcss": "^4"
+    "tailwindcss": "^4",
+    "typescript": "^5.9.3"
   }
 }
