@@ -43,7 +43,7 @@ app.use(
     methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
     allowedHeaders: ["Authorization", "Content-Type"],
     credentials: true,
-  })
+  }),
 );
 app.use(compression());
 app.use(cookieParser());
@@ -62,7 +62,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
   res.on("finish", () => {
     const duration = Date.now() - start;
     console.info(
-      `📩 New Request: ${ip} ${req.method} ${req.originalUrl} -> ${res.statusCode} ${res.statusMessage} (${duration}ms)`
+      `📩 New Request: ${ip} ${req.method} ${req.originalUrl} -> ${res.statusCode} ${res.statusMessage} (${duration}ms)`,
     );
   });
 
@@ -79,6 +79,26 @@ app.use("/admin", adminRouter);
 
 app.get("/ping", (req, res) => {
   res.send("POST /pong");
+});
+
+app.post("/client-log", (req: Request, res: Response) => {
+  try {
+    console.error(
+      "[CLIENT ERROR]",
+      JSON.stringify(
+        {
+          ...req.body,
+          tsServer: new Date().toISOString(),
+        },
+        null,
+        2,
+      ),
+    );
+  } catch (err) {
+    console.error("[CLIENT ERROR LOG FAILED]", err);
+  }
+
+  res.status(204).end();
 });
 
 app.use((req, res) => {

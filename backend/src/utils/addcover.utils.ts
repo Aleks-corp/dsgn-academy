@@ -22,7 +22,7 @@ export interface IData {
 }
 
 export default async function fetchVideoDataById(
-  id: string
+  id: string,
 ): Promise<IData | undefined> {
   // const id = url.replace("https://vimeo.com/", "");
   try {
