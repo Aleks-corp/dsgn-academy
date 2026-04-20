@@ -53,7 +53,7 @@ export default function CoursesCard({
         <div className="relative w-full h-full rounded-2xl">
           <div className="relative w-full h-full rounded-2xl overflow-hidden">
             <SafeImage
-              src={course.videos[0].cover}
+              src={course.videos[0]?.cover}
               alt={course.title}
               width={354}
               height={200}

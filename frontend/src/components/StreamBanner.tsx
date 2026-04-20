@@ -29,7 +29,7 @@ function StreamBanner({
           <div className="relative flex overflow-x-hidden flex-grow">
             <div className="animate-marquee whitespace-nowrap pointer-events-none">
               <span className="mx-10">
-                Онлайн-ефір: {stream.title}, ⚠️ Оновлена дата ефіру -{" "}
+                Онлайн-ефір {stream.title} -{" "}
                 {dayjs
                   .utc(stream.startStreamAt)
                   .locale("uk")
@@ -37,7 +37,7 @@ function StreamBanner({
                 🔒 Лише для підписників
               </span>
               <span className="mx-10">
-                Онлайн-ефір: {stream.title}, ⚠️ Оновлена дата ефіру -{" "}
+                Онлайн-ефір {stream.title} -{" "}
                 {dayjs
                   .utc(stream.startStreamAt)
                   .locale("uk")
@@ -45,7 +45,7 @@ function StreamBanner({
                 🔒 Лише для підписників
               </span>
               <span className="mx-10">
-                Онлайн-ефір: {stream.title}, ⚠️ Оновлена дата ефіру -{" "}
+                Онлайн-ефір {stream.title} -{" "}
                 {dayjs
                   .utc(stream.startStreamAt)
                   .locale("uk")
@@ -53,7 +53,7 @@ function StreamBanner({
                 🔒 Лише для підписників
               </span>{" "}
               <span className="mx-10">
-                Онлайн-ефір: {stream.title}, ⚠️ Оновлена дата ефіру -{" "}
+                Онлайн-ефір {stream.title} -{" "}
                 {dayjs
                   .utc(stream.startStreamAt)
                   .locale("uk")

@@ -53,9 +53,9 @@ export default function SignInForm() {
       );
 
       if (res?.type === "auth/login/rejected") {
-        if (res.payload.status === 403) {
+        if (res.payload?.status === 403) {
           setEmail(email);
-          setServerError(res.payload.data.message);
+          setServerError(res.payload?.data?.message ?? "Помилка входу.");
         }
         return;
       } else {

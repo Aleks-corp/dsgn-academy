@@ -286,7 +286,7 @@ export default function Aside({ selectedPage, setSelectedPage }: Props) {
           </div>
         )}
         <Link
-          href="/command"
+          href="/about?tab=command"
           className="md:hidden flex whitespace-nowrap items-center text-[#727272] font-inter font-medium text-[13px] leading-5 tracking-thin hover:text-foreground transition-colors duration-300 mr-4"
           passHref
         >

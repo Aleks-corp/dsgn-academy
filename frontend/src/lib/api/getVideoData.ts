@@ -7,7 +7,8 @@ export const fetchVideoData = async (vimeoId: string) => {
     return response.data;
   } catch (error) {
     if (error instanceof AxiosError) {
-      return error.response?.data.message ?? error.message;
+      throw new Error(error.response?.data.message ?? error.message);
     }
+    throw error;
   }
 };

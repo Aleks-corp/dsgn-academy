@@ -199,7 +199,7 @@ export default function CourseDescription({
       )}
       <div className="flex flex-col gap-4 w-full xl:flex-row xl:justify-between mb-4">
         <h1 className=" text-xl font-medium leading-7 tracking-thinest text-start">
-          {course.videos[selectedVideoIndex].title}
+          {course.videos[selectedVideoIndex]?.title}
         </h1>
       </div>
       <div className="mt-5 text-sm text-muted-foreground leading-5">
@@ -208,8 +208,8 @@ export default function CourseDescription({
             expanded || width >= 1024 ? "line-clamp-none" : "line-clamp-3"
           }`}
         >
-          {course.videos[selectedVideoIndex].description}
-          {course.videos[selectedVideoIndex].originalUrl && (
+          {course.videos[selectedVideoIndex]?.description}
+          {course.videos[selectedVideoIndex]?.originalUrl && (
             <span className="flex mt-4">
               Оригінальне посилання:
               <Link
@@ -224,7 +224,7 @@ export default function CourseDescription({
           )}
         </p>
 
-        {course.videos[selectedVideoIndex].description &&
+        {course.videos[selectedVideoIndex]?.description &&
           course.videos[selectedVideoIndex].description.length > 120 &&
           width < 1024 && (
             <div className="w-full flex justify-center translate-y-3">

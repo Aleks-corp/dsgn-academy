@@ -7,7 +7,8 @@ export const fetchStreamData = async () => {
     return { data: response.data, status: response.status };
   } catch (error) {
     if (error instanceof AxiosError) {
-      return error.response?.data.message ?? error.message;
+      throw new Error(error.response?.data.message ?? error.message);
     }
+    throw error;
   }
 };

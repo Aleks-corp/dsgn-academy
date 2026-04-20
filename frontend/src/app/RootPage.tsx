@@ -46,7 +46,7 @@ function RootPage({ children }: { children: React.ReactNode }) {
   const computeShouldOpen = useCallback(() => {
     return (
       pathname === "/" ||
-      pathname.endsWith("/command") ||
+      pathname.endsWith("/about") ||
       pathname.endsWith("/videos") ||
       pathname.endsWith("/bookmarks") ||
       pathname.endsWith("/shorts") ||

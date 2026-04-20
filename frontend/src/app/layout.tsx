@@ -7,6 +7,8 @@ import { GoogleAnalytics } from "@next/third-parties/google";
 
 import RootPage from "@/app/RootPage";
 import AnalyticsTracker from "@/hooks/useAnaliticTracker";
+import { initServerErrors } from "../server/init-errors";
+import ClientErrorListener from "@/components/ClientErrorListener";
 
 const sora = Sora({
   weight: ["400", "500", "600", "800"],
@@ -24,6 +26,8 @@ const inter = Inter({
 
 export { metadata };
 
+initServerErrors();
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -39,6 +43,7 @@ export default function RootLayout({
           <RootPage>{children}</RootPage>
           <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID!} />
           <AnalyticsTracker />
+          <ClientErrorListener />
         </ReduxProvider>
       </body>
     </html>

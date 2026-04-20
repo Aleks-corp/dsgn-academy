@@ -40,8 +40,8 @@ export default function Forgotorm() {
       );
 
       if (res?.type === "auth/forgotpassword/rejected") {
-        if (res.payload.status === 404) {
-          setServerError(res.payload.data.message);
+        if (res.payload?.status === 404) {
+          setServerError(res.payload?.data?.message ?? "Помилка.");
         }
         return;
       } else {

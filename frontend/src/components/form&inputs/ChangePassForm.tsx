@@ -47,8 +47,8 @@ export default function ChangePassForm() {
       );
 
       if (res?.type === "auth/resetpassword/rejected") {
-        if (res.payload.status === 400) {
-          setServerError(res.payload.data.message);
+        if (res.payload?.status === 400) {
+          setServerError(res.payload?.data?.message ?? "Помилка.");
           return;
         }
       }

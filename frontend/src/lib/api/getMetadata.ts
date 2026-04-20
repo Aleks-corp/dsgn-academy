@@ -7,8 +7,9 @@ export const fetchCourseById = async (id: string) => {
     return response.data;
   } catch (error) {
     if (error instanceof AxiosError) {
-      return error.response?.data.message ?? error.message;
+      throw new Error(error.response?.data.message ?? error.message);
     }
+    throw error;
   }
 };
 
@@ -18,7 +19,8 @@ export const fetchVideoById = async (id: string) => {
     return response.data;
   } catch (error) {
     if (error instanceof AxiosError) {
-      return error.response?.data.message ?? error.message;
+      throw new Error(error.response?.data.message ?? error.message);
     }
+    throw error;
   }
 };

@@ -56,7 +56,7 @@ export const signIn = createAsyncThunk(
             duration: 4000,
           }
         );
-        return thunkAPI.rejectWithValue(error.response ?? error.message);
+        return thunkAPI.rejectWithValue(error.response?.data ?? error.message);
       }
     }
   }
@@ -174,7 +174,7 @@ export const setNewPassword = createAsyncThunk(
           }
         );
 
-        return thunkAPI.rejectWithValue(error.response ?? error.message);
+        return thunkAPI.rejectWithValue(error.response?.data ?? error.message);
       }
     }
   }
@@ -197,7 +197,7 @@ export const forgotPassword = createAsyncThunk(
             duration: 4000,
           }
         );
-        return thunkAPI.rejectWithValue(error.response ?? error.message);
+        return thunkAPI.rejectWithValue(error.response?.data ?? error.message);
       }
     }
   }
@@ -220,7 +220,7 @@ export const changePassword = createAsyncThunk(
             duration: 4000,
           }
         );
-        return thunkAPI.rejectWithValue(error.response ?? error.message);
+        return thunkAPI.rejectWithValue(error.response?.data ?? error.message);
       }
     }
   }
@@ -240,7 +240,7 @@ export const changeName = createAsyncThunk(
             duration: 4000,
           }
         );
-        return thunkAPI.rejectWithValue(error.response ?? error.message);
+        return thunkAPI.rejectWithValue(error.response?.data ?? error.message);
       }
     }
   }
