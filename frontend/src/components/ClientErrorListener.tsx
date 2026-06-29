@@ -39,6 +39,11 @@ if (typeof window !== "undefined") {
       message = JSON.stringify(reason);
     }
 
+    // vidstack throws this when the media provider unmounts (e.g. page navigation) — harmless
+    if (message === "provider destroyed") {
+      return;
+    }
+
     sendError({
       type: "unhandled-rejection",
       message,
