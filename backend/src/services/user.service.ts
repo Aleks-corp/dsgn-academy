@@ -86,17 +86,17 @@ export const registerService = async ({
   };
   const emailText =
     "Дякуємо за реєстрацію! Щоб завершити реєстрацію, будь ласка, підтвердьте свою електронну адресу, натиснувши кнопку нижче.";
-  await UserModel.create({
-    name,
-    email,
-    ip,
-    ...userData,
-  });
   await sendMail({
     email,
     verificationToken: userData.verificationToken,
     path: "verify",
     text: emailText,
+  });
+  await UserModel.create({
+    name,
+    email,
+    ip,
+    ...userData,
   });
 };
 

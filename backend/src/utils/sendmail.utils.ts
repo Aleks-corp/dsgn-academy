@@ -33,6 +33,9 @@ const sendMail = async ({
     host: SMTP.HOST,
     port: SMTP.PORT,
     secure: true,
+    connectionTimeout: 10000,
+    greetingTimeout: 10000,
+    socketTimeout: 10000,
     auth: {
       user: EMAIL_SEND_FROM,
       pass: EMAIL_PASS,
