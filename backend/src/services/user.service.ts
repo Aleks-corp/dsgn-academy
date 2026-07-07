@@ -461,14 +461,18 @@ export const paymentWebhookService = async (
     );
     console.info("✅ Оплата підтверджена для", orderReference); //Log
     if (updatedUser) {
-      await sendMailSub({
-        email: updatedUser.email,
-        mode: updatedUser.mode
-          ? updatedUser.mode
-          : data.amount === 4.95
-          ? "monthly"
-          : "yearly",
-      });
+      try {
+        await sendMailSub({
+          email: updatedUser.email,
+          mode: updatedUser.mode
+            ? updatedUser.mode
+            : data.amount === 4.95
+            ? "monthly"
+            : "yearly",
+        });
+      } catch (err) {
+        console.error("sendMailSub error on payment:", err);
+      }
     }
   }
   return responseData;
@@ -503,10 +507,14 @@ export const unsubscribeWebhookService = async (
       },
       { new: true }
     );
-    await sendMailSub({
-      email: user.email,
-      reason,
-    });
+    try {
+      await sendMailSub({
+        email: user.email,
+        reason,
+      });
+    } catch (err) {
+      console.error("sendMailSub error on unsubscribe:", err);
+    }
     const message =
       Object.values(answerWFPCodes).find(
         (item) => String(item.code) === String(data.reasonCode)
