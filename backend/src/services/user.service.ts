@@ -32,6 +32,7 @@ import {
   sendMailSub,
   sendMailToSprt,
 } from "../utils/index.js";
+import { uploadToS3, deleteFromS3 } from "../utils/s3.utils.js";
 import { answerWFPCodes } from "../constants/answerWfpCodes.js";
 
 const {
@@ -528,6 +529,24 @@ export const unsubscribeWebhookService = async (
   const message = answer?.message ?? "Unknown error";
   console.log("Webhook unsubscribe message:", message);
   return { message };
+};
+
+export const changeAvatarService = async (
+  userId: Types.ObjectId,
+  buffer: Buffer,
+  mimetype: string,
+  currentAvatar: string | undefined
+): Promise<string> => {
+  const ext = mimetype.split("/")[1];
+  const key = `avatars/${userId}-${Date.now()}.${ext}`;
+  const avatarUrl = await uploadToS3(key, buffer, mimetype);
+
+  if (currentAvatar) {
+    deleteFromS3(currentAvatar).catch(() => {});
+  }
+
+  await UserModel.findByIdAndUpdate(userId, { avatar: avatarUrl });
+  return avatarUrl;
 };
 
 export const callSupportService = async (user: IUser): Promise<void> => {

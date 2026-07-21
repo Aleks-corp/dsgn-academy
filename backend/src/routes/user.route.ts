@@ -31,10 +31,13 @@ const {
   paymentReturn,
   oauthUpsert,
   changeName,
+  changeAvatar,
   callSupport,
   reportSupport,
   messageToSupport,
 } = userController;
+
+const avatarUpload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 1024 * 1024 * 2 } });
 
 const upload = multer();
 
@@ -63,6 +66,13 @@ usersRouter.post(
   authenticateUser,
   validateBody(userNameSchema),
   changeName
+);
+
+usersRouter.patch(
+  "/change-avatar",
+  authenticateUser,
+  avatarUpload.single("avatar"),
+  changeAvatar
 );
 
 usersRouter.post(

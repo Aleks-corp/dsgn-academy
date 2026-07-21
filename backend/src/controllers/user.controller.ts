@@ -23,6 +23,7 @@ import {
   changeNameService,
   callSupportService,
   reportSupportService,
+  changeAvatarService,
 } from "../services/user.service.js";
 import sendMessageToSupport from "../utils/messageToSpt.js";
 
@@ -324,6 +325,21 @@ const reportSupport = async (req: Request, res: Response): Promise<void> => {
   res.json("sent");
 };
 
+const changeAvatar = async (req: Request, res: Response): Promise<void> => {
+  if (!req.file) {
+    throw HttpError(400, "Файл не надано");
+  }
+  const userId = req.user._id as Types.ObjectId;
+  const currentAvatar = req.user.avatar;
+  const avatarUrl = await changeAvatarService(
+    userId,
+    req.file.buffer,
+    req.file.mimetype,
+    currentAvatar
+  );
+  res.json({ avatar: avatarUrl });
+};
+
 const messageToSupport = async (req: Request, res: Response): Promise<void> => {
   const { message, email } = req.body;
   const file = req.file;
@@ -355,6 +371,7 @@ export default {
   unsubscribeWebhook: ctrlWrapper(unsubscribeWebhook),
   paymentReturn: ctrlWrapper(paymentReturn),
   changeName: ctrlWrapper(changeName),
+  changeAvatar: ctrlWrapper(changeAvatar),
   callSupport: ctrlWrapper(callSupport),
   reportSupport: ctrlWrapper(reportSupport),
   messageToSupport: ctrlWrapper(messageToSupport),
