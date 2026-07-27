@@ -148,6 +148,41 @@ export default function AdminAside({ selectedPage, setSelectedPage }: Props) {
         </button>
         <button
           type="button"
+          name="unpublished-videos"
+          className={`w-full cursor-pointer rounded-xl border-[1px] border-background hover:bg-muted-background hover:border-border ${
+            selectedPage === "unpublished-videos"
+              ? "bg-muted-background border-border"
+              : ""
+          } `}
+          onClick={(e) => {
+            setSelectedPage(e.currentTarget.name);
+          }}
+        >
+          <NavLinkIcon
+            text="Неопубліковані відео"
+            rout="/da-admin/unpublished-videos"
+            icon={
+              <div
+                className={`flex items-center justify-center w-8 h-8 p-1.5 rounded-lg ${
+                  selectedPage === "unpublished-videos"
+                    ? "bg-icon shadow-icon"
+                    : ""
+                }`}
+              >
+                <MaskIcon
+                  src="/icons/menu-icons/eye-closed.svg"
+                  className={`w-5 h-5 ${
+                    selectedPage === "unpublished-videos"
+                      ? "text-foreground"
+                      : "text-muted"
+                  }`}
+                />
+              </div>
+            }
+          />
+        </button>
+        <button
+          type="button"
           name="users"
           className={`w-full cursor-pointer rounded-xl border-[1px] border-background hover:bg-muted-background hover:border-border ${
             selectedPage === "users" ? "bg-muted-background border-border" : ""

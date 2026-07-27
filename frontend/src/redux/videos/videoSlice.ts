@@ -2,6 +2,7 @@ import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { VideoState } from "../../types/state.types";
 import {
   fetchVideos,
+  fetchUnpublishedVideos,
   fetchVideoById,
   fetchVideosCount,
   addVideo,
@@ -212,6 +213,9 @@ const videoSlice = createSlice({
       .addCase(fetchVideos.pending, handleFetchVideosPending)
       .addCase(fetchVideos.fulfilled, handleFulfilledVideos)
       .addCase(fetchVideos.rejected, handleRejectVideos)
+      .addCase(fetchUnpublishedVideos.pending, handleFetchVideosPending)
+      .addCase(fetchUnpublishedVideos.fulfilled, handleFulfilledVideos)
+      .addCase(fetchUnpublishedVideos.rejected, handleRejectVideos)
       .addCase(fetchBookMarkedVideos.pending, handlePending)
       .addCase(fetchBookMarkedVideos.fulfilled, handleFulfilledBookmarkedVideos)
       .addCase(fetchVideoById.pending, handlePending)

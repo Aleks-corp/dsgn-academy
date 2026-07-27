@@ -51,6 +51,34 @@ export const fetchVideos = createAsyncThunk(
   }
 );
 
+export const fetchUnpublishedVideos = createAsyncThunk(
+  "videos/fetchUnpublishedVideos",
+  async (
+    { page = 1, limit = 9, category = "", filter = "", search = "" }: Query,
+    thunkAPI
+  ) => {
+    const params = new URLSearchParams({
+      page: String(page),
+      limit: String(limit),
+    });
+    if (category) params.append("category", category);
+    if (filter) params.append("filter", filter);
+    if (search) params.append("q", search);
+    try {
+      const response = await instance.get(
+        `/videos/unpublished?${params.toString()}`
+      );
+      return response.data;
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        return thunkAPI.rejectWithValue(
+          error.response?.data.message ?? error.message
+        );
+      }
+    }
+  }
+);
+
 export const fetchRecommended = createAsyncThunk(
   "videos/fetchRecommendedVideos",
   async (

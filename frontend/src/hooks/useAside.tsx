@@ -79,6 +79,10 @@ export function useSelectedPage() {
       setSelectedPage("edit-course");
       return;
     }
+    if (pathname === "/da-admin/unpublished-videos") {
+      setSelectedPage("unpublished-videos");
+      return;
+    }
     if (pathname === "/da-admin/users") {
       setSelectedPage("users");
       return;

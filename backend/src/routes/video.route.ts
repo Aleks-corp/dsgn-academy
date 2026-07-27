@@ -12,6 +12,7 @@ import { videosSchemas } from "../schemas/index.js";
 import { videoController } from "../controllers/index.js";
 const {
   getVideos,
+  getUnpublishedVideos,
   getVideoById,
   getCategoriesVideos,
   getVideosCounts,
@@ -49,6 +50,12 @@ videosRouter.patch(
   updateWatchedVideo
 );
 videosRouter.patch("/like/:id", isValidId, authenticateUser, toggleLikeVideo);
+
+videosRouter.get(
+  "/unpublished",
+  authenticateAdmin,
+  getUnpublishedVideos
+);
 
 videosRouter.get("/:id", authenticateToken, isValidId, getVideoById);
 

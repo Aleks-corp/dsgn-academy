@@ -246,6 +246,27 @@ export const changeName = createAsyncThunk(
   }
 );
 
+export const changeAvatar = createAsyncThunk(
+  "user/changeavatar",
+  async (file: File, thunkAPI) => {
+    try {
+      const formData = new FormData();
+      formData.append("avatar", file);
+      const response = await instance.patch("/auth/change-avatar", formData);
+      toast.success("Аватар успішно змінено", { duration: 4000 });
+      return response.data as { avatar: string };
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        toast.error(
+          `${error.response?.data.message ?? error.message} Спробуйте ще раз.`,
+          { duration: 4000 }
+        );
+        return thunkAPI.rejectWithValue(error.response?.data ?? error.message);
+      }
+    }
+  }
+);
+
 export const checkPaymentStatus = createAsyncThunk(
   "auth/checkpayment",
   async (_, thunkAPI) => {

@@ -12,6 +12,7 @@ import {
   changePassword,
   checkPaymentStatus,
   unsubscribe,
+  changeAvatar,
 } from "./auth.thunk";
 import { AuthState } from "../../types/state.types";
 import { IUser, GetUser, UserSubscription } from "../../types/users.type";
@@ -131,6 +132,11 @@ const authSlice = createSlice({
       .addCase(refreshUser.pending, handleRefreshPending)
       .addCase(refreshUser.rejected, handleRefreshRejected)
       .addCase(unsubscribe.fulfilled, handleUnsubscribeFulfilled)
+      .addCase(changeAvatar.fulfilled, (state, action) => {
+        if (state.profile && action.payload?.avatar) {
+          state.profile.avatar = action.payload.avatar;
+        }
+      })
 
       .addMatcher(
         ({ type }) => type.endsWith("/rejected") && type.startsWith("auth"),
