@@ -4,6 +4,7 @@ import type { Request, Response } from "express";
 import type { Types } from "mongoose";
 
 import { HttpError } from "../utils/index.js";
+import { getFromS3 } from "../utils/s3.utils.js";
 import { ctrlWrapper } from "../decorators/index.js";
 import type { PaymentData } from "../types/data.types.js";
 import {
@@ -325,6 +326,15 @@ const reportSupport = async (req: Request, res: Response): Promise<void> => {
   res.json("sent");
 };
 
+const getAvatar = async (req: Request, res: Response): Promise<void> => {
+  const key = (req.params as Record<string, string>)[0];
+  if (!key) throw HttpError(400, "Key not provided");
+  const { stream, contentType } = await getFromS3(key);
+  res.setHeader("Content-Type", contentType);
+  res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
+  stream.pipe(res);
+};
+
 const changeAvatar = async (req: Request, res: Response): Promise<void> => {
   if (!req.file) {
     throw HttpError(400, "Файл не надано");
@@ -370,6 +380,7 @@ export default {
   paymentStatus: ctrlWrapper(paymentStatus),
   unsubscribeWebhook: ctrlWrapper(unsubscribeWebhook),
   paymentReturn: ctrlWrapper(paymentReturn),
+  getAvatar: ctrlWrapper(getAvatar),
   changeName: ctrlWrapper(changeName),
   changeAvatar: ctrlWrapper(changeAvatar),
   callSupport: ctrlWrapper(callSupport),

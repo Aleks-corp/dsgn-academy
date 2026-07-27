@@ -30,6 +30,7 @@ const {
   unsubscribeWebhook,
   paymentReturn,
   oauthUpsert,
+  getAvatar,
   changeName,
   changeAvatar,
   callSupport,
@@ -43,6 +44,7 @@ const upload = multer();
 
 const usersRouter = Router();
 
+usersRouter.get("/avatar/*", getAvatar);
 usersRouter.post("/register", validateBody(usersRegSchema), register);
 usersRouter.post("/login", validateBody(usersLoginSchema), login);
 usersRouter.post("/oauth-upsert", oauthUpsert);
