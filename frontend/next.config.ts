@@ -22,7 +22,7 @@ const nextConfig = {
       },
       {
         protocol: "https",
-        hostname: "t3.storageapi.dev",
+        hostname: "dsgn-academy-api-production.up.railway.app",
         port: "",
         pathname: "/**",
       },
