@@ -34,6 +34,7 @@ export const uploadToS3 = async (
       Key: key,
       Body: buffer,
       ContentType: mimetype,
+      ACL: "public-read",
     })
   );
   return `${BUCKET_ENDPOINT}/${BUCKET_NAME}/${key}`;
