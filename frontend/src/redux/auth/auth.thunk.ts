@@ -252,7 +252,9 @@ export const changeAvatar = createAsyncThunk(
     try {
       const formData = new FormData();
       formData.append("avatar", file);
-      const response = await instance.patch("/auth/change-avatar", formData);
+      const response = await instance.patch("/auth/change-avatar", formData, {
+        headers: { "Content-Type": undefined },
+      });
       toast.success("Аватар успішно змінено", { duration: 4000 });
       return response.data as { avatar: string };
     } catch (error) {
