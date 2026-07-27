@@ -44,7 +44,7 @@ const upload = multer();
 
 const usersRouter = Router();
 
-usersRouter.get("/avatar/*", getAvatar);
+usersRouter.get("/avatar/avatars/:filename", getAvatar);
 usersRouter.post("/register", validateBody(usersRegSchema), register);
 usersRouter.post("/login", validateBody(usersLoginSchema), login);
 usersRouter.post("/oauth-upsert", oauthUpsert);

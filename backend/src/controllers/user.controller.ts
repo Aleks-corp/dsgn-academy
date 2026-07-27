@@ -327,9 +327,9 @@ const reportSupport = async (req: Request, res: Response): Promise<void> => {
 };
 
 const getAvatar = async (req: Request, res: Response): Promise<void> => {
-  const key = (req.params as Record<string, string>)[0];
-  if (!key) throw HttpError(400, "Key not provided");
-  const { stream, contentType } = await getFromS3(key);
+  const { filename } = req.params;
+  if (!filename) throw HttpError(400, "Key not provided");
+  const { stream, contentType } = await getFromS3(`avatars/${filename}`);
   res.setHeader("Content-Type", contentType);
   res.setHeader("Cache-Control", "public, max-age=31536000, immutable");
   stream.pipe(res);
