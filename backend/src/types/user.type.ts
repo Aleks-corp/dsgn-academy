@@ -42,6 +42,9 @@ export interface IUser extends Document {
   regularDateEnd?: Date;
   lastPayedStatus?: string;
   lastPayedDate?: Date;
+  lastPayedReasonCode?: string;
+  lastPayedReason?: string;
+  subCheckedAt?: Date | null;
   substart: Date;
   subend: Date;
   orderReference: string;

@@ -9,6 +9,7 @@ import { IUser } from "@/types/users.type";
 import { freeDescription } from "@/constants/sub.desc.constants";
 import Button from "@/components/buttons/Button";
 import SubCard from "@/components/SubCard";
+import NavLink from "@/components/links/Link";
 
 export default function FreeSubProfile({ profile }: { profile: IUser }) {
   const [disabled, setDisabled] = useState(false);
@@ -33,6 +34,11 @@ export default function FreeSubProfile({ profile }: { profile: IUser }) {
           <p className="font-inter font-medium text-xs text-muted leading-4 tracking-thin">
             На жаль, ми не отримали підтвердження платежу.
           </p>
+          {profile.lastPayedReason && (
+            <p className="font-inter font-medium text-xs text-muted leading-4 tracking-thin mb-4">
+              Причина: {profile.lastPayedReason}
+            </p>
+          )}
           <p className="font-inter font-medium text-xs text-muted leading-4 tracking-thin mb-4">
             Ви можете перейти на{" "}
             <Link
@@ -49,6 +55,13 @@ export default function FreeSubProfile({ profile }: { profile: IUser }) {
             Якщо вважаєте, що сталася помилка — зв’яжіться з нашою підтримкою, і
             ми допоможемо вирішити питання. 💙
           </p>
+          <div className="mb-4">
+            <NavLink
+              rout="/check-subscription"
+              text="Поновити підписку"
+              style="accent"
+            />
+          </div>
           <Button
             text="Зв’язатись з підтримкою"
             type="button"

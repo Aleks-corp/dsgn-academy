@@ -1,4 +1,4 @@
-import { Router } from "express";
+import express, { Router } from "express";
 import multer from "multer";
 import { userController } from "../controllers/index.js";
 import { usersSchemas } from "../schemas/index.js";
@@ -90,7 +90,12 @@ usersRouter.post("/callsupport", authenticateUser, reportSupport);
 usersRouter.post("/support", uploadFile.single("file"), messageToSupport);
 
 usersRouter.post("/create-payment", authenticateUser, createPayment);
-usersRouter.post("/payment-webhook", paymentWebhook);
+// Global json/urlencoded парсять лише точний Content-Type; для решти читаємо сирий body
+usersRouter.post(
+  "/payment-webhook",
+  express.raw({ type: () => true, limit: "100kb" }),
+  paymentWebhook
+);
 usersRouter.post("/payment-return", upload.none(), paymentReturn);
 usersRouter.get("/payment-status", authenticateUser, paymentStatus);
 usersRouter.post("/unsubscribe", authenticateUser, unsubscribeWebhook);

@@ -31,6 +31,7 @@ import {
   unsubscribeUser,
   sendMailSub,
   sendMailToSprt,
+  buildWebhookResponse,
 } from "../utils/index.js";
 import { uploadToS3, deleteFromS3 } from "../utils/s3.utils.js";
 import { answerWFPCodes } from "../constants/answerWfpCodes.js";
@@ -126,7 +127,7 @@ export const loginService = async ({
       "Користувач не підтверджений, перевірте електронну пошту"
     );
   }
-  const updatedUser = await checkSubscriptionStatus(user);
+  const updatedUser = await checkSubscriptionStatus(user, { force: true });
 
   const token = jwt.sign({ id: user._id }, JWT_SECRET ? JWT_SECRET : "", {
     expiresIn: "333h",
@@ -198,7 +199,7 @@ export const oauthUpsertService = async ({
     if (emailLc) user.verify = true;
   }
   if (ip) user.ip = ip;
-  const updatedUser = await checkSubscriptionStatus(user);
+  const updatedUser = await checkSubscriptionStatus(user, { force: true });
   const token = jwt.sign(
     { id: updatedUser._id },
     JWT_SECRET ? JWT_SECRET : "",
@@ -329,11 +330,10 @@ export const resetPasswordService = async ({
     throw HttpError(400, "Термін дії токена для скидання пароля закінчився");
   }
 
-  user.password = await bcrypt.hash(newPassword, 10);
-  user.resetPasswordToken = "";
-  user.resetPasswordExpires = 0;
   await UserModel.findByIdAndUpdate(user._id, {
-    ...user,
+    password: await bcrypt.hash(newPassword, 10),
+    resetPasswordToken: "",
+    resetPasswordExpires: 0,
   });
   return { message: "Пароль успішно змінено" };
 };
@@ -360,9 +360,8 @@ export const changePasswordService = async ({
     throw HttpError(401, "Старий пароль невірний");
   }
 
-  user.password = await bcrypt.hash(newPassword, 10);
   await UserModel.findByIdAndUpdate(user._id, {
-    ...user,
+    password: await bcrypt.hash(newPassword, 10),
   });
   return { message: "Пароль успішно змінено" };
 };
@@ -376,6 +375,21 @@ export const createPaymentService = async ({
 }): Promise<PaymentData> => {
   if (!userId) {
     throw HttpError(401, "Будь ласка, увійдіть в систему");
+  }
+  const currentUser = await UserModel.findById(userId);
+  if (
+    currentUser?.orderReference &&
+    currentUser.subscription !== userSubscriptionConst.PREMIUM &&
+    currentUser.status !== "Removed" &&
+    currentUser.status !== "Completed"
+  ) {
+    // Старе WFP-замовлення ще живе (напр. після Declined) — знімаємо, щоб не було подвійних списань
+    try {
+      const result = await unsubscribeUser(currentUser);
+      console.info("Stale WFP order removed:", currentUser.orderReference, result.reasonCode);
+    } catch (err) {
+      console.error("Failed to remove stale WFP order:", err);
+    }
   }
   await UserModel.findByIdAndUpdate(userId, {
     newOrderReference: data.orderReference,
@@ -427,25 +441,22 @@ export const createPaymentService = async ({
   return paymentData;
 };
 
+export type WebhookResult = ResponseData;
+
 export const paymentWebhookService = async (
   data: RequestData
-): Promise<ResponseData> => {
+): Promise<WebhookResult> => {
   const merchantSecret = WFP_SECRET_KEY ? WFP_SECRET_KEY : "";
-  const time = Math.floor(Date.now() / 1000);
-  const responseData = {
-    orderReference: data.orderReference,
-    status: "accept",
-    time,
-    signature: crypto
-      .createHmac("md5", merchantSecret)
-      .update(`${data.orderReference};accept;${time}`)
-      .digest("hex"),
-  };
+  const responseData = buildWebhookResponse(data.orderReference, merchantSecret);
 
   const { transactionStatus, orderReference, phone, regularDateEnd } = data;
+  const reasonCode = data.reasonCode !== undefined ? String(data.reasonCode) : "";
+  const reason = data.reason ?? "";
   const arr = orderReference.split("-");
+  const now = new Date();
+
   if (transactionStatus === "Approved") {
-    const updatedUser = await UserModel.findOneAndUpdate(
+    const firstPayment = await UserModel.findOneAndUpdate(
       { newOrderReference: orderReference },
       {
         subscription: userSubscriptionConst.PREMIUM,
@@ -453,6 +464,10 @@ export const paymentWebhookService = async (
         newOrderReference: "",
         phone,
         status: "Active",
+        lastPayedStatus: "Approved",
+        lastPayedDate: now,
+        lastPayedReasonCode: "",
+        lastPayedReason: "",
         regularDateEnd: regularDateEnd
           ? new Date(regularDateEnd.split(".").reverse().join("-"))
           : null,
@@ -460,14 +475,37 @@ export const paymentWebhookService = async (
       },
       { new: true }
     );
+    // Регулярне списання: orderReference вже збережений, newOrderReference порожній
+    const updatedUser =
+      firstPayment ??
+      (await UserModel.findOneAndUpdate(
+        { orderReference, subscription: { $nin: ["admin", "tester"] } },
+        {
+          subscription: userSubscriptionConst.PREMIUM,
+          status: "Active",
+          lastPayedStatus: "Approved",
+          lastPayedDate: now,
+          lastPayedReasonCode: "",
+          lastPayedReason: "",
+        },
+        { new: true }
+      ));
     console.info("✅ Оплата підтверджена для", orderReference); //Log
     if (updatedUser) {
+      try {
+        // синхронізуємо subend з WFP
+        await checkSubscriptionStatus(updatedUser, { force: true, full: true });
+      } catch (err) {
+        console.error("Sync after approved payment failed:", err);
+      }
+    }
+    if (updatedUser && firstPayment) {
       try {
         await sendMailSub({
           email: updatedUser.email,
           mode: updatedUser.mode
             ? updatedUser.mode
-            : data.amount === 4.95
+            : Number(data.amount) === 4.95
             ? "monthly"
             : "yearly",
         });
@@ -475,6 +513,27 @@ export const paymentWebhookService = async (
         console.error("sendMailSub error on payment:", err);
       }
     }
+  } else if (transactionStatus === "Declined") {
+    const declined = {
+      lastPayedStatus: "Declined",
+      lastPayedDate: now,
+      lastPayedReasonCode: reasonCode,
+      lastPayedReason: reason,
+    };
+    // Перша невдала спроба (апгрейд з free/trial): доступ не чіпаємо
+    const first = await UserModel.findOneAndUpdate(
+      { newOrderReference: orderReference },
+      declined
+    );
+    if (!first) {
+      // Відмова по вже існуючій підписці: забираємо преміум локально,
+      // але НЕ робимо REMOVE у WFP — він сам повторить списання наступного дня.
+      await UserModel.findOneAndUpdate(
+        { orderReference, subscription: { $nin: ["admin", "tester"] } },
+        { ...declined, subscription: userSubscriptionConst.FREE }
+      );
+    }
+    console.info("❌ Оплата відхилена для", orderReference, reasonCode, reason);
   }
   return responseData;
 };

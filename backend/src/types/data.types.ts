@@ -17,9 +17,16 @@ export interface ResponseData {
 }
 
 export interface RequestData {
+  merchantAccount?: string;
   orderReference: string;
   transactionStatus: string;
   phone: string;
   regularDateEnd: string;
-  amount: number;
+  amount: number | string;
+  currency?: string;
+  authCode?: string;
+  cardPan?: string;
+  reasonCode?: number | string;
+  reason?: string;
+  merchantSignature?: string;
 }

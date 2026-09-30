@@ -10,6 +10,17 @@ import {
   sendMailToUsers,
 } from "../utils/index.js";
 
+// Повертаємо лише тих, кого реально торкнулась дія; фронт мержить по _id
+const touchedUsersResponse = async (
+  usersId: ObjectId[]
+): Promise<{ usersId: ObjectId[]; users: unknown[] }> => {
+  const users = await UserModel.find(
+    { _id: { $in: usersId } },
+    "-password -token -verificationToken -verify -resetPasswordToken -resetPasswordExpires -createdAt -updatedAt"
+  );
+  return { usersId: users.map((u) => u._id) as unknown as ObjectId[], users };
+};
+
 const getAllUser = async (req: Request, res: Response): Promise<void> => {
   const { page = "1", limit = "500", filter = "" } = req.query;
 
@@ -82,16 +93,7 @@ const updateUsersSubscription = async (
     );
   }
 
-  const updatedUsers = await UserModel.find(
-    {},
-    "-password -token -verificationToken -verify -resetPasswordToken -resetPasswordExpires -createdAt -updatedAt",
-    {
-      skip: 0,
-      limit: 500,
-    }
-  );
-  const totalHits = await UserModel.countDocuments({});
-  res.json({ totalHits, users: updatedUsers });
+  res.json(await touchedUsersResponse(usersId));
 };
 
 const updateUserSubscription = async (
@@ -177,21 +179,15 @@ const checkUsersSubscription = async (
     usersId.map(async (_id: ObjectId) => {
       const user = await UserModel.findById(_id);
       if (!user) return;
-      const updatedUser = await checkSubscriptionStatus(user);
+      const updatedUser = await checkSubscriptionStatus(user, {
+        force: true,
+        full: true,
+      });
       return updatedUser;
     })
   );
 
-  const updatedUsers = await UserModel.find(
-    {},
-    "-password -token -verificationToken -verify -resetPasswordToken -resetPasswordExpires -createdAt -updatedAt",
-    {
-      skip: 0,
-      limit: 500,
-    }
-  );
-  const totalHits = await UserModel.countDocuments({});
-  res.json({ totalHits, users: updatedUsers });
+  res.json(await touchedUsersResponse(usersId));
 };
 
 const updateUserBlockStatus = async (
@@ -213,16 +209,7 @@ const updateUserBlockStatus = async (
       });
     })
   );
-  const updatedUsers = await UserModel.find(
-    {},
-    "-password -token -verificationToken -verify -resetPasswordToken -resetPasswordExpires -createdAt -updatedAt",
-    {
-      skip: 0,
-      limit: 500,
-    }
-  );
-  const totalHits = await UserModel.countDocuments({});
-  res.json({ totalHits, users: updatedUsers });
+  res.json(await touchedUsersResponse(usersId));
 };
 
 const sentMailToUsers = async (req: Request, res: Response): Promise<void> => {
