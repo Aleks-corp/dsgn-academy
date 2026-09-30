@@ -10,7 +10,17 @@ const merchantPassword = process.env.WFP_MERCHANT_PASSWORD || "";
 const WFP_API_URL =
   process.env.WFP_API_URL || "https://api.wayforpay.com/regularApi";
 
-const checkSubscriptionStatus = async (user: IUser): Promise<IUser> => {
+const CHECK_INTERVAL_MS =
+  Number(process.env.WFP_CHECK_INTERVAL_HOURS || 6) * 60 * 60 * 1000;
+
+interface CheckOptions {
+  // обійти throttle (логін, ручна адмінська перевірка, cron)
+  force?: boolean;
+  // опитати WFP навіть якщо підписка не прострочена
+  full?: boolean;
+}
+
+const syncWithWfp = async (user: IUser, full = false): Promise<IUser> => {
   if (user.subscription === userSubscriptionConst.ADMIN) {
     return user;
   }
@@ -75,7 +85,7 @@ const checkSubscriptionStatus = async (user: IUser): Promise<IUser> => {
       console.error("Error checking WayForPay subscription:", error);
     }
   }
-  if (user.subend && newDateTime > user.subend.getTime()) {
+  if (full || (user.subend && newDateTime > user.subend.getTime())) {
     const payload = {
       requestType,
       merchantAccount,
@@ -102,9 +112,8 @@ const checkSubscriptionStatus = async (user: IUser): Promise<IUser> => {
         if (data.nextPaymentDate) {
           user.subend = new Date(parseInt(data.nextPaymentDate + "000"));
         } else {
-          user.subend = new Date(
-            user.subend.setMonth(user.subend.getMonth() + 1)
-          );
+          const base = user.subend ?? new Date(newDateTime);
+          user.subend = new Date(base.setMonth(base.getMonth() + 1));
         }
         const currentDate = new Date(data.dateBegin + "000");
         if (!user.substart) {
@@ -205,9 +214,8 @@ const checkSubscriptionStatus = async (user: IUser): Promise<IUser> => {
         if (data.nextPaymentDate) {
           user.subend = new Date(parseInt(data.nextPaymentDate + "000"));
         } else {
-          user.subend = new Date(
-            user.subend.setMonth(user.subend.getMonth() + 1)
-          );
+          const base = user.subend ?? new Date(newDateTime);
+          user.subend = new Date(base.setMonth(base.getMonth() + 1));
         }
         const currentDate = new Date(data.dateBegin + "000");
         if (!user.substart) {
@@ -236,4 +244,31 @@ const checkSubscriptionStatus = async (user: IUser): Promise<IUser> => {
   }
   return user;
 };
+
+const checkSubscriptionStatus = async (
+  user: IUser,
+  { force = false, full = false }: CheckOptions = {}
+): Promise<IUser> => {
+  if (user.subscription === userSubscriptionConst.ADMIN || !user.orderReference) {
+    return user;
+  }
+  const now = Date.now();
+  const last = user.subCheckedAt ? new Date(user.subCheckedAt).getTime() : 0;
+  if (!force && now - last < CHECK_INTERVAL_MS) {
+    return user;
+  }
+  // Запит у WFP потрібен лише за цих умов (як і раніше), тож штампуємо тільки тоді
+  const needsWfp =
+    full ||
+    !user.subend ||
+    now > new Date(user.subend).getTime() ||
+    user.lastPayedStatus === "Declined";
+  if (!needsWfp) {
+    return user;
+  }
+  user.subCheckedAt = new Date(now);
+  await UserModel.findByIdAndUpdate(user._id, { subCheckedAt: user.subCheckedAt });
+  return syncWithWfp(user, full);
+};
+
 export default checkSubscriptionStatus;

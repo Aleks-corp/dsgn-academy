@@ -49,22 +49,25 @@ const handlePatchUserFulfilled = (
   state.folowers.splice(index, 1, action.payload);
 };
 
+const mergeUsers = (state: AdminState, users: IUser[]) => {
+  const byId = new Map(users.map((u) => [u._id, u]));
+  state.folowers = state.folowers.map((u) => byId.get(u._id) ?? u);
+};
+
 const handlePatchUsersFulfilled = (
   state: AdminState,
-  action: PayloadAction<{ users: IUser[]; totalHits: number }>
+  action: PayloadAction<{ users: IUser[]; usersId: string[] }>
 ) => {
   state.isLoadingUpdate = false;
-  state.folowers = action.payload.users;
-  state.totalFolowers = action.payload.totalHits;
+  mergeUsers(state, action.payload.users);
 };
 
 const handlePatchCheckSubFulfilled = (
   state: AdminState,
-  action: PayloadAction<{ users: IUser[]; totalHits: number }>
+  action: PayloadAction<{ users: IUser[]; usersId: string[] }>
 ) => {
   state.isLoadingCheck = false;
-  state.folowers = action.payload.users;
-  state.totalFolowers = action.payload.totalHits;
+  mergeUsers(state, action.payload.users);
 };
 
 const handleSendMessageSptPending = (state: AdminState) => {

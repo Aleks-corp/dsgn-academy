@@ -82,6 +82,9 @@ const userSchema = new Schema<IUser, IUserModelType>(
     regularDateEnd: { type: Date, default: null },
     lastPayedStatus: { type: String },
     lastPayedDate: { type: Date, default: null },
+    lastPayedReasonCode: { type: String },
+    lastPayedReason: { type: String },
+    subCheckedAt: { type: Date, default: null },
     substart: {
       type: Date,
       default: null,

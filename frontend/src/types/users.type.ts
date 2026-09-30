@@ -23,6 +23,7 @@ export interface IUser {
   regularDateEnd?: Date;
   lastPayedStatus?: string;
   lastPayedDate?: Date;
+  lastPayedReason?: string;
   substart: Date;
   subend: Date;
   orderReference: string;

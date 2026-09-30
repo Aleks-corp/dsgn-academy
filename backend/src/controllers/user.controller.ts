@@ -3,10 +3,14 @@ import fs from "fs/promises";
 import type { Request, Response } from "express";
 import type { Types } from "mongoose";
 
-import { HttpError } from "../utils/index.js";
+import {
+  HttpError,
+  parseWebhookBody,
+  verifyWebhookSignature,
+} from "../utils/index.js";
 import { getFromS3 } from "../utils/s3.utils.js";
 import { ctrlWrapper } from "../decorators/index.js";
-import type { PaymentData } from "../types/data.types.js";
+import type { PaymentData, RequestData } from "../types/data.types.js";
 import {
   changePasswordService,
   createPaymentService,
@@ -148,6 +152,7 @@ const getCurrent = async (req: Request, res: Response): Promise<void> => {
     regularDateEnd,
     lastPayedDate,
     lastPayedStatus,
+    lastPayedReason,
     subend,
     createdAt,
   } = req.user;
@@ -164,6 +169,7 @@ const getCurrent = async (req: Request, res: Response): Promise<void> => {
       regularDateEnd,
       lastPayedDate,
       lastPayedStatus,
+      lastPayedReason,
       substart,
       subend,
       createdAt,
@@ -225,18 +231,30 @@ const createPayment = async (req: Request, res: Response): Promise<void> => {
 };
 
 const paymentWebhook = async (req: Request, res: Response): Promise<void> => {
-  let data = req.body;
-  const keys = Object.keys(data);
-  if (keys.length === 1) {
-    try {
-      data = JSON.parse(keys[0]);
-    } catch (error) {
-      console.error("🚀 ~ paymentWebhook ~ error:", error);
-      throw HttpError(400, "Invalid nested JSON");
-    }
+  let data: RequestData;
+  try {
+    data = parseWebhookBody(req.body) as unknown as RequestData;
+  } catch (error) {
+    console.error("🚀 ~ paymentWebhook ~ error:", error);
+    throw HttpError(400, "Invalid webhook body");
   }
   if (!data || typeof data !== "object" || !data.orderReference) {
     throw HttpError(400, "Missing orderReference");
+  }
+  // WFP_WEBHOOK_VERIFY: "log" (за замовчуванням) — лише логує розбіжність, "enforce" — блокує
+  const verifyMode = process.env.WFP_WEBHOOK_VERIFY || "log";
+  if (verifyMode !== "off") {
+    const valid = verifyWebhookSignature(data, process.env.WFP_SECRET_KEY || "");
+    if (!valid) {
+      console.warn(
+        "⚠️ WFP webhook signature mismatch:",
+        data.orderReference,
+        data.transactionStatus
+      );
+      if (verifyMode === "enforce") {
+        throw HttpError(403, "Invalid signature");
+      }
+    }
   }
   const responseData = await paymentWebhookService(data);
   res.json(responseData);
