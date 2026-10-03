@@ -12,9 +12,16 @@ import { AdminState } from "../../types/state.types";
 import { IUser } from "@/types/users.type";
 import toast from "react-hot-toast";
 
-const handleGetAllUsersPending = (state: AdminState) => {
+const handleGetAllUsersPending = (
+  state: AdminState,
+  action: { meta: { arg: { page?: number; search?: string } } }
+) => {
   state.isLoadingMore = true;
   state.error = "";
+  // новий пошук (page 1) замінює список; пагінація (page > 1) його доповнює
+  if ((action.meta.arg.page ?? 1) === 1) {
+    state.currentSearch = action.meta.arg.search ?? "";
+  }
 };
 
 const handlePatchUsersPending = (state: AdminState) => {
@@ -29,14 +36,24 @@ const handlePatchCheckSubPending = (state: AdminState) => {
 
 const handleGetAllUsersFulfilled = (
   state: AdminState,
-  action: PayloadAction<{ users: IUser[]; totalHits: number }>
+  action: PayloadAction<
+    { users: IUser[]; totalHits: number },
+    string,
+    { arg: { page?: number; search?: string } }
+  >
 ) => {
   state.isLoadingMore = false;
-  const newUsers = action.payload.users.filter(
-    (newUser) =>
-      !state.folowers.some((existingUser) => existingUser._id === newUser._id)
-  );
-  state.folowers = [...state.folowers, ...newUsers];
+  // відповідь на застарілий пошук ігноруємо
+  if ((action.meta.arg.search ?? "") !== state.currentSearch) return;
+  if ((action.meta.arg.page ?? 1) === 1) {
+    state.folowers = action.payload.users;
+  } else {
+    const newUsers = action.payload.users.filter(
+      (newUser) =>
+        !state.folowers.some((existingUser) => existingUser._id === newUser._id)
+    );
+    state.folowers = [...state.folowers, ...newUsers];
+  }
   state.totalFolowers = action.payload.totalHits;
 };
 

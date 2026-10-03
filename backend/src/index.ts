@@ -4,9 +4,11 @@ import "dotenv/config";
 
 import app from "./app.js";
 import { UserModel } from "./models/index.js";
-import { checkSubscriptionStatus } from "./utils/index.js";
+import { checkSubscriptionStatus, assertBaseUrl } from "./utils/index.js";
 
 const { DB_HOST = "", PORT = 3000 } = process.env;
+
+assertBaseUrl();
 
 process.on("unhandledRejection", (reason) => {
   console.error("Unhandled Rejection:", reason);

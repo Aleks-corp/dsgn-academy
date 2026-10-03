@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "@/redux/hooks";
 import {
   getAllUsers,
@@ -20,6 +20,7 @@ import Loader from "@/components/loaders/Loader";
 
 import UsersTable from "@/components/admin/UserTable";
 import Button from "@/components/buttons/Button";
+import IconInput from "@/components/form&inputs/InputIcon";
 import toast from "react-hot-toast";
 
 const UsersPage = () => {
@@ -35,11 +36,32 @@ const UsersPage = () => {
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const USERS_PER_PAGE = 50;
+  const [search, setSearch] = useState("");
+  const [isExpanded, setIsExpanded] = useState(false);
+  const searchRef = useRef("");
 
+  const USERS_PER_PAGE = 50;
+  const SERVER_LIMIT = 500;
+
+  // перший запит і новий пошук (з дебаунсом): замінює список
   useEffect(() => {
-    dispatch(getAllUsers({}));
-  }, [dispatch]);
+    const timer = setTimeout(() => {
+      searchRef.current = search.trim();
+      setCurrentPage(1);
+      dispatch(
+        getAllUsers({
+          page: 1,
+          limit: SERVER_LIMIT,
+          search: searchRef.current,
+        }),
+      );
+    }, 400);
+    return () => clearTimeout(timer);
+  }, [dispatch, search]);
+
+  // після дій список міг скоротитись: сторінка показу не виходить за межі
+  const totalPages = Math.max(1, Math.ceil(users.length / USERS_PER_PAGE));
+  const safePage = Math.min(currentPage, totalPages);
 
   const handleSend = async () => {
     setIsLoading(true);
@@ -62,7 +84,7 @@ const UsersPage = () => {
           style: {
             whiteSpace: "pre-line",
           },
-        }
+        },
       );
       if (failed > 0) {
         setUpdateUsers(failedEmails);
@@ -73,8 +95,8 @@ const UsersPage = () => {
       if (failed > 0) {
         alert(
           `Відправлено: ${sent}\nНе відправлено: ${failed}\n\nНе доставлені листи:\n${failedEmails.join(
-            ", "
-          )}`
+            ", ",
+          )}`,
         );
       }
     } else {
@@ -127,10 +149,30 @@ const UsersPage = () => {
         </ul>
       </div>
 
+      <form role="search" className="mb-4" onSubmit={(e) => e.preventDefault()}>
+        <IconInput
+          type="search"
+          inputMode="search"
+          autoComplete="off"
+          spellCheck={false}
+          aria-label="Пошук користувачів"
+          placeholder="Ім'я, email або orderReference..."
+          value={search}
+          onChange={setSearch}
+          isExpanded={isExpanded}
+          setIsExpanded={setIsExpanded}
+          wrapperClassName=" "
+        />
+      </form>
+
+      {users.length === 0 && !isLoadingMore && search.trim() && (
+        <p className="font-inter text-sm text-muted">Нічого не знайдено</p>
+      )}
+
       {users.length > 0 && (
         <>
           <UsersTable
-            currentPage={currentPage}
+            currentPage={safePage}
             updateUsers={updateUsers}
             setUpdateUsers={setUpdateUsers}
           />
@@ -166,7 +208,7 @@ const UsersPage = () => {
                       patchUsers({
                         usersId: updateUsers,
                         subscription: "premium",
-                      })
+                      }),
                     )
                   }
                   style="accent"
@@ -188,7 +230,10 @@ const UsersPage = () => {
                   text="Set Free"
                   onClick={() =>
                     dispatch(
-                      patchUsers({ usersId: updateUsers, subscription: "free" })
+                      patchUsers({
+                        usersId: updateUsers,
+                        subscription: "free",
+                      }),
                     )
                   }
                   style="accent"
@@ -251,14 +296,14 @@ const UsersPage = () => {
                   onClick={() => setCurrentPage(i + 1)}
                   className={
                     "font-inter cursor-pointer min-w-9 rounded-lg border px-3 py-1.5 text-sm font-medium " +
-                    (currentPage === i + 1
+                    (safePage === i + 1
                       ? "border-gray-800 bg-gray-800 text-white "
                       : "border-gray-300 text-gray-800 hover:bg-gray-100 ")
                   }
                 >
                   {i + 1}
                 </button>
-              )
+              ),
             )}
           </div>
 
@@ -272,13 +317,15 @@ const UsersPage = () => {
                   className="inline-flex items-center gap-2 rounded-lg border border-gray-300 px-3 py-2 text-sm font-medium text-gray-800 hover:bg-gray-100 active:bg-gray-200"
                   type="button"
                   onClick={() => {
-                    const nextPage = currentPage + 1;
-                    setCurrentPage(nextPage);
+                    // наступна СЕРВЕРНА сторінка рахується від кількості вже завантажених
+                    const nextServerPage =
+                      Math.floor(users.length / SERVER_LIMIT) + 1;
                     dispatch(
                       getAllUsers({
-                        page: nextPage,
-                        limit: 500,
-                      })
+                        page: nextServerPage,
+                        limit: SERVER_LIMIT,
+                        search: searchRef.current,
+                      }),
                     );
                   }}
                 >

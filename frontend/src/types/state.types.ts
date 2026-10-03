@@ -71,6 +71,7 @@ export interface AuthState {
 export interface AdminState {
   folowers: IUser[];
   totalFolowers: number;
+  currentSearch: string;
   isLoading: boolean;
   isLoadingUpdate: boolean;
   isLoadingCheck: boolean;

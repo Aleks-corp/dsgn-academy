@@ -107,6 +107,8 @@ const userSchema = new Schema<IUser, IUserModelType>(
       type: String,
       default: "",
     },
+    // попередні newOrderReference, перезаписані повторним create-payment (щоб пізній вебхук знайшов юзера)
+    prevOrderReferences: { type: [String], default: [] },
     token: {
       type: String,
     },

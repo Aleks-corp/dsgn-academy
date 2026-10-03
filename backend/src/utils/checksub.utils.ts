@@ -10,6 +10,16 @@ const merchantPassword = process.env.WFP_MERCHANT_PASSWORD || "";
 const WFP_API_URL =
   process.env.WFP_API_URL || "https://api.wayforpay.com/regularApi";
 
+// WFP віддає unix-секунди; null/undefined не повинні давати Invalid Date
+const fromUnix = (value: unknown): Date | undefined => {
+  const n = Number(value);
+  return value && Number.isFinite(n) ? new Date(n * 1000) : undefined;
+};
+const defaultNext = (user: IUser, now: number): Date => {
+  const base = new Date(user.subend ?? now);
+  return new Date(base.setMonth(base.getMonth() + 1));
+};
+
 const CHECK_INTERVAL_MS =
   Number(process.env.WFP_CHECK_INTERVAL_HOURS || 6) * 60 * 60 * 1000;
 
@@ -43,18 +53,18 @@ const syncWithWfp = async (user: IUser, full = false): Promise<IUser> => {
       if (data.status === "Active") {
         user.subscription = userSubscriptionConst.PREMIUM;
         user.lastPayedStatus = data.lastPayedStatus;
-        user.lastPayedDate = new Date(parseInt(data.lastPayedDate + "000"));
+        user.lastPayedDate = fromUnix(data.lastPayedDate) ?? user.lastPayedDate;
         user.status = data.status;
         user.amount = data.amount;
         user.mode = data.mode;
         if (data.nextPaymentDate) {
-          user.subend = new Date(parseInt(data.nextPaymentDate + "000"));
+          user.subend = fromUnix(data.nextPaymentDate) ?? defaultNext(user, newDateTime);
         } else {
           user.subend = new Date(
             new Date(newDateTime).setMonth(new Date(newDateTime).getMonth() + 1)
           );
         }
-        const currentDate = new Date(data.dateBegin + "000");
+        const currentDate = fromUnix(data.dateBegin) ?? new Date(newDateTime);
         if (!user.substart) {
           user.substart = new Date(
             currentDate.setMonth(
@@ -98,24 +108,23 @@ const syncWithWfp = async (user: IUser, full = false): Promise<IUser> => {
       });
 
       if (data.status === "Active") {
-        if (data.lastPayedStatus === "Declined") {
-          user.subscription = userSubscriptionConst.FREE;
-        }
-        if (data.lastPayedStatus === "Approved") {
-          user.subscription = userSubscriptionConst.PREMIUM;
-        }
+        // щойно зареєстрований регулярний платіж: lastPayedStatus === null — це теж ОК
+        user.subscription =
+          data.lastPayedStatus === "Declined"
+            ? userSubscriptionConst.FREE
+            : userSubscriptionConst.PREMIUM;
         user.lastPayedStatus = data.lastPayedStatus;
-        user.lastPayedDate = new Date(parseInt(data.lastPayedDate + "000"));
+        user.lastPayedDate = fromUnix(data.lastPayedDate) ?? user.lastPayedDate;
         user.status = data.status;
         user.amount = data.amount;
         user.mode = data.mode;
         if (data.nextPaymentDate) {
-          user.subend = new Date(parseInt(data.nextPaymentDate + "000"));
+          user.subend = fromUnix(data.nextPaymentDate) ?? defaultNext(user, newDateTime);
         } else {
           const base = user.subend ?? new Date(newDateTime);
           user.subend = new Date(base.setMonth(base.getMonth() + 1));
         }
-        const currentDate = new Date(data.dateBegin + "000");
+        const currentDate = fromUnix(data.dateBegin) ?? new Date(newDateTime);
         if (!user.substart) {
           user.substart = new Date(
             currentDate.setMonth(
@@ -202,22 +211,22 @@ const syncWithWfp = async (user: IUser, full = false): Promise<IUser> => {
         headers: { "Content-Type": "application/json" },
       });
       if (data.status === "Active") {
-        if (data.lastPayedStatus === "Approved") {
+        if (data.lastPayedStatus !== "Declined") {
           user.subscription = userSubscriptionConst.PREMIUM;
         }
         user.lastPayedStatus = data.lastPayedStatus;
-        user.lastPayedDate = new Date(parseInt(data.lastPayedDate + "000"));
+        user.lastPayedDate = fromUnix(data.lastPayedDate) ?? user.lastPayedDate;
         user.status = data.status;
         user.amount = data.amount;
         user.mode = data.mode;
 
         if (data.nextPaymentDate) {
-          user.subend = new Date(parseInt(data.nextPaymentDate + "000"));
+          user.subend = fromUnix(data.nextPaymentDate) ?? defaultNext(user, newDateTime);
         } else {
           const base = user.subend ?? new Date(newDateTime);
           user.subend = new Date(base.setMonth(base.getMonth() + 1));
         }
-        const currentDate = new Date(data.dateBegin + "000");
+        const currentDate = fromUnix(data.dateBegin) ?? new Date(newDateTime);
         if (!user.substart) {
           user.substart = new Date(
             currentDate.setMonth(

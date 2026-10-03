@@ -6,14 +6,17 @@ import { instance } from "@/lib/api/axios";
 interface Query {
   page?: number;
   limit?: number;
+  search?: string;
 }
 
 export const getAllUsers = createAsyncThunk(
   "admin/getallusers",
-  async ({ page = 1, limit = 500 }: Query, thunkAPI) => {
+  async ({ page = 1, limit = 500, search = "" }: Query, thunkAPI) => {
     try {
       const response = await instance.get(
-        `/admin/users/?page=${page}&limit=${limit}`
+        `/admin/users/?page=${page}&limit=${limit}&search=${encodeURIComponent(
+          search
+        )}`
       );
       return response.data;
     } catch (e) {

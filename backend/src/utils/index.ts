@@ -9,3 +9,5 @@ export { default as checkSubscriptionStatus } from "./checksub.utils.js";
 export { default as fetchVideoDataById } from "./addcover.utils.js";
 export { default as sendMailToUsers } from "./mailstream.utils.js";
 export * from "./wfpwebhook.utils.js";
+export { default as escapeRegex } from "./escaperegex.utils.js";
+export { assertBaseUrl, normalizeBaseUrl } from "./env.utils.js";

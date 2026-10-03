@@ -39,21 +39,15 @@ export function getNextPaymentDate(
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
   const day = currentDate.getDate();
-  if (duration === "monthly") {
-    const nextDate = new Date(year, month + 1, day);
+  const target = duration === "monthly" ? month + 1 : month + 12;
+  // день обмежуємо останнім днем цільового місяця (31.01 -> 28.02, а не 03.03)
+  const lastDay = new Date(year, target + 1, 0).getDate();
+  const nextDate = new Date(year, target, Math.min(day, lastDay));
 
-    const dd = String(nextDate.getDate()).padStart(2, "0");
-    const mm = String(nextDate.getMonth() + 1).padStart(2, "0");
-    const yyyy = nextDate.getFullYear();
-
-    return `${dd}.${mm}.${yyyy}`;
-  } else {
-    const nextDate = new Date(year + 1, month, day);
-    const dd = String(nextDate.getDate()).padStart(2, "0");
-    const mm = String(nextDate.getMonth() + 1).padStart(2, "0");
-    const yyyy = nextDate.getFullYear();
-    return `${dd}.${mm}.${yyyy}`;
-  }
+  const dd = String(nextDate.getDate()).padStart(2, "0");
+  const mm = String(nextDate.getMonth() + 1).padStart(2, "0");
+  const yyyy = nextDate.getFullYear();
+  return `${dd}.${mm}.${yyyy}`;
 }
 
 const generatePaymentData = async (data: PaymemtData) => {

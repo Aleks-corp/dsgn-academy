@@ -8,6 +8,7 @@ import {
   setSubDate,
   HttpError,
   sendMailToUsers,
+  escapeRegex,
 } from "../utils/index.js";
 
 // Повертаємо лише тих, кого реально торкнулась дія; фронт мержить по _id
@@ -22,12 +23,21 @@ const touchedUsersResponse = async (
 };
 
 const getAllUser = async (req: Request, res: Response): Promise<void> => {
-  const { page = "1", limit = "500", filter = "" } = req.query;
+  const { page = "1", limit = "500", filter = "", search = "" } = req.query;
 
-  const pageNumber = parseInt(page as string, 10);
-  const limitNumber = parseInt(limit as string, 10);
+  const pageNumber = Math.max(1, parseInt(page as string, 10) || 1);
+  const limitNumber = Math.min(
+    1000,
+    Math.max(1, parseInt(limit as string, 10) || 500)
+  );
   const skip = (pageNumber - 1) * limitNumber;
-  const query = filter ? { subscription: filter } : {};
+  const query: Record<string, unknown> = {};
+  if (filter) query.subscription = filter;
+  const term = typeof search === "string" ? search.trim().slice(0, 100) : "";
+  if (term) {
+    const regex = new RegExp(escapeRegex(term), "i");
+    query.$or = [{ name: regex }, { email: regex }, { orderReference: regex }];
+  }
 
   const users = await UserModel.find(
     query,
@@ -35,6 +45,8 @@ const getAllUser = async (req: Request, res: Response): Promise<void> => {
     {
       skip,
       limit: limitNumber,
+      // стабільне сортування, інакше пагінація кількома запитами дає дублі/пропуски
+      sort: { email: 1, _id: 1 },
     }
   );
   const totalHits = await UserModel.countDocuments(query);

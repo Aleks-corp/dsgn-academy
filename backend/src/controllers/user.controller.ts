@@ -238,6 +238,10 @@ const paymentWebhook = async (req: Request, res: Response): Promise<void> => {
     console.error("🚀 ~ paymentWebhook ~ error:", error);
     throw HttpError(400, "Invalid webhook body");
   }
+  // завжди, на кожен вхідний запит, до перевірки підпису і розгалуження по статусу
+  console.info(
+    `📥 WFP webhook: orderReference=${data?.orderReference} transactionStatus=${data?.transactionStatus}`
+  );
   if (!data || typeof data !== "object" || !data.orderReference) {
     throw HttpError(400, "Missing orderReference");
   }

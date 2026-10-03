@@ -3,7 +3,7 @@ import { Types } from "mongoose";
 import type { ICourse } from "../types/course.type.js";
 import { courseServices } from "../services/index.js";
 import { ctrlWrapper } from "../decorators/index.js";
-import { HttpError } from "../utils/index.js";
+import { HttpError, escapeRegex } from "../utils/index.js";
 
 import {
   toggleBookmarkedCourseService,
@@ -41,7 +41,7 @@ export const getCourses = async (
     filter.category = category.trim();
   }
   if (typeof q === "string" && q.trim() !== "") {
-    const regex = new RegExp(q.trim(), "i");
+    const regex = new RegExp(escapeRegex(q.trim()), "i");
     filter.title = regex;
   }
 

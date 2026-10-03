@@ -3,7 +3,7 @@ import type { FilterQuery } from "mongoose";
 import type { IVideo } from "../types/video.type.js";
 import { videoServices } from "../services/index.js";
 import { ctrlWrapper } from "../decorators/index.js";
-import { HttpError, fetchVideoDataById } from "../utils/index.js";
+import { HttpError, fetchVideoDataById, escapeRegex } from "../utils/index.js";
 import {
   toggleBookmarkedVideoService,
   updateBookmarkedVideosService,
@@ -45,7 +45,7 @@ export const getVideos = async (req: Request, res: Response): Promise<void> => {
     filtersQuery.filter = { $in: [filter.trim()] };
   }
   if (typeof q === "string" && q.trim() !== "") {
-    const regex = new RegExp(q.trim(), "i");
+    const regex = new RegExp(escapeRegex(q.trim()), "i");
     filtersQuery.title = regex;
   }
   if (free) filtersQuery.free = true;
@@ -106,7 +106,7 @@ export const getUnpublishedVideos = async (
     filtersQuery.filter = { $in: [filter.trim()] };
   }
   if (typeof q === "string" && q.trim() !== "") {
-    const regex = new RegExp(q.trim(), "i");
+    const regex = new RegExp(escapeRegex(q.trim()), "i");
     filtersQuery.title = regex;
   }
 

@@ -3,6 +3,7 @@ import { AdminState } from "../../types/state.types";
 export const initialState: AdminState = {
   folowers: [],
   totalFolowers: 0,
+  currentSearch: "",
   isLoading: false,
   isLoadingUpdate: false,
   isLoadingCheck: false,

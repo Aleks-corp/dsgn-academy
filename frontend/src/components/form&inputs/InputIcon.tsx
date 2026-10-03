@@ -16,6 +16,7 @@ type IconInputProps = Omit<
 export default function IconInput({
   wrapperClassName = "",
   inputClassName = "",
+  placeholder,
   value,
   onChange,
   isExpanded,
@@ -38,7 +39,9 @@ export default function IconInput({
             isExpanded ? "pl-9" : ""
           }`}
           placeholder={
-            isExpanded || window.innerWidth > 1024 ? "Пошук відео..." : ""
+            isExpanded || window.innerWidth > 1024
+              ? placeholder ?? "Пошук відео..."
+              : ""
           }
           value={value}
           onChange={(e) => onChange(e.target.value)}

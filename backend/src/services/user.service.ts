@@ -32,6 +32,7 @@ import {
   sendMailSub,
   sendMailToSprt,
   buildWebhookResponse,
+  normalizeBaseUrl,
 } from "../utils/index.js";
 import { uploadToS3, deleteFromS3 } from "../utils/s3.utils.js";
 import { answerWFPCodes } from "../constants/answerWfpCodes.js";
@@ -391,9 +392,24 @@ export const createPaymentService = async ({
       console.error("Failed to remove stale WFP order:", err);
     }
   }
-  await UserModel.findByIdAndUpdate(userId, {
+  // без { new: true } повертається документ ДО оновлення — звідти беремо старий orderReference
+  const before = await UserModel.findByIdAndUpdate(userId, {
     newOrderReference: data.orderReference,
   });
+  console.info(
+    `💳 create-payment: orderReference=${data.orderReference} userId=${userId} email=${before?.email}`
+  );
+  if (
+    before?.newOrderReference &&
+    before.newOrderReference !== data.orderReference
+  ) {
+    console.warn(
+      `⚠️ create-payment: newOrderReference ПЕРЕЗАПИСАНО для ${before.email}: ${before.newOrderReference} -> ${data.orderReference} (попередня спроба без результату)`
+    );
+    await UserModel.findByIdAndUpdate(userId, {
+      $addToSet: { prevOrderReferences: before.newOrderReference },
+    });
+  }
   const amountPriceData = {
     amount: Number(data.amount).toFixed(2),
     productPrice: [Number(data.amount).toFixed(2)],
@@ -435,8 +451,8 @@ export const createPaymentService = async ({
     merchantAccount,
     merchantDomainName,
     merchantSignature,
-    returnUrl: `${BASE_URL}/auth/payment-return`,
-    serviceUrl: `${BASE_URL}/auth/payment-webhook`,
+    returnUrl: `${normalizeBaseUrl(BASE_URL)}/auth/payment-return`,
+    serviceUrl: `${normalizeBaseUrl(BASE_URL)}/auth/payment-webhook`,
   };
   return paymentData;
 };
@@ -454,14 +470,22 @@ export const paymentWebhookService = async (
   const reason = data.reason ?? "";
   const arr = orderReference.split("-");
   const now = new Date();
+  // пізній вебхук по спробі, яку перезаписав повторний create-payment
+  const pendingMatch = {
+    $or: [
+      { newOrderReference: orderReference },
+      { prevOrderReferences: orderReference },
+    ],
+  };
 
   if (transactionStatus === "Approved") {
     const firstPayment = await UserModel.findOneAndUpdate(
-      { newOrderReference: orderReference },
+      pendingMatch,
       {
         subscription: userSubscriptionConst.PREMIUM,
         orderReference,
         newOrderReference: "",
+        prevOrderReferences: [],
         phone,
         status: "Active",
         lastPayedStatus: "Approved",
@@ -490,7 +514,14 @@ export const paymentWebhookService = async (
         },
         { new: true }
       ));
-    console.info("✅ Оплата підтверджена для", orderReference); //Log
+    if (updatedUser) {
+      console.info("✅ Оплата підтверджена для", orderReference, updatedUser.email);
+    } else {
+      console.warn(
+        "⚠️ Approved, але юзера з таким orderReference не знайдено (ні newOrderReference, ні orderReference, ні історія):",
+        orderReference
+      );
+    }
     if (updatedUser) {
       try {
         // синхронізуємо subend з WFP
@@ -521,15 +552,13 @@ export const paymentWebhookService = async (
       lastPayedReason: reason,
     };
     // Перша невдала спроба (апгрейд з free/trial): доступ не чіпаємо
-    const first = await UserModel.findOneAndUpdate(
-      { newOrderReference: orderReference },
-      declined
-    );
+    const first = await UserModel.findOneAndUpdate(pendingMatch, declined);
     if (!first) {
       // Відмова по вже існуючій підписці: забираємо преміум локально,
       // але НЕ робимо REMOVE у WFP — він сам повторить списання наступного дня.
       await UserModel.findOneAndUpdate(
-        { orderReference, subscription: { $nin: ["admin", "tester"] } },
+        // лише для вже платного member: не чіпаємо trial/free/admin/tester
+        { orderReference, subscription: userSubscriptionConst.PREMIUM },
         { ...declined, subscription: userSubscriptionConst.FREE }
       );
     }
