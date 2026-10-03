@@ -11,6 +11,8 @@ import Image from "next/image";
 import { sendToSupport } from "@/lib/api/sendSupport";
 import toast from "react-hot-toast";
 
+const MAX_FILE_SIZE = 2 * 1024 * 1024;
+
 const isEmail = (str: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(str);
 
 function SupportMenu({
@@ -29,8 +31,10 @@ function SupportMenu({
   const router = useRouter();
   const user = useAppSelector(selectUser);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [isSending, setIsSending] = useState(false);
 
   const handleSend = async () => {
+    if (isSending) return;
     let email: string = "";
     const trimmed = userMessage.trim();
     if (!user && isEmail(trimmed)) {
@@ -57,10 +61,11 @@ function SupportMenu({
           (item) =>
             item.sender === "user" &&
             item.message &&
-            !isEmail(item.message.trim())
+            // email відсікаємо лише у гостя, у якого це контакт, а не текст звернення
+            (user || !isEmail(item.message.trim()))
         )
         .map((item) => item.message),
-      !isEmail(trimmed) && trimmed ? trimmed : null,
+      (user || !isEmail(trimmed)) && trimmed ? trimmed : null,
     ].filter(Boolean);
     form.append("message", userMessages.join("\n"));
     if (email) {
@@ -73,14 +78,25 @@ function SupportMenu({
       form.append("file", uploadedFile);
     }
 
-    const result = await sendToSupport(form);
-
-    if (typeof result === "string") {
-      toast.error("Помилка: " + result + " , спробуйте ще раз");
-    } else {
+    setIsSending(true);
+    try {
+      await sendToSupport(form);
       toast.success("Повідомлення успішно відправлено!");
+      setChatItems([]);
+      setUploadedFile(null);
+    } catch (error) {
+      // повертаємо текст у поле, щоб клієнт не втратив звернення
+      setChatItems((prev) => prev.slice(0, -1));
+      setUserMessage(userMessage);
+      toast.error(
+        `Не вдалося відправити: ${
+          error instanceof Error ? error.message : "невідома помилка"
+        }. Спробуйте ще раз.`,
+        { duration: 6000 }
+      );
+    } finally {
+      setIsSending(false);
     }
-    setChatItems([]);
   };
 
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
@@ -97,6 +113,11 @@ function SupportMenu({
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    if (file.size > MAX_FILE_SIZE) {
+      toast.error("Файл завеликий, максимум 2 МБ");
+      e.target.value = "";
+      return;
+    }
     setUploadedFile(file);
     const url = URL.createObjectURL(file);
 
@@ -263,7 +284,7 @@ function SupportMenu({
               className="absolute bottom-1.5 right-1.5 flex justify-center items-center w-8 h-8 btn-gradient-send  
               p-1.5 rounded-lg cursor-pointer disabled:cursor-default"
               onClick={handleSend}
-              disabled={!userMessage.trim()}
+              disabled={!userMessage.trim() || isSending}
             >
               <MaskIcon
                 src="/icons/nav-icons/arrow-top.svg"

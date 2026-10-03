@@ -11,3 +11,4 @@ export { default as sendMailToUsers } from "./mailstream.utils.js";
 export * from "./wfpwebhook.utils.js";
 export { default as escapeRegex } from "./escaperegex.utils.js";
 export { assertBaseUrl, normalizeBaseUrl } from "./env.utils.js";
+export { default as escapeHtml } from "./escapehtml.utils.js";

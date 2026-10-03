@@ -17,11 +17,18 @@ export default function FreeSubProfile({ profile }: { profile: IUser }) {
 
   const supportHandler = async () => {
     setDisabled(true);
-    await dispatch(callSupport());
-    toast.success(
-      "Ваш запит у службу підтримки відправлено. Очікуйте відповідь.",
-      { duration: 5000 }
-    );
+    const result = await dispatch(callSupport());
+    if (callSupport.fulfilled.match(result)) {
+      toast.success(
+        "Ваш запит у службу підтримки відправлено. Очікуйте відповідь.",
+        { duration: 5000 }
+      );
+    } else {
+      setDisabled(false);
+      toast.error("Не вдалося відправити запит. Спробуйте ще раз.", {
+        duration: 5000,
+      });
+    }
   };
 
   return (

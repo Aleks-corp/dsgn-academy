@@ -376,14 +376,31 @@ const messageToSupport = async (req: Request, res: Response): Promise<void> => {
   const { message, email } = req.body;
   const file = req.file;
 
-  if (!email || !message) {
-    res.status(400).json({ message: "Email та повідомлення обовʼязкові!" });
-    return;
+  try {
+    console.info(
+      `[SUPPORT] Incoming request from ${email ?? "-"} (message ${
+        typeof message === "string" ? message.length : 0
+      } chars${file ? `, file ${file.originalname}` : ""})`
+    );
+    if (
+      typeof email !== "string" ||
+      typeof message !== "string" ||
+      !email.trim() ||
+      !message.trim()
+    ) {
+      res.status(400).json({ message: "Email та повідомлення обовʼязкові!" });
+      return;
+    }
+    await sendMessageToSupport({
+      email: email.trim().slice(0, 254),
+      message: message.slice(0, 5000),
+      file,
+    });
+    res.json({ message: "Звернення відправлено. Дякуємо!" });
+  } finally {
+    // тимчасовий файл видаляємо і при успіху, і при помилці відправки
+    if (file) await fs.unlink(file.path).catch(() => undefined);
   }
-  await sendMessageToSupport({ email, message, file });
-  res.json({ message: "Звернення відправлено. Дякуємо!" });
-
-  if (file) await fs.unlink(file.path);
 };
 
 export default {

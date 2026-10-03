@@ -4,7 +4,7 @@ import "dotenv/config";
 
 import { SMTP } from "../constants/mail.constant.js";
 import type { IUser } from "../types/user.type.js";
-import { HttpError } from "./index.js";
+import { HttpError, escapeHtml } from "./index.js";
 
 const { EMAIL_REPORT_SEND, EMAIL_SEND_FROM, EMAIL_PASS } = process.env;
 
@@ -35,8 +35,8 @@ const sendMailToSprt = async ({
   });
 
   const subject = report
-    ? `🐞 Report від ${user.email}`
-    : `🧾 Запит на перевірку оплати від ${user.email}`;
+    ? `🐞 Report від ${escapeHtml(user.email)}`
+    : `🧾 Запит на перевірку оплати від ${escapeHtml(user.email)}`;
 
   let html: string;
 
@@ -45,28 +45,28 @@ const sendMailToSprt = async ({
     html = `
       <h2>Отримано репорт від користувача</h2>
       <table border="1" cellspacing="0" cellpadding="6" style="border-collapse:collapse;">
-        <tr><td><b>Ім’я</b></td><td>${user.name}</td></tr>
-        <tr><td><b>Email</b></td><td>${user.email}</td></tr>
+        <tr><td><b>Ім’я</b></td><td>${escapeHtml(user.name)}</td></tr>
+        <tr><td><b>Email</b></td><td>${escapeHtml(user.email)}</td></tr>
         ${
           user.phone
-            ? `<tr><td><b>Телефон</b></td><td>${user.phone}</td></tr>`
+            ? `<tr><td><b>Телефон</b></td><td>${escapeHtml(user.phone)}</td></tr>`
             : ""
         }
-        <tr><td><b>Підписка</b></td><td>${user.subscription}</td></tr>
-        <tr><td><b>Order Ref</b></td><td>${user.orderReference}</td></tr>
+        <tr><td><b>Підписка</b></td><td>${escapeHtml(user.subscription)}</td></tr>
+        <tr><td><b>Order Ref</b></td><td>${escapeHtml(user.orderReference)}</td></tr>
         ${
           user.status
-            ? `<tr><td><b>Статус підписки</b></td><td>${user.status}</td></tr>`
+            ? `<tr><td><b>Статус підписки</b></td><td>${escapeHtml(user.status)}</td></tr>`
             : ""
         }
         ${
           user.lastPayedStatus
-            ? `<tr><td><b>Статус останьої оплати</b></td><td>${user.lastPayedStatus}</td></tr>`
+            ? `<tr><td><b>Статус останьої оплати</b></td><td>${escapeHtml(user.lastPayedStatus)}</td></tr>`
             : ""
         }
       </table>
       <h3>Текст репорту:</h3>
-      <p>${report}</p>
+      <p>${escapeHtml(report)}</p>
       <hr/>
       <small>Це автоматичне повідомлення з dsgn.academy</small>
     `;
@@ -75,17 +75,17 @@ const sendMailToSprt = async ({
     html = `
       <h2>Запит на перевірку оплати</h2>
       <table border="1" cellspacing="0" cellpadding="6" style="border-collapse:collapse;">
-        <tr><td><b>Ім’я</b></td><td>${user.name}</td></tr>
-        <tr><td><b>Email</b></td><td>${user.email}</td></tr>
+        <tr><td><b>Ім’я</b></td><td>${escapeHtml(user.name)}</td></tr>
+        <tr><td><b>Email</b></td><td>${escapeHtml(user.email)}</td></tr>
         ${
           user.phone
-            ? `<tr><td><b>Телефон</b></td><td>${user.phone}</td></tr>`
+            ? `<tr><td><b>Телефон</b></td><td>${escapeHtml(user.phone)}</td></tr>`
             : ""
         }
-        <tr><td><b>Підписка</b></td><td>${user.subscription}</td></tr>
+        <tr><td><b>Підписка</b></td><td>${escapeHtml(user.subscription)}</td></tr>
         ${
           user.status
-            ? `<tr><td><b>Статус підписки</b></td><td>${user.status}</td></tr>`
+            ? `<tr><td><b>Статус підписки</b></td><td>${escapeHtml(user.status)}</td></tr>`
             : ""
         }
         ${
@@ -100,7 +100,7 @@ const sendMailToSprt = async ({
         }
         ${
           user.lastPayedStatus
-            ? `<tr><td><b>Статус останьої оплати</b></td><td>${user.lastPayedStatus}</td></tr>`
+            ? `<tr><td><b>Статус останьої оплати</b></td><td>${escapeHtml(user.lastPayedStatus)}</td></tr>`
             : ""
         }
         ${
@@ -116,7 +116,7 @@ const sendMailToSprt = async ({
         <tr><td><b>Дата закінчення</b></td><td>${new Date(
           user.subend
         ).toLocaleDateString("uk-UA")}</td></tr>
-        <tr><td><b>Order Ref</b></td><td>${user.orderReference}</td></tr>
+        <tr><td><b>Order Ref</b></td><td>${escapeHtml(user.orderReference)}</td></tr>
       </table>
       <hr/>
       <small>Це автоматичне повідомлення з dsgn.academy</small>

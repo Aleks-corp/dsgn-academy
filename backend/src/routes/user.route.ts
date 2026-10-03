@@ -1,8 +1,10 @@
 import express, { Router } from "express";
+import type { RequestHandler } from "express";
 import multer from "multer";
 import { userController } from "../controllers/index.js";
 import { usersSchemas } from "../schemas/index.js";
 import { validateBody } from "../decorators/index.js";
+import { HttpError } from "../utils/index.js";
 import { authenticateUser, uploadFile } from "../middlewares/index.js";
 
 const {
@@ -87,7 +89,17 @@ usersRouter.post(
 usersRouter.get("/callsupport", authenticateUser, callSupport);
 usersRouter.post("/callsupport", authenticateUser, reportSupport);
 
-usersRouter.post("/support", uploadFile.single("file"), messageToSupport);
+// помилки multer (напр. файл > 2 МБ) інакше віддавались як безіменний 500
+const supportUpload: RequestHandler = (req, res, next) => {
+  uploadFile.single("file")(req, res, (err: unknown) => {
+    if (!err) return next();
+    if (err instanceof multer.MulterError && err.code === "LIMIT_FILE_SIZE") {
+      return next(HttpError(413, "Файл завеликий, максимум 2 МБ"));
+    }
+    return next(HttpError(400, "Не вдалося завантажити файл"));
+  });
+};
+usersRouter.post("/support", supportUpload, messageToSupport);
 
 usersRouter.post("/create-payment", authenticateUser, createPayment);
 // Global json/urlencoded парсять лише точний Content-Type; для решти читаємо сирий body
